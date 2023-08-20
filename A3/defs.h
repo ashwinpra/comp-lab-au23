@@ -1,0 +1,9 @@
+#define KEYWORD 1
+#define IDENTIFIER 2
+#define INTEGER_CONST 3
+#define FLOAT_CONST 4
+#define CHAR_CONST 5
+#define STRING_LITERAL 6
+#define PUNCTUATOR 7
+#define SINGLE_LINE_COMMENT 8
+#define MULTI_LINE_COMMENT 9
