@@ -1,13 +1,18 @@
+/*
+    Compilers Lab Assignment 3 
+    21CS10026 - Gorantla Thoyajakshi
+    21CS30009 - Ashwin Prasanth 
+
+    C file with main() function to test the lexer of tinyC
+*/
+
 #include <stdio.h>
 #include "defs.h"
 
-// extern lex variables and functions
 extern int yylex();
 extern char* yytext;
 extern int yylineno;
-extern int yylen;
 extern FILE* yyin;
-extern FILE* yyout;
 
 // test file is defined
 #define TEST_FILE "ass3_21CS10026_21CS30009_test.c" 
@@ -17,7 +22,7 @@ int main() {
 
     // to get input from test file
     yyin = fopen(TEST_FILE, "r");
-    printf("Input file: %s\n", TEST_FILE);
+    printf("Input file: %s\n\n", TEST_FILE);
 
     // get next token usign yylex() function
     next_token = yylex();
@@ -55,11 +60,11 @@ int main() {
             break;
 
         case SINGLE_LINE_COMMENT:
-            printf("< SINGLE_LINE_COMMENT > at line %d\n", yylineno-1);
+            printf("< SINGLE_LINE_COMMENT > at line %d\n", yylineno);
             break;
 
         case MULTI_LINE_COMMENT:
-            printf("< MULTI_LINE_COMMENT > at line %d\n", yylineno-1);
+            printf("< MULTI_LINE_COMMENT > starting at line %d\n", yylineno);
             break;
 
         // default case - unexpected token

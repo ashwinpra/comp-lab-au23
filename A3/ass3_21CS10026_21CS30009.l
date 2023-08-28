@@ -1,3 +1,11 @@
+/*
+    Compilers Lab Assignment 3 
+    21CS10026 - Gorantla Thoyajakshi
+    21CS30009 - Ashwin Prasanth 
+
+    Flex Specification for tinyC
+*/
+
 %{
 #include "defs.h"
 %}
@@ -49,22 +57,21 @@ whitespace [ \t\n]
 
 {punctuator}                {return PUNCTUATOR;}
 
-"/*"                        {BEGIN(multi_line_comment);}
-<multi_line_comment>"*/"    {BEGIN(INITIAL); return MULTI_LINE_COMMENT;}
+"/*"                        {BEGIN(multi_line_comment); return MULTI_LINE_COMMENT;}
+<multi_line_comment>"*/"    {BEGIN(INITIAL);}
 <multi_line_comment>.       { }
 <multi_line_comment>"\n"    {yylineno++;}
 
-"//"                        {BEGIN(single_line_comment);}
-<single_line_comment>"\n"   {BEGIN(INITIAL); yylineno++; return SINGLE_LINE_COMMENT;}
+"//"                        {BEGIN(single_line_comment); return SINGLE_LINE_COMMENT;}
+<single_line_comment>"\n"   {BEGIN(INITIAL); yylineno++;}
 <single_line_comment>.      { }
+
 \n                          {yylineno++;}
 
-{whitespace}                   { }
+{whitespace}                { }
 
 .                           {return UNEXPECTED_TOKEN;} // if no matches, return unexpected token
 
 %%
 
-int yywrap() {
-    return 1;
-}
+int yywrap() { return 1; }

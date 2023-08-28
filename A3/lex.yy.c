@@ -597,11 +597,18 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "ass3_21CS10026_21CS30009.l"
-#line 2 "ass3_21CS10026_21CS30009.l"
-#include "defs.h"
-#line 602 "lex.yy.c"
+/*
+    Compilers Lab Assignment 3 
+    21CS10026 - Gorantla Thoyajakshi
+    21CS30009 - Ashwin Prasanth 
 
-#line 604 "lex.yy.c"
+    Flex Specification for tinyC
+*/
+#line 10 "ass3_21CS10026_21CS30009.l"
+#include "defs.h"
+#line 609 "lex.yy.c"
+
+#line 611 "lex.yy.c"
 
 #define INITIAL 0
 #define multi_line_comment 1
@@ -820,9 +827,9 @@ YY_DECL
 		}
 
 	{
-#line 37 "ass3_21CS10026_21CS30009.l"
+#line 45 "ass3_21CS10026_21CS30009.l"
 
-#line 825 "lex.yy.c"
+#line 832 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -881,99 +888,99 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 38 "ass3_21CS10026_21CS30009.l"
+#line 46 "ass3_21CS10026_21CS30009.l"
 {return KEYWORD;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 40 "ass3_21CS10026_21CS30009.l"
+#line 48 "ass3_21CS10026_21CS30009.l"
 {return IDENTIFIER;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 42 "ass3_21CS10026_21CS30009.l"
+#line 50 "ass3_21CS10026_21CS30009.l"
 {return INTEGER_CONST;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 44 "ass3_21CS10026_21CS30009.l"
+#line 52 "ass3_21CS10026_21CS30009.l"
 {return FLOAT_CONST;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 46 "ass3_21CS10026_21CS30009.l"
+#line 54 "ass3_21CS10026_21CS30009.l"
 {return CHAR_CONST;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 48 "ass3_21CS10026_21CS30009.l"
+#line 56 "ass3_21CS10026_21CS30009.l"
 {return STRING_LITERAL;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 50 "ass3_21CS10026_21CS30009.l"
+#line 58 "ass3_21CS10026_21CS30009.l"
 {return PUNCTUATOR;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 52 "ass3_21CS10026_21CS30009.l"
-{BEGIN(multi_line_comment);}
+#line 60 "ass3_21CS10026_21CS30009.l"
+{BEGIN(multi_line_comment); return MULTI_LINE_COMMENT;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 53 "ass3_21CS10026_21CS30009.l"
-{BEGIN(INITIAL); return MULTI_LINE_COMMENT;}
+#line 61 "ass3_21CS10026_21CS30009.l"
+{BEGIN(INITIAL);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 54 "ass3_21CS10026_21CS30009.l"
+#line 62 "ass3_21CS10026_21CS30009.l"
 { }
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 55 "ass3_21CS10026_21CS30009.l"
+#line 63 "ass3_21CS10026_21CS30009.l"
 {yylineno++;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 57 "ass3_21CS10026_21CS30009.l"
-{BEGIN(single_line_comment);}
+#line 65 "ass3_21CS10026_21CS30009.l"
+{BEGIN(single_line_comment); return SINGLE_LINE_COMMENT;}
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 58 "ass3_21CS10026_21CS30009.l"
-{BEGIN(INITIAL); yylineno++; return SINGLE_LINE_COMMENT;}
+#line 66 "ass3_21CS10026_21CS30009.l"
+{BEGIN(INITIAL); yylineno++;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 59 "ass3_21CS10026_21CS30009.l"
+#line 67 "ass3_21CS10026_21CS30009.l"
 { }
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 60 "ass3_21CS10026_21CS30009.l"
+#line 69 "ass3_21CS10026_21CS30009.l"
 {yylineno++;}
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 62 "ass3_21CS10026_21CS30009.l"
+#line 71 "ass3_21CS10026_21CS30009.l"
 { }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 64 "ass3_21CS10026_21CS30009.l"
-{return UNEXPECTED_TOKEN;}
+#line 73 "ass3_21CS10026_21CS30009.l"
+{return UNEXPECTED_TOKEN;} // if no matches, return unexpected token
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 66 "ass3_21CS10026_21CS30009.l"
+#line 75 "ass3_21CS10026_21CS30009.l"
 ECHO;
 	YY_BREAK
-#line 976 "lex.yy.c"
+#line 983 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(multi_line_comment):
 case YY_STATE_EOF(single_line_comment):
@@ -1980,9 +1987,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 66 "ass3_21CS10026_21CS30009.l"
+#line 75 "ass3_21CS10026_21CS30009.l"
 
 
-int yywrap() {
-    return 1;
-}
+int yywrap() { return 1; }

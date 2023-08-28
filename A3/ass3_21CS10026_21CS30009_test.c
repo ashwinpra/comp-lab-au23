@@ -1,3 +1,11 @@
+/*
+    Compilers Lab Assignment 3 
+    21CS10026 - Gorantla Thoyajakshi
+    21CS30009 - Ashwin Prasanth 
+
+    Test file for lexer of tinyC
+*/
+
 #include <stdio.h>
 
 #define NUM 100
@@ -31,6 +39,9 @@ int main()
 
     for(int i = 0; i < 10; i++)
         printf("i = %d\n", i);
+
+    while(n > 0)
+        n--;
 
     return 0;
 }
