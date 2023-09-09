@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include "defs.h"
     void yyerror(const char*); 
+    void yyinfo(const char*);
     extern int yylex();   
 %}
 
@@ -28,15 +29,14 @@
 %token STRUCT TYPEDEF UNION
 
 %token <sval> IDENTIFIER
-%token <ival> INTEGER_CONSTANT
-%token <fval> FLOATING_CONSTANT
-%token <cval> CHARACTER_CONSTANT
+%token <ival> INT_CONST
+%token <fval> FLOAT_CONST
+%token <cval> CHAR_CONST
 %token <sval> STRING_LITERAL
 
 %token INVALID_TOKEN
 
-%nonassoc THEN
-%nonassoc ELSE
+/* %nonassoc ELSE */
 
 %start translation_unit
 
@@ -47,7 +47,7 @@ primary_expression:
     IDENTIFIER
         { yyinfo("primary-expression: identifier"); }
 
-    | CONSTANT
+    | constant
         { yyinfo("primary-expression: constant"); }
 
     | STRING_LITERAL
@@ -56,6 +56,12 @@ primary_expression:
     | '(' expression ')'
         { yyinfo("primary-expression: ( expression )"); }
     ;
+
+constant:
+    INT_CONST
+    | FLOAT_CONST
+    | CHAR_CONST
+
 
 postfix_expression:
     primary_expression
@@ -322,6 +328,11 @@ declaration:
     { yyinfo("declaration -> declaration_specifiers init_declarator_list_opt ;\n"); }
     ;
 
+declaration_specifiers_opt:
+    declaration_specifiers
+    | /* empty */
+
+
 declaration_specifiers:
     storage_class_specifier declaration_specifiers_opt
     { yyinfo("declaration_specifiers -> storage_class_specifier declaration_specifiers_opt\n"); }
@@ -334,15 +345,10 @@ declaration_specifiers:
 
     | function_specifier declaration_specifiers_opt
     { yyinfo("declaration_specifiers -> function_specifier declaration_specifiers_opt\n"); }
-
-    | alignment_specifier declaration_specifiers_opt
-    { yyinfo("declaration_specifiers -> alignment_specifier declaration_specifiers_opt\n"); }
     ;
 
 init_declarator_list_opt:
     init_declarator_list
-    { yyinfo("init_declarator_list_opt -> init_declarator_list\n"); }
-
     | /* empty */
     ;
 
@@ -771,3 +777,12 @@ declaration_list:
     { yyinfo("declaration_list -> declaration_list declaration\n"); }
     ;
 
+%%
+
+void yyerror(const char* s) {
+    printf("ERROR [Line %d] : %s, unable to parse : %s\n", yylineno, s, yytext);
+}
+
+void yyinfo(const char* s) {
+    printf("INFO [Line %d] : %s\n", yylineno, s);
+}
