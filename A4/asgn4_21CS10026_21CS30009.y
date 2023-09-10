@@ -1,9 +1,10 @@
 %{
     #include <stdio.h>
-    #include "defs.h"
     void yyerror(const char*); 
     void yyinfo(const char*);
     extern int yylex();   
+    extern int yylineno;
+    extern char* yytext;
 %}
 
 %union {
@@ -14,7 +15,7 @@
 } 
 
 %token INC_OP DEC_OP PTR_OP EQ
-%token CURLY_BRACE_OPEN CURLY_BRACE_CLOSE SQR_BRACE_OPEN SQR_BRACE_CLOSE
+%token PARENTHESIS_OPEN PARENTHESIS_CLOSE CURLY_BRACE_OPEN CURLY_BRACE_CLOSE SQR_BRACE_OPEN SQR_BRACE_CLOSE
 %token COLON SEMI_COLON ELLIPSIS QUESTION_MARK
 %token SIZEOF
 %token LEFT_OP RIGHT_OP EQ_OP NE_OP LTE_OP GTE_OP
@@ -27,14 +28,14 @@
 %token CONST ENUM INLINE RESTRICT VOLATILE
 %token IF ELSE SWITCH  CASE DEFAULT WHILE CONTINUE DO GOTO FOR RETURN BREAK
 %token STRUCT TYPEDEF UNION
+%token UNEXPECTED_TOKEN
 
 %token <sval> IDENTIFIER
-%token <ival> INT_CONST
+%token <ival> INTEGER_CONST
 %token <fval> FLOAT_CONST
 %token <cval> CHAR_CONST
 %token <sval> STRING_LITERAL
 
-%token INVALID_TOKEN
 
 /* %nonassoc ELSE */
 
@@ -53,12 +54,12 @@ primary_expression:
     | STRING_LITERAL
         { yyinfo("primary-expression: string-literal"); }
 
-    | '(' expression ')'
+    | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
         { yyinfo("primary-expression: ( expression )"); }
     ;
 
 constant:
-    INT_CONST
+    INTEGER_CONST 
     | FLOAT_CONST
     | CHAR_CONST
 
@@ -67,43 +68,44 @@ postfix_expression:
     primary_expression
     { yyinfo("postfix_expression -> primary_expression\n"); }
 
-    | postfix_expression '[' expression ']'
+    | postfix_expression SQR_BRACE_OPEN expression SQR_BRACE_CLOSE
     { yyinfo("postfix_expression -> postfix_expression [ expression ]\n"); }
 
-    | postfix_expression '(' argument_expression_list_opt ')'
+    | postfix_expression PARENTHESIS_OPEN argument_expression_list_opt PARENTHESIS_CLOSE
     { yyinfo("postfix_expression -> postfix_expression ( ]argument_expression_list_opt )\n"); }
 
-    | postfix_expression '.' IDENTIFIER
+    | postfix_expression DOT IDENTIFIER
     { yyinfo("postfix_expression -> postfix_expression . identifier\n"); }
 
     | postfix_expression PTR_OP IDENTIFIER
     { yyinfo("postfix_expression -> postfix_expression -> identifier\n"); }
 
-    | postfix_expression INC_OP
+    | postfix_expression INC_OP 
     { yyinfo("postfix_expression -> postfix_expression ++\n"); }
 
     | postfix_expression DEC_OP
     { yyinfo("postfix_expression -> postfix_expression --\n"); }
 
-    | '(' type_name ')' '{' initializer_list '}'
+    | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE CURLY_BRACE_OPEN initializer_list CURLY_BRACE_CLOSE
     { yyinfo("postfix_expression -> ( type_name ) { initializer_list }\n"); }
 
-    | '(' type_name ')' '{' initializer_list ',' '}'     
+    | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE CURLY_BRACE_OPEN initializer_list COMMA CURLY_BRACE_CLOSE     
     { yyinfo("postfix_expression -> ( type_name ) { initializer_list , }\n"); }
     ;  
-
-
-argument_expression_list_opt:
-    argument_expression_list
-    | /* empty */
-    ;
 
 argument_expression_list:
     assignment_expression
     { yyinfo("argument_expression_list -> assignment_expression\n"); }
 
-    | argument_expression_list ',' assignment_expression
+    | argument_expression_list COMMA assignment_expression
     { yyinfo("argument_expression_list -> argument_expression_list , assignment_expression\n"); }
+    ;
+
+argument_expression_list_opt:
+    argument_expression_list
+    { yyinfo("argument_expression_list_opt -> argument_expression_list\n"); }
+    | /* empty */
+    { yyinfo("argument_expression_list_opt -> epsilon\n");}
     ;
 
 unary_expression:
@@ -122,7 +124,7 @@ unary_expression:
     | SIZEOF unary_expression
     { yyinfo("unary_expression -> sizeof unary_expression\n"); }
 
-    | SIZEOF '(' type_name ')'
+    | SIZEOF PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE
     { yyinfo("unary_expression -> sizeof ( type_name )\n"); }
     ;
 
@@ -150,7 +152,7 @@ cast_expression:
     unary_expression
     { yyinfo("cast_expression -> unary_expression\n"); }
 
-    | '(' type_name ')' cast_expression
+    | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE cast_expression
     { yyinfo("cast_expression -> ( type_name ) cast_expression\n"); }
     ;
 
@@ -262,7 +264,7 @@ conditional_expression:
     logical_or_expression
     { yyinfo("conditional_expression -> logical_or_expression\n"); }
 
-    | logical_or_expression '?' expression ':' conditional_expression
+    | logical_or_expression QUESTION_MARK expression COLON conditional_expression
     { yyinfo("conditional_expression -> logical_or_expression ? expression : conditional_expression\n"); }
     ;
 
@@ -313,7 +315,7 @@ expression:
     assignment_expression
     { yyinfo("expression -> assignment_expression\n"); }
 
-    | expression ',' assignment_expression
+    | expression COMMA assignment_expression
     { yyinfo("expression -> expression , assignment_expression\n"); }
     ;
 
@@ -327,11 +329,6 @@ declaration:
     declaration_specifiers init_declarator_list_opt SEMI_COLON
     { yyinfo("declaration -> declaration_specifiers init_declarator_list_opt ;\n"); }
     ;
-
-declaration_specifiers_opt:
-    declaration_specifiers
-    | /* empty */
-
 
 declaration_specifiers:
     storage_class_specifier declaration_specifiers_opt
@@ -347,17 +344,26 @@ declaration_specifiers:
     { yyinfo("declaration_specifiers -> function_specifier declaration_specifiers_opt\n"); }
     ;
 
-init_declarator_list_opt:
-    init_declarator_list
+declaration_specifiers_opt:
+    declaration_specifiers
+    { yyinfo("declaration_specifiers_opt -> declaration_specifiers\n");}
     | /* empty */
+    { yyinfo("declaration_specifiers_opt -> epsilon\n"); }
     ;
 
 init_declarator_list:
     init_declarator
     { yyinfo("init_declarator_list -> init_declarator\n"); }
 
-    | init_declarator_list ',' init_declarator
+    | init_declarator_list COMMA init_declarator
     { yyinfo("init_declarator_list -> init_declarator_list , init_declarator\n"); }
+    ;
+
+init_declarator_list_opt:
+    init_declarator_list
+    { yyinfo("init_declarator_list_opt -> init_declarator_list\n");}
+    | /* empty */
+    { yyinfo("init_declarator_list_opt -> epsilon\n"); }
     ;
 
 init_declarator:
@@ -423,11 +429,6 @@ type_specifier:
     { yyinfo("type_specifier -> enum_specifier\n"); }
     ; 
 
-specifier_qualifier_list_opt: 
-    specifier_qualifier_list
-    | /* empty */
-    ;
-
 specifier_qualifier_list: 
     type_specifier specifier_qualifier_list_opt
     { yyinfo("specifier_qualifier_list -> type_specifier specifier_qualifier_list_opt\n"); }
@@ -436,16 +437,25 @@ specifier_qualifier_list:
     { yyinfo("specifier_qualifier_list -> type_qualifier specifier_qualifier_list_opt\n"); }
     ;
 
+specifier_qualifier_list_opt: 
+    specifier_qualifier_list
+    { yyinfo("specifier_qualifier_list_opt -> specifier_qualifier_list\n"); }
+    | /* empty */
+    { yyinfo("specifier_qualifier_list_opt -> epsilon\n");}
+    ;
+
 identifier_opt:
     IDENTIFIER
+    { yyinfo("identifier_opt -> identifier\n"); }
     | /* empty */
+    { yyinfo("identifier_opt -> epsilon\n");}
     ;
 
 enum_specifier: 
-    ENUM identifier_opt '{' enumerator_list '}'
+    ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list CURLY_BRACE_CLOSE
     { yyinfo("enum_specifier -> enum identifier_opt { enumerator_list }\n"); }
 
-    | ENUM identifier_opt '{' enumerator_list ',' '}'
+    | ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list COMMA CURLY_BRACE_CLOSE
     { yyinfo("enum_specifier -> enum identifier_opt { enumerator_list , }\n"); }
 
     | ENUM IDENTIFIER
@@ -455,7 +465,7 @@ enumerator_list:
     enumerator
     { yyinfo("enumerator_list -> enumerator\n"); }
 
-    | enumerator_list ',' enumerator
+    | enumerator_list COMMA enumerator
     { yyinfo("enumerator_list -> enumerator_list , enumerator\n"); }
     ;
 
@@ -490,38 +500,35 @@ declarator:
 
 assignment_expression_opt:
     assignment_expression
+    { yyinfo("assignment_expression_opt -> assignment_expression\n"); }
     | /* empty */
+    { yyinfo("assignment_expression_opt -> epsilon\n");}
     ;
 
 direct_declarator:
     IDENTIFIER
     { yyinfo("direct_declarator -> identifier\n"); }
 
-    | '(' declarator ')'
+    | PARENTHESIS_OPEN declarator PARENTHESIS_CLOSE
     { yyinfo("direct_declarator -> ( declarator )\n"); }
 
-    | direct_declarator '[' type_qualifier_list_opt assignment_expression_opt ']'
+    | direct_declarator SQR_BRACE_OPEN type_qualifier_list_opt assignment_expression_opt SQR_BRACE_CLOSE
     { yyinfo("direct_declarator -> direct_declarator [ type_qualifier_list_opt assignment_expression_opt ]\n"); }
 
-    | direct_declarator '[' STATIC type_qualifier_list_opt assignment_expression ']'
+    | direct_declarator SQR_BRACE_OPEN STATIC type_qualifier_list_opt assignment_expression SQR_BRACE_CLOSE
     { yyinfo("direct_declarator -> direct_declarator [ static type_qualifier_list_opt assignment_expression ]\n"); }
 
-    | direct_declarator '[' type_qualifier_list STATIC assignment_expression ']'
+    | direct_declarator SQR_BRACE_OPEN type_qualifier_list STATIC assignment_expression SQR_BRACE_CLOSE
     { yyinfo("direct_declarator -> direct_declarator [ type_qualifier_list static assignment_expression ]\n"); }
 
-    | direct_declarator '[' type_qualifier_list_opt '*' ']'
+    | direct_declarator SQR_BRACE_OPEN type_qualifier_list_opt STAR SQR_BRACE_CLOSE
     { yyinfo("direct_declarator -> direct_declarator [ type_qualifier_list_opt * ]\n"); }
 
-    | direct_declarator '(' parameter_type_list ')'
+    | direct_declarator PARENTHESIS_OPEN parameter_type_list PARENTHESIS_CLOSE
     { yyinfo("direct_declarator -> direct_declarator ( parameter_type_list )\n"); }
 
-    | direct_declarator '(' identifier_list_opt ')'
+    | direct_declarator PARENTHESIS_OPEN identifier_list_opt PARENTHESIS_CLOSE
     { yyinfo("direct_declarator -> direct_declarator ( identifier_list_opt )\n"); }
-    ;
-
-pointer_opt:
-    pointer
-    | /* empty */
     ;
 
 pointer: 
@@ -532,9 +539,11 @@ pointer:
     { yyinfo("pointer -> * type_qualifier_list_opt pointer\n"); }
     ;
 
-type_qualifier_list_opt:
-    type_qualifier_list
+pointer_opt:
+    pointer
+    { yyinfo("pointer_opt -> pointer\n");}
     | /* empty */
+    { yyinfo("pointer_opt -> epsilon\n"); }
     ;
 
 type_qualifier_list:
@@ -545,11 +554,18 @@ type_qualifier_list:
     { yyinfo("type_qualifier_list -> type_qualifier_list type_qualifier\n"); }
     ;
 
+type_qualifier_list_opt:
+    type_qualifier_list
+    { yyinfo("type_qualifier_list_opt -> type_qualifier_list\n");}
+    | /* empty */
+    { yyinfo("type_qualifier_list_opt -> epsilon\n");}
+    ;
+
 parameter_type_list:
     parameter_list
     { yyinfo("parameter_type_list -> parameter_list\n"); }
 
-    | parameter_list ',' ELLIPSIS
+    | parameter_list COMMA ELLIPSIS
     { yyinfo("parameter_type_list -> parameter_list , ...\n"); }
     ;
 
@@ -557,7 +573,7 @@ parameter_list:
     parameter_declaration
     { yyinfo("parameter_list -> parameter_declaration\n"); }
 
-    | parameter_list ',' parameter_declaration
+    | parameter_list COMMA parameter_declaration
     { yyinfo("parameter_list -> parameter_list , parameter_declaration\n"); }
     ;
 
@@ -569,17 +585,20 @@ parameter_declaration:
     { yyinfo("parameter_declaration -> declaration_specifiers\n"); }
     ;
 
-identifier_list_opt:
-    identifier_list
-    | /* empty */
-    ;
 
 identifier_list:
     IDENTIFIER
     { yyinfo("identifier_list -> identifier\n"); }
 
-    | identifier_list ',' IDENTIFIER
+    | identifier_list COMMA IDENTIFIER
     { yyinfo("identifier_list -> identifier_list , identifier\n"); }
+    ;
+
+identifier_list_opt:
+    identifier_list
+    { yyinfo("identifier_list_opt -> identifier_list\n"); }
+    | /* empty */
+    { yyinfo("identifier_list_opt -> epsilon\n");}
     ;
 
 type_name:
@@ -591,10 +610,10 @@ initializer:
     assignment_expression
     { yyinfo("initializer -> assignment_expression\n"); }
 
-    | '{' initializer_list '}'
+    | CURLY_BRACE_OPEN initializer_list CURLY_BRACE_CLOSE
     { yyinfo("initializer -> { initializer_list }\n"); }
 
-    | '{' initializer_list ',' '}'
+    | CURLY_BRACE_OPEN initializer_list COMMA CURLY_BRACE_CLOSE
     { yyinfo("initializer -> { initializer_list , }\n"); }
     ;
 
@@ -602,18 +621,20 @@ initializer_list:
     designation_opt initializer
     { yyinfo("initializer_list -> designation_opt initializer\n"); }
 
-    | initializer_list ',' designation_opt initializer
+    | initializer_list COMMA designation_opt initializer
     { yyinfo("initializer_list -> initializer_list , designation_opt initializer\n"); }
+    ;
+
+designation:
+    designator_list EQ
+    { yyinfo("designation -> designator_list =\n"); }
     ;
 
 designation_opt:
     designation
+    { yyinfo("designation_opt -> designation\n");}
     | /* empty */
-    ;
-
-designation:
-    designator_list '='
-    { yyinfo("designation -> designator_list =\n"); }
+    { yyinfo("designation_opt -> epsilon\n");}
     ;
 
 designator_list:
@@ -625,10 +646,10 @@ designator_list:
     ;
 
 designator:
-    '[' constant_expression ']'
+    SQR_BRACE_OPEN constant_expression SQR_BRACE_CLOSE
     { yyinfo("designator -> [ constant_expression ]\n"); }
 
-    | '.' IDENTIFIER
+    | DOT IDENTIFIER
     { yyinfo("designator -> . identifier\n"); }
     ;
 
@@ -654,24 +675,19 @@ statement:
     ;
 
 labeled_statement:
-    IDENTIFIER ':' statement
+    IDENTIFIER COLON statement
     { yyinfo("labeled_statement -> identifier : statement\n"); }
 
-    | CASE constant_expression ':' statement
+    | CASE constant_expression COLON statement
     { yyinfo("labeled_statement -> case constant_expression : statement\n"); }
 
-    | DEFAULT ':' statement
+    | DEFAULT COLON statement
     { yyinfo("labeled_statement -> default : statement\n"); }
     ;
 
 compound_statement:
-    '{' block_item_list_opt'}'
+    CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
     { yyinfo("compound_statement -> { block_item_list_opt }\n"); }
-    ;
-
-block_item_list_opt:
-    block_item_list
-    | /* empty */
     ;
 
 block_item_list:
@@ -680,6 +696,11 @@ block_item_list:
 
     | block_item_list block_item
     { yyinfo("block_item_list -> block_item_list block_item\n"); }
+    ;
+
+block_item_list_opt:
+    block_item_list
+    | /* empty */
     ;
 
 block_item:
@@ -701,27 +722,27 @@ expression_opt:
     ;
 
 selection_statement:
-    IF '(' expression ')' statement ELSE statement
+    IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement ELSE statement
     { yyinfo("selection_statement -> if ( expression ) statement else statement\n"); }
 
-    | IF '(' expression ')' statement
+    | IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement
     { yyinfo("selection_statement -> if ( expression ) statement\n"); }
 
-    | SWITCH '(' expression ')' statement
+    | SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement
     { yyinfo("selection_statement -> switch ( expression ) statement\n"); }
     ;
 
 iteration_statement:
-    WHILE '(' expression ')' statement
+    WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement
     { yyinfo("iteration_statement -> while ( expression ) statement\n"); }
 
-    | DO statement WHILE '(' expression ')' SEMI_COLON
+    | DO statement WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMI_COLON
     { yyinfo("iteration_statement -> do statement while ( expression ) ;\n"); }
 
-    | FOR '(' expression_opt ';' expression_opt ';' expression_opt ')' statement
+    | FOR PARENTHESIS_OPEN expression_opt SEMI_COLON expression_opt SEMI_COLON expression_opt PARENTHESIS_CLOSE statement
     { yyinfo("iteration_statement -> for ( expression_opt ; expression_opt ; expression_opt ) statement\n"); }
 
-    | FOR '(' declaration expression_opt ';' expression_opt ')' statement
+    | FOR PARENTHESIS_OPEN declaration expression_opt SEMI_COLON expression_opt PARENTHESIS_CLOSE statement
     { yyinfo("iteration_statement -> for ( declaration expression_opt ; expression_opt ) statement\n"); }
     ;
 
@@ -764,11 +785,6 @@ function_definition:
     { yyinfo("function_definition -> declarator declaration_list_opt compound_statement\n"); }
     ;
 
-declaration_list_opt:
-    declaration_list
-    | /* empty */
-    ;
-
 declaration_list:
     declaration
     { yyinfo("declaration_list -> declaration\n"); }
@@ -777,6 +793,12 @@ declaration_list:
     { yyinfo("declaration_list -> declaration_list declaration\n"); }
     ;
 
+declaration_list_opt:
+    declaration_list
+    | /* empty */
+    ;
+
+
 %%
 
 void yyerror(const char* s) {
@@ -784,5 +806,5 @@ void yyerror(const char* s) {
 }
 
 void yyinfo(const char* s) {
-    printf("INFO [Line %d] : %s\n", yylineno, s);
+    printf("[Line %d] : %s", yylineno, s);
 }
