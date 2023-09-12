@@ -1,8 +1,4 @@
 BASE_NAME=asgn4_21CS10026_21CS30009
-CC = gcc
-
-$(BASE_NAME)_output.txt: a.out $(BASE_NAME)_test.c
-	./a.out < $(BASE_NAME)_test.c > $(BASE_NAME)_output.txt
 
 a.out: lex.yy.o y.tab.o $(BASE_NAME).o
 	gcc lex.yy.o y.tab.o $(BASE_NAME).o
@@ -25,5 +21,9 @@ lex.yy.o: lex.yy.c
 y.tab.o: y.tab.c
 	gcc -c y.tab.c
 
+run: a.out $(BASE_NAME)_test.c
+	./a.out < $(BASE_NAME)_test.c > output.txt
+	@echo "Output written to output.txt"
+
 clean:
-	-rm a.out lex.yy.* *.o *.tab.* *.output
+	-rm a.out lex.yy.* *.o y.tab.* output.txt

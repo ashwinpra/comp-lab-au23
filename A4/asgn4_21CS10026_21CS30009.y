@@ -1,3 +1,11 @@
+/*
+    Compilers Lab Assignment 4
+    21CS10026 - Gorantla Thoyajakshi
+    21CS30009 - Ashwin Prasanth 
+
+    Parser specification for tinyC
+*/
+
 %{
     #include <stdio.h>
     void yyerror(const char*); 
@@ -8,10 +16,10 @@
 %}
 
 %union {
-        int ival;
-        float fval;
-        char cval;
-        char *sval;
+    int ival;
+    float fval;
+    char cval;
+    char *sval;
 } 
 
 %token INC_OP DEC_OP PTR_OP EQ
@@ -36,26 +44,24 @@
 %token <cval> CHAR_CONST
 %token <sval> STRING_LITERAL
 
-
-/* %nonassoc ELSE */
-
 %start translation_unit
 
 %%
 
-// 1. Expressions
+// ----------1. Expressions----------
+
 primary_expression:
     IDENTIFIER
-        { yyinfo("primary-expression: identifier"); }
+        { yyinfo("primary_expression -> identifier\n"); }
 
     | constant
-        { yyinfo("primary-expression: constant"); }
+        { yyinfo("primary_expression -> constant\n"); }
 
     | STRING_LITERAL
-        { yyinfo("primary-expression: string-literal"); }
+        { yyinfo("primary_expression -> string_literal\n"); }
 
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-        { yyinfo("primary-expression: ( expression )"); }
+        { yyinfo("primary_expression -> ( expression )\n"); }
     ;
 
 constant:
@@ -72,7 +78,7 @@ postfix_expression:
     { yyinfo("postfix_expression -> postfix_expression [ expression ]\n"); }
 
     | postfix_expression PARENTHESIS_OPEN argument_expression_list_opt PARENTHESIS_CLOSE
-    { yyinfo("postfix_expression -> postfix_expression ( ]argument_expression_list_opt )\n"); }
+    { yyinfo("postfix_expression -> postfix_expression ( argument_expression_list_opt )\n"); }
 
     | postfix_expression DOT IDENTIFIER
     { yyinfo("postfix_expression -> postfix_expression . identifier\n"); }
@@ -101,6 +107,7 @@ argument_expression_list:
     { yyinfo("argument_expression_list -> argument_expression_list , assignment_expression\n"); }
     ;
 
+// all non-terminals with "opt" have been replaced with separate non-terminal, which produces either the non-terminal itself or epsilon
 argument_expression_list_opt:
     argument_expression_list
     { yyinfo("argument_expression_list_opt -> argument_expression_list\n"); }
@@ -224,7 +231,7 @@ and_expression:
     equality_expression
     { yyinfo("and_expression -> equality_expression\n"); }
 
-    | and_expression AND_OP equality_expression
+    | and_expression BITWISEAND equality_expression
     { yyinfo("and_expression -> and_expression & equality_expression\n"); }
     ;
 
@@ -324,7 +331,7 @@ constant_expression:
     { yyinfo("constant_expression -> conditional_expression\n"); }
     ;
 
-// 2. Declarations
+// ----------2. Declarations----------
 declaration: 
     declaration_specifiers init_declarator_list_opt SEMI_COLON
     { yyinfo("declaration -> declaration_specifiers init_declarator_list_opt ;\n"); }
@@ -653,7 +660,7 @@ designator:
     { yyinfo("designator -> . identifier\n"); }
     ;
 
-// 3. Statements
+// ----------3. Statements----------
 statement: 
     labeled_statement
     { yyinfo("statement -> labeled_statement\n"); }
@@ -700,7 +707,9 @@ block_item_list:
 
 block_item_list_opt:
     block_item_list
+    { yyinfo("block_item_list_opt -> block_item_list\n"); }
     | /* empty */
+    { yyinfo("block_item_list_opt -> epsilon\n"); }
     ;
 
 block_item:
@@ -718,7 +727,9 @@ expression_statement:
 
 expression_opt:
     expression
+    { yyinfo("expression_opt -> expression\n"); }
     | /* empty */
+    { yyinfo("expression_opt -> epsilon\n"); }
     ;
 
 selection_statement:
@@ -760,7 +771,7 @@ jump_statement:
     { yyinfo("jump_statement -> return expression_opt ;\n"); }
     ;
 
-// 4. External definitions
+// ----------4. External definitions----------
 translation_unit:
     external_declaration
     { yyinfo("translation_unit -> external_declaration\n"); }
@@ -795,7 +806,9 @@ declaration_list:
 
 declaration_list_opt:
     declaration_list
+    { yyinfo("declaration_list_opt -> declaration_list\n"); }
     | /* empty */
+    { yyinfo("declaration_list_opt -> epsilon\n"); }
     ;
 
 
@@ -806,5 +819,5 @@ void yyerror(const char* s) {
 }
 
 void yyinfo(const char* s) {
-    printf("[Line %d] : %s", yylineno, s);
+    printf("%s", s);
 }

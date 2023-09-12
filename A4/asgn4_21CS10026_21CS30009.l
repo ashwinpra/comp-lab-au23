@@ -141,13 +141,13 @@ whitespace [ \t\n]
 "/*"                        {BEGIN(multi_line_comment);}
 <multi_line_comment>"*/"    {BEGIN(INITIAL);}
 <multi_line_comment>.       { }
-<multi_line_comment>"\n"    {yylineno++; printf("\n----------LINE: %d----------\n", yylineno);}
+<multi_line_comment>"\n"    {yylineno++; printf("\n----------[LINE: %d]----------\n", yylineno);}
 
 "//"                        {BEGIN(single_line_comment);}
-<single_line_comment>"\n"   {BEGIN(INITIAL); yylineno++; printf("\n----------LINE: %d----------\n", yylineno);}
+<single_line_comment>"\n"   {BEGIN(INITIAL); yylineno++; printf("\n----------[LINE: %d]----------\n", yylineno);}
 <single_line_comment>.      { }
 
-\n                          {yylineno++; printf("\n----------LINE: %d----------\n", yylineno);}
+\n                          {yylineno++; printf("\n----------[LINE: %d]----------\n", yylineno);}
 
 {whitespace}                { }
 
