@@ -1,5 +1,5 @@
 /*
-    Compilers Lab Assignment 3 
+    Compilers Lab Assignment 3
     21CS10026 - Gorantla Thoyajakshi
     21CS30009 - Ashwin Prasanth 
 
@@ -55,7 +55,7 @@ whitespace [ \t\n]
 
 {string_literal}            {return STRING_LITERAL;}
 
-{punctuator}                {return PUNCTUATOR;}
+{punctuator}                {return PUNCTUATOR;}⁄
 
 "/*"                        {BEGIN(multi_line_comment); return MULTI_LINE_COMMENT;}
 <multi_line_comment>"*/"    {BEGIN(INITIAL);}

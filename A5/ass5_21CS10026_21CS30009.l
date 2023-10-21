@@ -1,5 +1,5 @@
 /*
-    Compilers Lab Assignment 4
+    Compilers Lab Assignment 5
     21CS10026 - Gorantla Thoyajakshi
     21CS30009 - Ashwin Prasanth 
 
@@ -39,58 +39,56 @@ string_literal \"({s_char_sequence})?\"
 whitespace [ \t\n]
 
 %%
-"extern"                    {return EXTERN;}
-"static"                    {return STATIC;}
-"auto"                      {return AUTO;}
-"register"                  {return REGISTER;}
+
+// short, long, double, _Bool, _Complex, _Imaginary removed
+// extern, static, auto, register removed (storage-class-specifiers)
 "void"                      {return VOID;}
 "char"                      {return CHAR;}
-"short"                     {return SHORT;}
 "int"                       {return INT;}
-"long"                      {return LONG;}
 "float"                     {return FLOAT;}
-"double"                    {return DOUBLE;}
 "signed"                    {return SIGNED;}
 "unsigned"                  {return UNSIGNED;}
-"_Bool"                     {return BOOL;}
-"_Complex"                  {return COMPLEX;}
-"_Imaginary"                {return IMAGINARY;}
 
-"const"                     {return CONST;}
-"restrict"                  {return RESTRICT;}
-"volatile"                  {return VOLATILE;}
-"enum"                      {return ENUM;}
-"inline"                    {return INLINE;}
+// enum removed (enum-specifier)
+// const, restrict, volatile, inline removed (type-qualifiers and function-specifier)
 
-"sizeof"                    {return SIZEOF;}
 "struct"                    {return STRUCT;}
 "typedef"                   {return TYPEDEF;}
 "union"                     {return UNION;}
 
+// case and default removed (labeled-statements)
+// swtich removed (in selection-statement)
+// goto, continue, break removed (jump-statements)
 "if"                        {return IF;}
 "else"                      {return ELSE;}
-"switch"                    {return SWITCH;}
-"case"                      {return CASE;}
-"default"                   {return DEFAULT;}
 "while"                     {return WHILE;}
-"continue"                  {return CONTINUE;}
 "do"                        {return DO;}
-"goto"                      {return GOTO;}
 "for"                       {return FOR;}
 "return"                    {return RETURN;}
-"break"                     {return BREAK;}
 
 
 
-{identifier}                {return IDENTIFIER;}
+{identifier}                {
+                                // check
+                                return IDENTIFIER;
+                            }
 
-{integer_constant}          {return INTEGER_CONST;}
+{integer_constant}          {
+                                yylval.int_val = atoi(yytext);
+                                return INTEGER_CONST;
+                            }
 
-{float_constant}            {return FLOAT_CONST;}
+{float_constant}            {
+                                yylval.float_val = atof(yytext); // check
+                                return FLOAT_CONST;
+                            }
 
-{char_constant}             {return CHAR_CONST;}
+{char_constant}             {
+                                yylval.char_val = yytext;
+                                return CHAR_CONST;
+                            }
 
-{string_literal}            {return STRING_LITERAL;}
+{string_literal}            {return STRING_LITERAL;} // check
 
 "("                         {return PARENTHESIS_OPEN;}
 ")"                         {return PARENTHESIS_CLOSE;}
@@ -125,34 +123,23 @@ whitespace [ \t\n]
 "/"                         {return DIVIDE;}
 "%"                         {return PERCENTAGE;}
 
-"+="                        {return ADD_ASSIGN;}
-"-="                        {return SUB_ASSIGN;}
-"*="                        {return MUL_ASSIGN;}
-"/="                        {return DIV_ASSIGN;}
-"%="                        {return MOD_ASSIGN;}
-"<<="                       {return LEFT_ASSIGN;}
-">>="                       {return RIGHT_ASSIGN;}
-"|="                        {return OR_ASSIGN;}
-"&="                        {return AND_ASSIGN;}
-"^="                        {return XOR_ASSIGN;}
-
+// comma removed
 ":"                         {return COLON;}
 ";"                         {return SEMI_COLON;}
 "..."                       {return ELLIPSIS;}
 "?"                         {return QUESTION_MARK;}
-","                         {return COMMA;}
 "#"                         {return HASH;}
 
 "/*"                        {BEGIN(multi_line_comment);}
 <multi_line_comment>"*/"    {BEGIN(INITIAL);}
 <multi_line_comment>.       { }
-<multi_line_comment>"\n"    {yylineno++; printf("\n----------[LINE: %d]----------\n", yylineno);}
+<multi_line_comment>"\n"    {yylineno++;}
 
 "//"                        {BEGIN(single_line_comment);}
-<single_line_comment>"\n"   {BEGIN(INITIAL); yylineno++; printf("\n----------[LINE: %d]----------\n", yylineno);}
+<single_line_comment>"\n"   {BEGIN(INITIAL); yylineno++;}
 <single_line_comment>.      { }
 
-\n                          {yylineno++; printf("\n----------[LINE: %d]----------\n", yylineno);}
+\n                          {yylineno++;}
 
 {whitespace}                { }
 

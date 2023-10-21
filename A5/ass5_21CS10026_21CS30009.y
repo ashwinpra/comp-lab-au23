@@ -824,4 +824,4 @@ declaration_list_opt:
 
 void yyerror(const char* s) {
     printf("ERROR [Line %d] : %s, unable to parse : %s\n", yylineno, s, yytext);
-}
+}2
