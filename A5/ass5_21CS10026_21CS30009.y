@@ -34,11 +34,10 @@
 %token COLON SEMI_COLON ELLIPSIS QUESTION_MARK COMMA HASH
 
 // keywords
-%token EXTERN STATIC AUTO REGISTER
-%token VOID CHAR SHORT INT LONG FLOAT DOUBLE SIGNED UNSIGNED BOOL COMPLEX IMAGINARY
+%token VOID CHAR INT FLOAT SIGNED UNSIGNED
 %token CONST RESTRICT VOLATILE ENUM INLINE
-%token SIZEOF STRUCT TYPEDEF UNION
-%token IF ELSE SWITCH CASE DEFAULT WHILE CONTINUE DO GOTO FOR RETURN BREAK
+%token STRUCT TYPEDEF UNION
+%token IF ELSE CASE DEFAULT WHILE CONTINUE DO GOTO FOR RETURN BREAK
 
 // default case - unexpected token
 %token UNEXPECTED_TOKEN
@@ -123,6 +122,7 @@ argument_expression_list_opt:
     { printf("argument_expression_list_opt -> epsilon\n");}
     ;
 
+/* expressions involving sizeof removed */
 unary_expression:
     postfix_expression
     { printf("unary_expression -> postfix_expression\n"); }
@@ -135,12 +135,6 @@ unary_expression:
 
     | unary_operator cast_expression
     { printf("unary_expression -> unary_operator cast_expression\n"); }
-
-    | SIZEOF unary_expression
-    { printf("unary_expression -> sizeof unary_expression\n"); }
-
-    | SIZEOF PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE
-    { printf("unary_expression -> sizeof ( type_name )\n"); }
     ;
 
 unary_operator:
@@ -291,39 +285,10 @@ assignment_expression:
     { printf("assignment_expression -> unary_expression assignment_operator assignment_expression\n"); }
     ;
 
+/* *=, /=, %=, +=, -=, <<=, >>=, &=, ^=, |= removed */
 assignment_operator:
     EQ
     { printf("assignment_operator -> =\n"); }
-
-    | MUL_ASSIGN
-    { printf("assignment_operator -> *=\n"); }
-
-    | DIV_ASSIGN
-    { printf("assignment_operator -> /=\n"); }
-
-    | MOD_ASSIGN
-    { printf("assignment_operator -> %%=\n"); }
-
-    | ADD_ASSIGN
-    { printf("assignment_operator -> +=\n"); }
-
-    | SUB_ASSIGN
-    { printf("assignment_operator -> -=\n"); }
-
-    | LEFT_ASSIGN
-    { printf("assignment_operator -> <<=\n"); }
-
-    | RIGHT_ASSIGN
-    { printf("assignment_operator -> >>=\n"); }
-
-    | AND_ASSIGN
-    { printf("assignment_operator -> &=\n"); }
-
-    | XOR_ASSIGN
-    { printf("assignment_operator -> ^=\n"); }
-
-    | OR_ASSIGN
-    { printf("assignment_operator -> |=\n"); }
     ;
 
 expression:
@@ -345,19 +310,10 @@ declaration:
     { printf("declaration -> declaration_specifiers init_declarator_list_opt ;\n"); }
     ;
 
+// storage_class_specifier, enum_specifier, type_qualifier, function_specifier removed
 declaration_specifiers:
-    storage_class_specifier declaration_specifiers_opt
-    { printf("declaration_specifiers -> storage_class_specifier declaration_specifiers_opt\n"); }
-
     | type_specifier declaration_specifiers_opt
     { printf("declaration_specifiers -> type_specifier declaration_specifiers_opt\n"); }
-
-    | type_qualifier declaration_specifiers_opt
-    { printf("declaration_specifiers -> type_qualifier declaration_specifiers_opt\n"); }
-
-    | function_specifier declaration_specifiers_opt
-    { printf("declaration_specifiers -> function_specifier declaration_specifiers_opt\n"); }
-    ;
 
 declaration_specifiers_opt:
     declaration_specifiers
@@ -389,20 +345,9 @@ init_declarator:
     { printf("init_declarator -> declarator = initializer\n"); }
     ;
 
-storage_class_specifier:
-    EXTERN
-    { printf("storage_class_specifier -> extern\n"); }
+/* storage_class_specifier removed */
 
-    | STATIC
-    { printf("storage_class_specifier -> static\n"); }
-
-    | AUTO
-    { printf("storage_class_specifier -> auto\n"); }
-
-    | REGISTER
-    { printf("storage_class_specifier -> register\n"); }
-    ;
-
+/* only void, char, int, float kept (not sure about signed, unsigned) */
 type_specifier:
     VOID
     { printf("type_specifier -> void\n"); }
@@ -410,46 +355,23 @@ type_specifier:
     | CHAR
     { printf("type_specifier -> char\n"); }
 
-    | SHORT
-    { printf("type_specifier -> short\n"); }
-
     | INT
     { printf("type_specifier -> int\n"); }
 
-    | LONG
-    { printf("type_specifier -> long\n"); }
-
     | FLOAT
     { printf("type_specifier -> float\n"); }
-
-    | DOUBLE
-    { printf("type_specifier -> double\n"); }
 
     | SIGNED
     { printf("type_specifier -> signed\n"); }
 
     | UNSIGNED
     { printf("type_specifier -> unsigned\n"); }
-
-    | BOOL
-    { printf("type_specifier -> _Bool\n"); }
-
-    | COMPLEX
-    { printf("type_specifier -> _Complex\n"); }
-
-    | IMAGINARY
-    { printf("type_specifier -> _Imaginary\n"); }
-
-    | enum_specifier
-    { printf("type_specifier -> enum_specifier\n"); }
     ; 
 
+/* rules involving type_qualifier removed */
 specifier_qualifier_list: 
     type_specifier specifier_qualifier_list_opt
     { printf("specifier_qualifier_list -> type_specifier specifier_qualifier_list_opt\n"); }
-
-    | type_qualifier specifier_qualifier_list_opt
-    { printf("specifier_qualifier_list -> type_qualifier specifier_qualifier_list_opt\n"); }
     ;
 
 specifier_qualifier_list_opt: 
@@ -466,15 +388,7 @@ identifier_opt:
     { printf("identifier_opt -> epsilon\n");}
     ;
 
-enum_specifier: 
-    ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list CURLY_BRACE_CLOSE
-    { printf("enum_specifier -> enum identifier_opt { enumerator_list }\n"); }
-
-    | ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list COMMA CURLY_BRACE_CLOSE
-    { printf("enum_specifier -> enum identifier_opt { enumerator_list , }\n"); }
-
-    | ENUM IDENTIFIER
-    { printf("enum_specifier -> enum identifier\n"); }
+/* enum_specifier removed */
 
 enumerator_list: 
     enumerator
@@ -492,21 +406,9 @@ enumerator:
     { printf("enumerator -> enumeration_constant = constant_expression\n"); }
     ;
 
-type_qualifier: 
-    CONST
-    { printf("type_qualifier -> const\n"); }
+/* type qualifier removed */
 
-    | RESTRICT
-    { printf("type_qualifier -> restrict\n"); }
-
-    | VOLATILE
-    { printf("type_qualifier -> volatile\n"); }
-    ;
-
-function_specifier:
-    INLINE
-    { printf("function_specifier -> inline\n"); }
-    ;
+/* function specifier removed */
 
 declarator:
     pointer_opt direct_declarator
@@ -520,6 +422,9 @@ assignment_expression_opt:
     { printf("assignment_expression_opt -> epsilon\n");}
     ;
 
+/* rules involving type_qualifier removed */
+/* rules involving static removed */
+/* type_qualifier_list_opt replaced with epsilon */
 direct_declarator:
     IDENTIFIER
     { printf("direct_declarator -> identifier\n"); }
@@ -527,17 +432,11 @@ direct_declarator:
     | PARENTHESIS_OPEN declarator PARENTHESIS_CLOSE
     { printf("direct_declarator -> ( declarator )\n"); }
 
-    | direct_declarator SQR_BRACE_OPEN type_qualifier_list_opt assignment_expression_opt SQR_BRACE_CLOSE
-    { printf("direct_declarator -> direct_declarator [ type_qualifier_list_opt assignment_expression_opt ]\n"); }
+    | direct_declarator SQR_BRACE_OPEN assignment_expression_opt SQR_BRACE_CLOSE
+    { printf("direct_declarator -> direct_declarator [ assignment_expression_opt ]\n"); }
 
-    | direct_declarator SQR_BRACE_OPEN STATIC type_qualifier_list_opt assignment_expression SQR_BRACE_CLOSE
-    { printf("direct_declarator -> direct_declarator [ static type_qualifier_list_opt assignment_expression ]\n"); }
-
-    | direct_declarator SQR_BRACE_OPEN type_qualifier_list STATIC assignment_expression SQR_BRACE_CLOSE
-    { printf("direct_declarator -> direct_declarator [ type_qualifier_list static assignment_expression ]\n"); }
-
-    | direct_declarator SQR_BRACE_OPEN type_qualifier_list_opt STAR SQR_BRACE_CLOSE
-    { printf("direct_declarator -> direct_declarator [ type_qualifier_list_opt * ]\n"); }
+    | direct_declarator SQR_BRACE_OPEN STAR SQR_BRACE_CLOSE
+    { printf("direct_declarator -> direct_declarator [ * ]\n"); }
 
     | direct_declarator PARENTHESIS_OPEN parameter_type_list PARENTHESIS_CLOSE
     { printf("direct_declarator -> direct_declarator ( parameter_type_list )\n"); }
@@ -546,12 +445,13 @@ direct_declarator:
     { printf("direct_declarator -> direct_declarator ( identifier_list_opt )\n"); }
     ;
 
+/* type_qualiifier_list_opt replaced with epsilon */
 pointer: 
-    STAR type_qualifier_list_opt
-    { printf("pointer -> * type_qualifier_list_opt\n"); }
+    STAR 
+    { printf("pointer -> *\n"); }
 
-    | STAR type_qualifier_list_opt pointer
-    { printf("pointer -> * type_qualifier_list_opt pointer\n"); }
+    | STAR pointer
+    { printf("pointer -> * pointer\n"); }
     ;
 
 pointer_opt:
@@ -561,20 +461,7 @@ pointer_opt:
     { printf("pointer_opt -> epsilon\n"); }
     ;
 
-type_qualifier_list:
-    type_qualifier
-    { printf("type_qualifier_list -> type_qualifier\n"); }
-
-    | type_qualifier_list type_qualifier
-    { printf("type_qualifier_list -> type_qualifier_list type_qualifier\n"); }
-    ;
-
-type_qualifier_list_opt:
-    type_qualifier_list
-    { printf("type_qualifier_list_opt -> type_qualifier_list\n");}
-    | /* empty */
-    { printf("type_qualifier_list_opt -> epsilon\n");}
-    ;
+/* type_qualifier_list and type_qualifier_list_opt removed */
 
 parameter_type_list:
     parameter_list
@@ -669,11 +556,10 @@ designator:
     ;
 
 // ----------3. Statements----------
-statement: 
-    labeled_statement
-    { printf("statement -> labeled_statement\n"); }
 
-    | compound_statement
+/* labeled_statement removed */
+statement: 
+    compound_statement
     { printf("statement -> compound_statement\n"); }
 
     | expression_statement
@@ -689,16 +575,7 @@ statement:
     { printf("statement -> jump_statement\n"); }
     ;
 
-labeled_statement:
-    IDENTIFIER COLON statement
-    { printf("labeled_statement -> identifier : statement\n"); }
-
-    | CASE constant_expression COLON statement
-    { printf("labeled_statement -> case constant_expression : statement\n"); }
-
-    | DEFAULT COLON statement
-    { printf("labeled_statement -> default : statement\n"); }
-    ;
+/* labeled_statement removed */
 
 compound_statement:
     CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
@@ -740,15 +617,13 @@ expression_opt:
     { printf("expression_opt -> epsilon\n"); }
     ;
 
+/* SWITCH removed */
 selection_statement:
     IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement ELSE statement
     { printf("selection_statement -> if ( expression ) statement else statement\n"); }
 
     | IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement
     { printf("selection_statement -> if ( expression ) statement\n"); }
-
-    | SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement
-    { printf("selection_statement -> switch ( expression ) statement\n"); }
     ;
 
 iteration_statement:
@@ -765,36 +640,17 @@ iteration_statement:
     { printf("iteration_statement -> for ( declaration expression_opt ; expression_opt ) statement\n"); }
     ;
 
+/* only return is kept */
 jump_statement:
-    GOTO IDENTIFIER SEMI_COLON
-    { printf("jump_statement -> goto identifier ;\n"); }
-
-    | CONTINUE SEMI_COLON
-    { printf("jump_statement -> continue ;\n"); }
-
-    | BREAK SEMI_COLON
-    { printf("jump_statement -> break ;\n"); }
-
-    | RETURN expression_opt SEMI_COLON
+    RETURN expression_opt SEMI_COLON
     { printf("jump_statement -> return expression_opt ;\n"); }
     ;
 
 // ----------4. External definitions----------
-translation_unit:
-    external_declaration
-    { printf("translation_unit -> external_declaration\n"); }
 
-    | translation_unit external_declaration
-    { printf("translation_unit -> translation_unit external_declaration\n"); }
-    ;
+/* translation_unit removed  (as it used external_declaration) */
 
-external_declaration:
-    function_definition
-    { printf("external_declaration -> function_definition\n"); }
-
-    | declaration
-    { printf("external_declaration -> declaration\n"); }
-    ;
+/* external_declaration removed */
 
 function_definition:
     declaration_specifiers declarator declaration_list_opt compound_statement

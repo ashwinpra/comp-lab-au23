@@ -123,11 +123,11 @@ whitespace [ \t\n]
 "/"                         {return DIVIDE;}
 "%"                         {return PERCENTAGE;}
 
-// comma removed
 ":"                         {return COLON;}
 ";"                         {return SEMI_COLON;}
 "..."                       {return ELLIPSIS;}
 "?"                         {return QUESTION_MARK;}
+""
 "#"                         {return HASH;}
 
 "/*"                        {BEGIN(multi_line_comment);}
