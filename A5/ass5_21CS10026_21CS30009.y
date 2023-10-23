@@ -97,261 +97,668 @@ N:
 
 primary_expression:
     IDENTIFIER
-        { printf("primary_expression -> identifier\n"); }
+        { 
+            $$ = new Expression(); // making a new expression and storing pointer to symbol table entry 
+            $$->entry = $1; 
+            $$->type = "NBOOL";
+
+            // printf("primary_expression -> identifier\n"); 
+        }
 
     | constant
-        { printf("primary_expression -> constant\n"); }
+        { 
+            $$ = $1; // depends on which type of constant
+
+            // printf("primary_expression -> constant\n"); 
+        
+        }
 
     | STRING_LITERAL
-        { printf("primary_expression -> string_literal\n"); }
+        { 
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType(TYPE_POINTER), $1);
+            $$->entry->type->arr_type = new SymType(TYPE_CHAR);
+            
+            // printf("primary_expression -> string_literal\n"); 
+        }
 
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-        { printf("primary_expression -> ( expression )\n"); }
+        { 
+            $$ = $2; // depends on expression
+
+            // printf("primary_expression -> ( expression )\n"); 
+        }
     ;
 
 constant:
     INTEGER_CONST 
     { 
-        printf("constant -> integer_constant\n"); 
+        $$ = new Expression(); 
+        string n = convInt2String($1);
+        $$->entry = gentemp(new SymType(TYPE_INT), n);
+        emit("=", $$->entry->name, n);
+
+        // printf("constant -> integer_constant\n"); 
     }
 
     | FLOAT_CONST
-    { 
-        printf("constant -> float_constant\n"); 
+    {   
+        $$ = new Expression();
+        string n = convFloat2String($1);
+        $$->entry = gentemp(new SymType(TYPE_FLOAT), n);
+        emit("=", $$->entry->name, n);
+
+        // printf("constant -> float_constant\n"); 
     }
 
     | CHAR_CONST
-    { 
-        printf("constant -> char_constant\n"); 
+    {   
+        $$ = new Expression();
+        $$->entry = gentemp(new SymType(TYPE_CHAR), $1);
+        emit("=", $$->entry->name, $1);
+
+        // printf("constant -> char_constant\n"); 
     }
     ;
 
+// struct-related rules removed
 postfix_expression:
     primary_expression
-    { printf("postfix_expression -> primary_expression\n"); }
+    { 
+        // create new array and append location of primary expression
+        $$ = new Array();
+        $$->addr = $1->entry;
+        $$->type = $1->entry->type;
+        $$->entry = $$->addr;
+
+        // printf("postfix_expression -> primary_expression\n"); 
+    }
 
     | postfix_expression SQR_BRACE_OPEN expression SQR_BRACE_CLOSE
-    { printf("postfix_expression -> postfix_expression [ expression ]\n"); }
+    { 
+        $$ = new Array();
+        $$->type = $1->type->arr_type;
+        $$->addr = $1->addr;
+        $$->entry = gentemp(new SymType(TYPE_INT));
+        $$->arr_type = TYPE_ARRAY;
+
+        // checking if array is 1D or multi-dimensional
+        if($1->arr_type = TYPE_ARRAY) {
+            // multi-dimensional array
+            Sym* temp = gentemp(new SymType(TYPE_INT));
+            int size = computeSize($$->type);
+            string s = convInt2String(size);
+            emit("*", temp->name, $$->entry->name, s);
+            emit("+", $$->entry->name, $1->entry->name, temp->name);
+
+        }
+        else {
+            // 1D array, just calculate size
+            int size = computeSize($$->type);
+            string s = convInt2String(size);
+            emit("*", $$->entry->name, $1->entry->name, s);
+        }
+
+        // printf("postfix_expression -> postfix_expression [ expression ]\n"); 
+    }
 
     | postfix_expression PARENTHESIS_OPEN argument_expression_list_opt PARENTHESIS_CLOSE
-    { printf("postfix_expression -> postfix_expression ( argument_expression_list_opt )\n"); }
+    {
+        // function call
+        $$ = new Array();
+        $$->addr = gentemp($1->type);
+        string s = convInt2String($3);
+        emit("call", $$->addr->name, $1->addr->name, s);
 
-    | postfix_expression DOT IDENTIFIER
-    { printf("postfix_expression -> postfix_expression . identifier\n"); }
-
-    | postfix_expression PTR_OP IDENTIFIER
-    { printf("postfix_expression -> postfix_expression -> identifier\n"); }
+        // printf("postfix_expression -> postfix_expression ( argument_expression_list_opt )\n"); 
+    }
 
     | postfix_expression INC_OP 
-    { printf("postfix_expression -> postfix_expression ++\n"); }
+    {
+        $$ = new Array();
+        $$->addr = gentemp($1->addr->type);
+        emit("=", $$->addr->name, $1->addr->name);
+        emit("+", $1->addr->name, $1->addr->name, "1");
+
+        // printf("postfix_expression -> postfix_expression ++\n"); 
+    }
 
     | postfix_expression DEC_OP
-    { printf("postfix_expression -> postfix_expression --\n"); }
+    { 
+        $$ = new Array();
+        $$->addr = gentemp($1->addr->type);
+        emit("=", $$->addr->name, $1->addr->name);
+        emit("-", $1->addr->name, $1->addr->name, "1");
+
+        // printf("postfix_expression -> postfix_expression --\n"); 
+    }
 
     | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE CURLY_BRACE_OPEN initializer_list CURLY_BRACE_CLOSE
-    { printf("postfix_expression -> ( type_name ) { initializer_list }\n"); }
+    { 
+        // printf("postfix_expression -> ( type_name ) { initializer_list }\n"); 
+    }
 
     | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE CURLY_BRACE_OPEN initializer_list COMMA CURLY_BRACE_CLOSE     
-    { printf("postfix_expression -> ( type_name ) { initializer_list , }\n"); }
+    { 
+        // printf("postfix_expression -> ( type_name ) { initializer_list , }\n"); 
+    }
     ;  
 
 argument_expression_list:
     assignment_expression
-    { printf("argument_expression_list -> assignment_expression\n"); }
+    { 
+        $$ = 1; // 1 argument
+        emit("param", $1->entry->name);
+
+        // printf("argument_expression_list -> assignment_expression\n"); 
+    }
 
     | argument_expression_list COMMA assignment_expression
-    { printf("argument_expression_list -> argument_expression_list , assignment_expression\n"); }
+    {   
+        $$ = $1 + 1; // one more argument added
+        emit("param", $3->entry->name);
+
+        // printf("argument_expression_list -> argument_expression_list , assignment_expression\n"); 
+    }
     ;
 
-// all non-terminals with "opt" have been replaced with separate non-terminal, which produces either the non-terminal itself or epsilon
 argument_expression_list_opt:
     argument_expression_list
-    { printf("argument_expression_list_opt -> argument_expression_list\n"); }
+    {
+        $$ = $1; // depends on argument expression list 
+        // printf("argument_expression_list_opt -> argument_expression_list\n"); 
+    }
     | /* empty */
-    { printf("argument_expression_list_opt -> epsilon\n");}
+    { 
+        $$ = 0; // no arguments
+        // printf("argument_expression_list_opt -> epsilon\n");
+    }
     ;
 
 /* expressions involving sizeof removed */
 unary_expression:
     postfix_expression
-    { printf("unary_expression -> postfix_expression\n"); }
+    { 
+        $$ = $1; // depends on postfix expression
+        // printf("unary_expression -> postfix_expression\n"); 
+    }
 
     | INC_OP unary_expression
-    { printf("unary_expression -> ++ unary_expression\n"); }
+    { 
+        emit("+", $2->addr->name, $2->addr->name, "1");
+        $$ = $2; // depends on unary expression
+
+        // printf("unary_expression -> ++ unary_expression\n"); 
+    }
 
     | DEC_OP unary_expression
-    { printf("unary_expression -> -- unary_expression\n"); }
+    { 
+        emit("-", $2->addr->name, $2->addr->name, "1");
+        $$ = $2; // depends on unary expression
+
+        // printf("unary_expression -> -- unary_expression\n"); 
+    }
 
     | unary_operator cast_expression
-    { printf("unary_expression -> unary_operator cast_expression\n"); }
+    { 
+        $$ = new Array();
+
+        // operation depends on unary operator
+        switch($1) {
+            case '+':
+                // unary plus
+                $$=$2;
+                break;
+            
+            case '-':
+                // unary minus - negation of cast expression
+                $$->addr = gentemp($2->type->type);
+                emit("U-", $$->addr->name, $2->addr->name); // check
+                break;
+
+            case '~':
+                // bitwise not
+                $$->addr = gentemp($2->type->type);
+                emit("~", $$->addr->name, $2->addr->name);
+                break;
+
+            case '!':
+                // logical not
+                $$->addr = gentemp($2->type->type);
+                emit("!", $$->addr->name, $2->addr->name);
+                break;
+
+            case '&':
+                // address of -> generate new pointer type
+                $$->addr = gentemp(new SymType(TYPE_POINTER));
+                $$->addr->type->arr_type = $2->addr->type;
+                emit("=&", $$->addr->name, $2->addr->name);
+                break;
+
+            case '*':
+                // dereference 
+                $$->arr_type = TYPE_POINTER;
+                $$->addr = gentemp($2->addr->type->arr_type);
+                $$->addr = $2->addr;
+                emit("*", $$->addr->name, $2->addr->name);
+                break;
+        }
+
+        // printf("unary_expression -> unary_operator cast_expression\n"); 
+    }
     ;
 
 unary_operator:
     BITWISEAND
-    { printf("unary_operator -> &\n"); }
+    { 
+        $$ = '&';
+        // printf("unary_operator -> &\n"); 
+    }
 
     | STAR
-    { printf("unary_operator -> *\n"); }
+    { 
+        $$ = '*';
+        // printf("unary_operator -> *\n"); 
+    }
 
     | PLUS
-    { printf("unary_operator -> +\n"); }
+    { 
+        $$ = '+';
+        // printf("unary_operator -> +\n"); 
+    }
 
     | MINUS
-    { printf("unary_operator -> -\n"); }
+    { 
+        $$ = '-';
+        // printf("unary_operator -> -\n"); 
+    }
 
     | NOT
-    { printf("unary_operator -> ~\n"); }
+    { 
+        $$ = '~';
+        // printf("unary_operator -> ~\n"); 
+    }
 
     | EXCLAMATION
-    { printf("unary_operator -> !\n"); }
+    { 
+        $$ = '!';
+        // printf("unary_operator -> !\n"); 
+    }
     ;
 
 cast_expression:
     unary_expression
-    { printf("cast_expression -> unary_expression\n"); }
+    { 
+        $$ = $1; // depends on unary expression
+        // printf("cast_expression -> unary_expression\n"); 
+    }
 
     | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE cast_expression
-    { printf("cast_expression -> ( type_name ) cast_expression\n"); }
+    { 
+        $$ = new Array();
+        $$->addr = convertType($4->addr, var_type); // convert type of cast expression to type name -> check
+        // printf("cast_expression -> ( type_name ) cast_expression\n"); 
+    }
     ;
 
 multiplicative_expression:
     cast_expression
-    { printf("multiplicative_expression -> cast_expression\n"); }
+    { 
+        $$ = new Expression();
+
+        // check - add comments
+        if ($1->arr_type == TYPE_ARRAY) {
+            $$->entry = gentemp($1->entry->type);
+            emit("=[]",$$->entry->name, $1->addr->name, $1->entry->name);
+        }
+
+        else if ($1->arr_type == TYPE_POINTER) {
+            $$->entry = $1->entry;
+        }
+        else {
+            $$->entry = $1->addr;
+        }
+
+        // printf("multiplicative_expression -> cast_expression\n"); 
+    }
 
     | multiplicative_expression STAR cast_expression
-    { printf("multiplicative_expression -> multiplicative_expression * cast_expression\n"); }
+    {   
+        if(!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType($1->entry->type->type)); // check
+            emit("*", $$->entry->name, $1->entry->name, $3->addr->name);
+        }
+
+        // printf("multiplicative_expression -> multiplicative_expression * cast_expression\n"); 
+    }
 
     | multiplicative_expression DIVIDE cast_expression
-    { printf("multiplicative_expression -> multiplicative_expression / cast_expression\n"); }
+    { 
+        if(!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType($1->entry->type->type)); // check
+            emit("/", $$->entry->name, $1->entry->name, $3->addr->name);
+        }
+
+        // printf("multiplicative_expression -> multiplicative_expression / cast_expression\n"); 
+    }
 
     | multiplicative_expression PERCENTAGE cast_expression
-    { printf("multiplicative_expression -> multiplicative_expression %% cast_expression\n"); }
+    { 
+        if(!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType($1->entry->type->type)); // check
+            emit("%", $$->entry->name, $1->entry->name, $3->addr->name);
+        }
+
+        // printf("multiplicative_expression -> multiplicative_expression %% cast_expression\n"); 
+    }
     ;
 
 additive_expression:
     multiplicative_expression
-    { printf("additive_expression -> multiplicative_expression\n"); }
+    { 
+        $$ = $1; // depends on multiplicative expression
+        // printf("additive_expression -> multiplicative_expression\n"); 
+    }
 
     | additive_expression PLUS multiplicative_expression
-    { printf("additive_expression -> additive_expression + multiplicative_expression\n"); }
+    {   
+        if(!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType($1->entry->type->type)); // check
+            emit("+", $$->entry->name, $1->entry->name, $3->addr->name);
+        }
+
+        // printf("additive_expression -> additive_expression + multiplicative_expression\n"); 
+    }
 
     | additive_expression MINUS multiplicative_expression
-    { printf("additive_expression -> additive_expression - multiplicative_expression\n"); }
+    { 
+        if(!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType($1->entry->type->type)); // check
+            emit("-", $$->entry->name, $1->entry->name, $3->addr->name);
+        }
+
+        // printf("additive_expression -> additive_expression - multiplicative_expression\n"); 
+    }
     ;
 
 shift_expression:
     additive_expression
-    { printf("shift_expression -> additive_expression\n"); }
+    {   
+        $$ = $1; // depends on additive expression
+        // printf("shift_expression -> additive_expression\n"); 
+    }
 
     | shift_expression LEFT_OP additive_expression
-    { printf("shift_expression -> shift_expression << additive_expression\n"); }
+    { 
+        if($1->entry->type->type != TYPE_INT) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType(TYPE_INT)); // check
+            emit("<<", $$->entry->name, $1->entry->name, $3->addr->name);
+        }
+
+        // printf("shift_expression -> shift_expression << additive_expression\n"); 
+    }
 
     | shift_expression RIGHT_OP additive_expression
-    { printf("shift_expression -> shift_expression >> additive_expression\n"); }
+    { 
+        if($1->entry->type->type != TYPE_INT) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->entry = gentemp(new SymType(TYPE_INT)); // check
+            emit(">>", $$->entry->name, $1->entry->name, $3->addr->name);
+        }
+
+        // printf("shift_expression -> shift_expression >> additive_expression\n"); 
+    }
     ;
 
 relational_expression:
     shift_expression
-    { printf("relational_expression -> shift_expression\n"); }
+    { 
+        $$ = $1; // depends on shift expression
+        // printf("relational_expression -> shift_expression\n"); 
+    }
 
     | relational_expression LT_OP shift_expression
-    { printf("relational_expression -> relational_expression < shift_expression\n"); }
+    { 
+        if (!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        // check - add comments
+        else {
+            $$ = new Expression();
+            $$->type = "BOOL";
+            $$->truelist = makelist(nextinstr());
+            $$->falselist = makelist(nextinstr()+1);
+            emit("<", "", $1->entry->name, $3->entry->name);
+            emit("goto", "");
+        }
+
+        // printf("relational_expression -> relational_expression < shift_expression\n"); 
+    }
 
     | relational_expression GT_OP shift_expression
-    { printf("relational_expression -> relational_expression > shift_expression\n"); }
+    { 
+        if (!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->type = "BOOL";
+            $$->truelist = makelist(nextinstr());
+            $$->falselist = makelist(nextinstr()+1);
+            emit(">", "", $1->entry->name, $3->entry->name);
+            emit("goto", "");
+        }
+
+        // printf("relational_expression -> relational_expression > shift_expression\n"); 
+    }
 
     | relational_expression LTE_OP shift_expression
-    { printf("relational_expression -> relational_expression <= shift_expression\n"); }
+    { 
+        if (!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->type = "BOOL";
+            $$->truelist = makelist(nextinstr());
+            $$->falselist = makelist(nextinstr()+1);
+            emit("<=", "", $1->entry->name, $3->entry->name);
+            emit("goto", "");
+        }
+        // printf("relational_expression -> relational_expression <= shift_expression\n"); 
+    }
 
     | relational_expression GTE_OP shift_expression
-    { printf("relational_expression -> relational_expression >= shift_expression\n"); }
+    { 
+        if (!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression();
+            $$->type = "BOOL";
+            $$->truelist = makelist(nextinstr());
+            $$->falselist = makelist(nextinstr()+1);
+            emit(">=", "", $1->entry->name, $3->entry->name);
+            emit("goto", "");
+        }
+        // printf("relational_expression -> relational_expression >= shift_expression\n"); 
+    }
     ;
 
 equality_expression:
     relational_expression
-    { printf("equality_expression -> relational_expression\n"); }
+    { 
+        $$ = $1; // depends on relational expression
+        // printf("equality_expression -> relational_expression\n"); 
+    }
 
     | equality_expression EQ_OP relational_expression
-    { printf("equality_expression -> equality_expression == relational_expression\n"); }
+    { 
+        if (!compareSymbolType($1->entry, $3->entry)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            // resume from here!
+        }
+        // printf("equality_expression -> equality_expression == relational_expression\n"); 
+    }
 
     | equality_expression NE_OP relational_expression
-    { printf("equality_expression -> equality_expression != relational_expression\n"); }
+    { 
+
+        // printf("equality_expression -> equality_expression != relational_expression\n"); 
+    }
     ;
 
 and_expression:
     equality_expression
-    { printf("and_expression -> equality_expression\n"); }
+    { 
+
+        // printf("and_expression -> equality_expression\n"); 
+    }
 
     | and_expression BITWISEAND equality_expression
-    { printf("and_expression -> and_expression & equality_expression\n"); }
+    { 
+
+        // printf("and_expression -> and_expression & equality_expression\n"); 
+    }
     ;
 
 exclusive_or_expression:
     and_expression
-    { printf("exclusive_or_expression -> and_expression\n"); }
+    { 
+
+        // printf("exclusive_or_expression -> and_expression\n"); 
+    }
 
     | exclusive_or_expression BITWISEXOR and_expression
-    { printf("exclusive_or_expression -> exclusive_or_expression ^ and_expression\n"); }
+    { 
+
+        // printf("exclusive_or_expression -> exclusive_or_expression ^ and_expression\n"); 
+    }
     ;
 
 inclusive_or_expression:
     exclusive_or_expression
-    { printf("inclusive_or_expression -> exclusive_or_expression\n"); }
+    { 
+
+        // printf("inclusive_or_expression -> exclusive_or_expression\n"); 
+    }
 
     | inclusive_or_expression BITWISEOR exclusive_or_expression
-    { printf("inclusive_or_expression -> inclusive_or_expression | exclusive_or_expression\n"); }
+    { 
+
+        // printf("inclusive_or_expression -> inclusive_or_expression | exclusive_or_expression\n"); 
+    }
     ;
 
 logical_and_expression:
     inclusive_or_expression
-    { printf("logical_and_expression -> inclusive_or_expression\n"); }
+    { 
+
+        // printf("logical_and_expression -> inclusive_or_expression\n"); 
+    }
 
     | logical_and_expression AND_OP inclusive_or_expression
-    { printf("logical_and_expression -> logical_and_expression && inclusive_or_expression\n"); }
+    { 
+
+        // printf("logical_and_expression -> logical_and_expression && inclusive_or_expression\n"); 
+    }
     ;
 
 logical_or_expression:
     logical_and_expression
-    { printf("logical_or_expression -> logical_and_expression\n"); }
+    { 
+
+        // printf("logical_or_expression -> logical_and_expression\n"); 
+    }
 
     | logical_or_expression OR_OP logical_and_expression
-    { printf("logical_or_expression -> logical_or_expression || logical_and_expression\n"); }
+    { 
+
+        // printf("logical_or_expression -> logical_or_expression || logical_and_expression\n"); 
+    }
     ;
 
 conditional_expression:
     logical_or_expression
-    { printf("conditional_expression -> logical_or_expression\n"); }
+    { 
+
+        // printf("conditional_expression -> logical_or_expression\n"); 
+    }
 
     | logical_or_expression QUESTION_MARK expression COLON conditional_expression
-    { printf("conditional_expression -> logical_or_expression ? expression : conditional_expression\n"); }
+    { 
+
+        // printf("conditional_expression -> logical_or_expression ? expression : conditional_expression\n"); 
+    }
     ;
 
 assignment_expression:
     conditional_expression
-    { printf("assignment_expression -> conditional_expression\n"); }
+    { 
+
+        // printf("assignment_expression -> conditional_expression\n"); 
+    }
 
     | unary_expression assignment_operator assignment_expression
-    { printf("assignment_expression -> unary_expression assignment_operator assignment_expression\n"); }
+    { 
+
+        // printf("assignment_expression -> unary_expression assignment_operator assignment_expression\n"); 
+    }
     ;
 
 /* *=, /=, %=, +=, -=, <<=, >>=, &=, ^=, |= removed */
 assignment_operator:
     EQ
-    { printf("assignment_operator -> =\n"); }
+    { 
+        // printf("assignment_operator -> =\n"); 
+    }
     ;
 
+/* expression with comma removed */
 expression:
     assignment_expression
-    { printf("expression -> assignment_expression\n"); }
-
-    | expression COMMA assignment_expression
-    { printf("expression -> expression , assignment_expression\n"); }
+    {
+        $$ = $1; // depends on assignment expression 
+        // printf("expression -> assignment_expression\n"); 
+    }
     ;
 
 constant_expression:
     conditional_expression
-    { printf("constant_expression -> conditional_expression\n"); }
+    { 
+        // printf("constant_expression -> conditional_expression\n"); 
+    }
     ;
+
 
 
 // ----------2. Declarations----------
@@ -731,4 +1138,4 @@ declaration_list_opt:
 
 void yyerror(const char* s) {
     printf("ERROR [Line %d] : %s, unable to parse : %s\n", yylineno, s, yytext);
-}2
+}   

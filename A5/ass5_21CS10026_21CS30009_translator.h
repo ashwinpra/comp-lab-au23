@@ -58,7 +58,7 @@ class SymType {
     public: 
         TYPE type;              // type of the symbol
         int width;              // for arrays, 1 if not array
-        SymType* array_type;    // for arrays, NULL if not array -> check
+        SymType* arr_type;      // for arrays, NULL if not array -> check
 
         SymType(TYPE type, int width = 1, SymType* array_type = NULL); // constructor
 };
@@ -112,9 +112,9 @@ struct Statement {
 };
 
 struct Array {
-    TYPE arr_type;      // type of the array
+    TYPE arr_type;      // type of the array (array or pointer)
     Sym* arr_entry;     // symbol table entry for the array
-    Sym* addr;          // address of the array -> check
+    Sym* addr;          // pointer to symbol table entry for the array
     SymType* type;      // for multidimensional arrays -> type of the subarray
 };
 
@@ -123,7 +123,7 @@ struct Expression {
     list<int> truelist;     // truelist for the expression
     list<int> falselist;    // falselist for the expression
     list<int> nextlist;     // nextlist for the expression
-    TYPE type;              // type of the expression
+    string type;              // type of the expression -> check
 };
 
 // global variables
