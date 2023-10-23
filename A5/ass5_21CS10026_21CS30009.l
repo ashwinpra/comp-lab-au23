@@ -74,21 +74,24 @@ whitespace [ \t\n]
                             }
 
 {integer_constant}          {
-                                yylval.int_val = atoi(yytext);
+                                yylval.ival = atoi(yytext);
                                 return INTEGER_CONST;
                             }
 
 {float_constant}            {
-                                yylval.float_val = atof(yytext); // check
+                                yylval.fval = atof(yytext); // check
                                 return FLOAT_CONST;
                             }
 
 {char_constant}             {
-                                yylval.char_val = yytext;
+                                yylval.cval = yytext;
                                 return CHAR_CONST;
                             }
 
-{string_literal}            {return STRING_LITERAL;} // check
+{string_literal}            {
+                                yylval.sval = yytext;
+                                return STRING_LITERAL;
+                            } 
 
 "("                         {return PARENTHESIS_OPEN;}
 ")"                         {return PARENTHESIS_CLOSE;}
@@ -127,7 +130,7 @@ whitespace [ \t\n]
 ";"                         {return SEMI_COLON;}
 "..."                       {return ELLIPSIS;}
 "?"                         {return QUESTION_MARK;}
-""
+","                         {return COMMA;}
 "#"                         {return HASH;}
 
 "/*"                        {BEGIN(multi_line_comment);}

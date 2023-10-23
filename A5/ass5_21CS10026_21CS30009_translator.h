@@ -107,23 +107,32 @@ class BasicType {
         void addType(TYPE type, int size); // add a type to the vector of types
 };
 
-// check - structure for statement and array ?
+struct Statement {
+    list<int> nextlist; // nextlist for the statement
+};
+
+struct Array {
+    TYPE arr_type;      // type of the array
+    Sym* arr_entry;     // symbol table entry for the array
+    Sym* addr;          // address of the array -> check
+    SymType* type;      // for multidimensional arrays -> type of the subarray
+};
 
 struct Expression {
     Sym* entry;             // symbol table entry for the expression
     list<int> truelist;     // truelist for the expression
     list<int> falselist;    // falselist for the expression
     list<int> nextlist;     // nextlist for the expression
-    TYPE type; // type of the expression
+    TYPE type;              // type of the expression
 };
 
 // global variables
-extern Symtable* globalST; // global symbol table
-extern Symtable* currentST;   // current symbol table
-extern QuadArray qarr;        // quad array
-extern BasicType bType;   // basic type
-extern Sym* currentSymbol;   // current symbol
-extern int next_instr;  // next instruction number
+extern Symtable* globalST;      // global symbol table
+extern Symtable* currentST;     // current symbol table
+extern QuadArray qarr;          // quad array
+extern BasicType bType;         // basic type
+extern Sym* currentSymbol;      // current symbol
+extern int next_instr;          // next instruction number
 
 // global functions, as mentioned in the assignment
 list<int> makelist(int);
@@ -132,6 +141,8 @@ void backpatch(list<int>*, int);
 bool typecheck(Expression*, Expression*);
 string convInt2String(int);
 string convFloat2String(float);
+
+int nextinstr(); // return the next instruction number
 
 // overloaded functions for emitting quads
 void emit(string, string, string arg1="", string arg2="");

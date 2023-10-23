@@ -8,6 +8,7 @@
 
 %{
     #include <stdio.h>
+    #include "ass5_21CS10026_21CS30009_translator.h"
     void yyerror(const char*); 
     extern int yylex();   
     extern int yylineno;
@@ -19,6 +20,14 @@
     float fval;
     char cval;
     char *sval;
+    char unary_op;
+    int instr_num;
+    int num_params;
+    Statement *stmt; 
+    Array *arr; 
+    Expression *expr;
+    SymType *sym_type;
+    Sym *sym;
 } 
 
 // parenthesis
@@ -42,7 +51,7 @@
 // default case - unexpected token
 %token UNEXPECTED_TOKEN
 
-%token <sval> IDENTIFIER
+%token <sym> IDENTIFIER
 %token <ival> INTEGER_CONST
 %token <fval> FLOAT_CONST
 %token <cval> CHAR_CONST
@@ -50,7 +59,39 @@
 
 %start translation_unit
 
+%type <unary_op> unary_operator // unary operators
+%type <num_params> argument_expression_list_opt argument_expression_list // number of parameters, in case of function call
+
+// check
+%type <expr> primary_expression constant multiplicative_expression additive_expression shift_expression relational_expression equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression conditional_expression assignment_expression assignment_operator expression constant_expression
+
+// check
+%type <stmt> statement compound_statement expression_statement selection_statement iteration_statement jump_statement block_item block_item_list block_item_list_opt
+
+%type <sym_type> pointer 
+
+%type <sym> initializer declarator direct_declarator init_declarator
+
+%type <arr> postfix_expression cast_expression unary_expression
+
+// non-terminals used for backpatching
+%type <instr_num> M; 
+%type <stmt> N; 
+
 %%
+
+M: 
+    { $$ = nextinstr(); }
+    ;
+
+N: 
+    { 
+        $$ = new Statement();
+        $$->nextlist = makelist(nextinstr());
+        emit("goto", " ");
+    }
+    ;
+
 
 // ----------1. Expressions----------
 
@@ -70,12 +111,20 @@ primary_expression:
 
 constant:
     INTEGER_CONST 
-    { printf("constant -> integer_constant\n"); }
-    | FLOAT_CONST
-    { printf("constant -> float_constant\n"); }
-    | CHAR_CONST
-    { printf("constant -> char_constant\n"); }
+    { 
+        printf("constant -> integer_constant\n"); 
+    }
 
+    | FLOAT_CONST
+    { 
+        printf("constant -> float_constant\n"); 
+    }
+
+    | CHAR_CONST
+    { 
+        printf("constant -> char_constant\n"); 
+    }
+    ;
 
 postfix_expression:
     primary_expression
@@ -303,6 +352,7 @@ constant_expression:
     conditional_expression
     { printf("constant_expression -> conditional_expression\n"); }
     ;
+
 
 // ----------2. Declarations----------
 declaration: 
