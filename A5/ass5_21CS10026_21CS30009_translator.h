@@ -4,7 +4,6 @@
 
 #include<iostream>
 #include<string>
-#include<map>
 #include<list>
 #include<vector>
 
@@ -47,8 +46,9 @@ class Sym {
         int size;               // size of the symbol
         int offset;             // offset of the symbol
         SymTable* parent_table; // pointer to parent symbol table
- 
-        Sym (string name, SymType* type, string init_val, int size, int offset, SymTable* parent_table = NULL); // constructor
+
+        // size will be obtained from type
+        Sym(string name_, TYPE type_, SymType *arr_type_, int width_); // constructor
 
         Sym* update(SymType* type);  // update type
 
@@ -60,22 +60,22 @@ class SymType {
         int width;              // for arrays, 1 if not array
         SymType* arr_type;      // for arrays, NULL if not array -> check
 
-        SymType(TYPE type, int width = 1, SymType* array_type = NULL); // constructor
+        SymType(TYPE type_, int width_ = 1, SymType* arr_type_ = NULL); // constructor
 };
 
 // symbol table class definition
-class Symtable {
+class SymTable {
     public:
         string name;            // name of the symbol table
         list<Sym> table;        // list of symbols
         int count;              // counter for temporary variables
-        Symtable* parent;       // pointer to parent symbol table
+        SymTable* parent;       // pointer to parent symbol table
 
-        Symtable(string name = ""); // constructor
+        SymTable(string name_ = " "); // constructor
 
-        Sym* lookup(string name);   // lookup for a symbol in the symbol table - as mentioned in the assignment
+        Sym* lookup(string name);   // lookup for a symbol in the symbol table, or add if not present - as mentioned in the assignment
         void print();               // print the symbol table - as mentioned in the assignment
-        void update();              // update the symbol table - as mentioned in the assignment
+        void update();              // update offset of existing entries - as mentioned in the assignment
 };
 
 // quad -> of the form (op, arg1, arg2, res) for res = arg1 op arg2
@@ -107,28 +107,28 @@ class BasicType {
         void addType(TYPE type, int size); // add a type to the vector of types
 };
 
-struct Statement {
+typedef struct _Statement {
     list<int> nextlist; // nextlist for the statement
-};
+} Statement;
 
-struct Array {
+typedef struct _Array {
     TYPE arr_type;      // type of the array (array or pointer)
     Sym* arr_entry;     // symbol table entry for the array
     Sym* addr;          // pointer to symbol table entry for the array
     SymType* type;      // for multidimensional arrays -> type of the subarray
-};
+} Array;
 
-struct Expression {
+typedef struct _Expression {
     Sym* entry;             // symbol table entry for the expression
     list<int> truelist;     // truelist for the expression
     list<int> falselist;    // falselist for the expression
     list<int> nextlist;     // nextlist for the expression
     string type;              // type of the expression -> check
-};
+} Expression;
 
 // global variables
-extern Symtable* globalST;      // global symbol table
-extern Symtable* currentST;     // current symbol table
+extern SymTable* globalST;      // global symbol table
+extern SymTable* currentST;     // current symbol table
 extern QuadArray qarr;          // quad array
 extern BasicType bType;         // basic type
 extern Sym* currentSymbol;      // current symbol
@@ -141,8 +141,12 @@ void backpatch(list<int>*, int);
 bool typecheck(Expression*, Expression*);
 string convInt2String(int);
 string convFloat2String(float);
+int convBool2Int(Expression*); // check
+bool convInt2Bool(Expression*); // check
 
 int nextinstr(); // return the next instruction number
+
+int computeSize(SymType*); // compute size of a symbol type
 
 // overloaded functions for emitting quads
 void emit(string, string, string arg1="", string arg2="");
