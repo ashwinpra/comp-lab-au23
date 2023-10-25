@@ -8,6 +8,7 @@ SymTable* currentST;     // current symbol table
 vector<Quad*> qArr;          // quad array
 Sym* currentSymbol;      // current symbol
 TYPE currentType;        // current type
+int block_count; 
 
 // Sym class methods 
 
@@ -27,7 +28,7 @@ SymType::SymType(TYPE type_, int width_, SymType* arr_type_): type(type_), width
 
 // SymTable class methods
 
-SymTable::SymTable(string name_): name(name_), count(0), parent(NULL) {}
+SymTable::SymTable(string name_, SymTable* parent_): name(name_), count(0), parent(parent_) {}
 
 // lookup for a symbol in the symbol table, or add if not present - as mentioned in the assignment
 Sym* SymTable::lookup(string name){
@@ -280,12 +281,12 @@ Sym* convertType(Sym* sym, TYPE ret_type){
     if(sym->type->type == TYPE_INT){
         if(ret_type == TYPE_FLOAT){
             Sym* temp = gentemp(TYPE_FLOAT);
-            emit("=", "int2float(" + sym->name + ")", " ", temp->name); // check
+            emit("=", temp->name, "int2float(" + sym->name + ")"); // check
             return temp;
         }
         else if(ret_type == TYPE_CHAR){
             Sym* temp = gentemp(TYPE_CHAR);
-            emit("=", "int2char(" + sym->name + ")", "", temp->name); // check
+            emit("=", temp->name, "int2char(" + sym->name + ")"); // check
             return temp;
         }
         return sym;
@@ -294,12 +295,12 @@ Sym* convertType(Sym* sym, TYPE ret_type){
     else if (sym->type->type == TYPE_FLOAT) {
         if(ret_type == TYPE_INT){
             Sym* temp = gentemp(TYPE_INT);
-            emit("=", "float2int(" + sym->name + ")", "", temp->name); // check
+            emit("=", temp->name, "float2int(" + sym->name + ")"); // check
             return temp;
         }
         else if(ret_type == TYPE_CHAR){
             Sym* temp = gentemp(TYPE_CHAR);
-            emit("=", "float2char(" + sym->name + ")", "", temp->name); // check
+            emit("=", temp->name, "float2char(" + sym->name + ")"); // check
             return temp;
         }
         return sym;
@@ -308,12 +309,12 @@ Sym* convertType(Sym* sym, TYPE ret_type){
     else if (sym->type->type == TYPE_CHAR) {
         if(ret_type == TYPE_INT){
             Sym* temp = gentemp(TYPE_INT);
-            emit("=", "char2int(" + sym->name + ")", "", temp->name); // check
+            emit("=", temp->name, "char2int(" + sym->name + ")"); // check
             return temp;
         }
         else if(ret_type == TYPE_FLOAT){
             Sym* temp = gentemp(TYPE_FLOAT);
-            emit("=", "char2float(" + sym->name + ")", "", temp->name); // check
+            emit("=", temp->name, "char2float(" + sym->name + ")"); // check
             return temp;
         }
         return sym;
@@ -325,19 +326,22 @@ Sym* convertType(Sym* sym, TYPE ret_type){
 
 Expression* convInt2Bool(Expression* e){
     e->falselist = makelist(nextinstr());
-    emit("==", "", e->entry->name, "0");
+    emit("==", "", e->symbol->name, "0");
     e->truelist = makelist(nextinstr());
     emit("goto", "");
+
+    return e;
 }
 
 Expression* convBool2Int(Expression* e){
-    cout<<"gentemp called by convBool2Int"<<endl;
-    e->entry = gentemp(TYPE_INT);
+    e->symbol = gentemp(TYPE_INT);
     backpatch(e->truelist, nextinstr());
-    emit("=", "true", "", e->entry->name); // check
+    emit("=", e->symbol->name, "true"); // check
     emit("goto", to_string(nextinstr()+1));
     backpatch(e->falselist, nextinstr());
-    emit("=", "false", "", e->entry->name); // check
+    emit("=", e->symbol->name, "false"); // check
+
+    return e;
 }
 
 
@@ -404,6 +408,7 @@ Sym* gentemp(TYPE type, string init_val){
 int main(){
     globalST = new SymTable("Global");
     currentST = globalST;
+    block_count = 0; 
     
     yyparse(); 
     globalST->update();

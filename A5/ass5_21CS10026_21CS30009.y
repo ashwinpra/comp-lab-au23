@@ -68,10 +68,8 @@
 %type <unary_op> unary_operator // unary operators
 %type <num_params> argument_expression_list_opt argument_expression_list // number of parameters, in case of function call
 
-// check
 %type <expr> expression primary_expression constant multiplicative_expression additive_expression shift_expression relational_expression equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression conditional_expression assignment_expression assignment_operator constant_expression expression_opt expression_statement
 
-// check
 %type <stmt> statement labeled_statement compound_statement selection_statement iteration_statement jump_statement block_item block_item_list block_item_list_opt
 
 %type <sym_type> pointer 
@@ -87,11 +85,16 @@
 %%
 
 M: 
-    { $$ = nextinstr(); }
+    { 
+        printf("M -> epsilon\n");
+        $$ = nextinstr(); 
+    }
     ;
 
 N: 
     { 
+        printf("N -> epsilon\n");
+
         $$ = new Statement();
         $$->nextlist = makelist(nextinstr());
         emit("goto", " ");
@@ -105,7 +108,7 @@ primary_expression:
     IDENTIFIER
         { 
             $$ = new Expression(); // making a new expression and storing pointer to symbol table entry 
-            $$->entry = $1; 
+            $$->symbol = $1; 
             $$->type = Expression::TYPE_NBOOL;
 
             printf("primary_expression -> identifier\n"); 
@@ -122,9 +125,8 @@ primary_expression:
     | STRING_LITERAL
         { 
             $$ = new Expression();
-            cout<<"gentemp called by primary_expression -> string_literal"<<endl;
-            $$->entry = gentemp(TYPE_POINTER, $1);
-            $$->entry->type->arr_type = new SymType(TYPE_CHAR);
+            $$->symbol = gentemp(TYPE_POINTER, $1);
+            $$->symbol->type->arr_type = new SymType(TYPE_CHAR);
             
             printf("primary_expression -> string_literal\n"); 
         }
@@ -142,9 +144,8 @@ constant:
     { 
         $$ = new Expression(); 
         string n = to_string($1);
-        cout<<"gentemp called by constant -> integer_constant"<<endl;
-        $$->entry = gentemp(TYPE_INT, n);
-        emit("=", $$->entry->name, n);
+        $$->symbol = gentemp(TYPE_INT, n);
+        emit("=", $$->symbol->name, n);
 
         printf("constant -> integer_constant\n"); 
     }
@@ -153,9 +154,8 @@ constant:
     {   
         $$ = new Expression();
         string f = to_string($1);
-        cout<<"gentemp called by constant -> float_constant"<<endl;
-        $$->entry = gentemp(TYPE_FLOAT, f);
-        emit("=", $$->entry->name, f);
+        $$->symbol = gentemp(TYPE_FLOAT, f);
+        emit("=", $$->symbol->name, f);
 
         printf("constant -> float_constant\n"); 
     }
@@ -163,9 +163,8 @@ constant:
     | CHAR_CONST
     {   
         $$ = new Expression();
-        cout<<"gentemp called by constant -> char_constant"<<endl;
-        $$->entry = gentemp(TYPE_CHAR, $1);
-        emit("=", $$->entry->name, $1);
+        $$->symbol = gentemp(TYPE_CHAR, $1);
+        emit("=", $$->symbol->name, $1);
 
         printf("constant -> char_constant\n"); 
     }
@@ -176,9 +175,9 @@ postfix_expression:
     { 
         // create new array and append location of primary expression
         $$ = new Array();
-        $$->addr = $1->entry;
-        $$->type = $1->entry->type;
-        $$->entry = $$->addr;
+        $$->symbol = $1->symbol;
+        $$->loc = $$->symbol;
+        $$->subarr_type = $1->symbol->type;
 
         printf("postfix_expression -> primary_expression\n"); 
     }
@@ -186,27 +185,23 @@ postfix_expression:
     | postfix_expression SQR_BRACE_OPEN expression SQR_BRACE_CLOSE
     { 
         $$ = new Array();
-        $$->type = $1->type->arr_type;
-        $$->addr = $1->addr;
-        cout<<"gentemp called by postfix_expression SQR_BRACE_OPEN"<<endl;
-        $$->entry = gentemp(TYPE_INT);
-        $$->arr_type = TYPE_ARRAY;
+        $$->symbol = $1->symbol;
+        $$->subarr_type = $1->subarr_type->arr_type;
+        $$->loc = gentemp(TYPE_INT);
+        $$->type = TYPE_ARRAY;
 
         // checking if array is 1D or multi-dimensional
-        if($1->arr_type == TYPE_ARRAY) {
-            // multi-dimensional array
-            cout<<"gentemp called by postfix_expression SQR_BRACE_OPEN"<<endl;
+        if($1->type == TYPE_ARRAY) {
+            // multi-dimensional array - so need to multiply size and add offset
             Sym* temp = gentemp(TYPE_INT);
-            int size = computeSize($$->type);
-            string s = to_string(size);
-            emit("*", temp->name, $$->entry->name, s);
-            emit("+", $$->entry->name, $1->entry->name, temp->name);
+            int size = computeSize($$->subarr_type);
+            emit("*", temp->name, $3->symbol->name, to_string(size));
+            emit("+", $$->loc->name, $1->loc->name, temp->name);
         }
         else {
             // 1D array, just calculate size
-            int size = computeSize($$->type);
-            string s = to_string(size);
-            emit("*", $$->entry->name, $1->entry->name, s);
+            int size = computeSize($$->subarr_type);
+            emit("*", $$->loc->name, $3->symbol->name, to_string(size));
         }
 
         printf("postfix_expression -> postfix_expression [ expression ]\n"); 
@@ -216,10 +211,8 @@ postfix_expression:
     {
         // function call
         $$ = new Array();
-        cout<<"gentemp called by postfix_expression PARENTHESIS_OPEN"<<endl;
-        $$->addr = gentemp($1->type->type); // here
-        string s = to_string($3);
-        emit("call", $$->addr->name, $1->addr->name, s);
+        $$->symbol = gentemp($1->symbol->type->type); 
+        emit("call", $$->symbol->name, $1->symbol->name, to_string($3));
 
         printf("postfix_expression -> postfix_expression ( argument_expression_list_opt )\n"); 
     }
@@ -238,10 +231,9 @@ postfix_expression:
     | postfix_expression INC_OP 
     {
         $$ = new Array();
-        cout<<"gentemp called by postfix_expression INC_OP"<<endl;
-        $$->addr = gentemp($1->addr->type->type); // here
-        emit("=", $$->addr->name, $1->addr->name);
-        emit("+", $1->addr->name, $1->addr->name, "1");
+        $$->symbol = gentemp($1->symbol->type->type); 
+        emit("=", $$->symbol->name, $1->symbol->name);
+        emit("+", $1->symbol->name, $1->symbol->name, "1");
 
         printf("postfix_expression -> postfix_expression ++\n"); 
     }
@@ -250,9 +242,9 @@ postfix_expression:
     { 
         $$ = new Array();
         cout<<"gentemp called by postfix_expression DEC_OP"<<endl;
-        $$->addr = gentemp($1->addr->type->type); // here
-        emit("=", $$->addr->name, $1->addr->name);
-        emit("-", $1->addr->name, $1->addr->name, "1");
+        $$->symbol = gentemp($1->symbol->type->type); 
+        emit("=", $$->symbol->name, $1->symbol->name);
+        emit("-", $1->symbol->name, $1->symbol->name, "1");
 
         printf("postfix_expression -> postfix_expression --\n"); 
     }
@@ -268,11 +260,12 @@ postfix_expression:
     }
     ;  
 
+// number of arguments/parameters is computed here
 argument_expression_list:
     assignment_expression
     { 
         $$ = 1; // 1 argument
-        emit("param", $1->entry->name);
+        emit("param", $1->symbol->name);
 
         printf("argument_expression_list -> assignment_expression\n"); 
     }
@@ -280,7 +273,7 @@ argument_expression_list:
     | argument_expression_list COMMA assignment_expression
     {   
         $$ = $1 + 1; // one more argument added
-        emit("param", $3->entry->name);
+        emit("param", $3->symbol->name);
 
         printf("argument_expression_list -> argument_expression_list , assignment_expression\n"); 
     }
@@ -309,7 +302,7 @@ unary_expression:
 
     | INC_OP unary_expression
     { 
-        emit("+", $2->addr->name, $2->addr->name, "1");
+        emit("+", $2->symbol->name, $2->symbol->name, "1");
         $$ = $2; // depends on unary expression
 
         printf("unary_expression -> ++ unary_expression\n"); 
@@ -317,7 +310,7 @@ unary_expression:
 
     | DEC_OP unary_expression
     { 
-        emit("-", $2->addr->name, $2->addr->name, "1");
+        emit("-", $2->symbol->name, $2->symbol->name, "1");
         $$ = $2; // depends on unary expression
 
         printf("unary_expression -> -- unary_expression\n"); 
@@ -337,39 +330,43 @@ unary_expression:
             case '-':
                 // unary minus - negation of cast expression
                 cout<<"gentemp called by unary_expression -"<<endl;
-                $$->addr = gentemp($2->type->type);
-                emit("=-", $$->addr->name, $2->addr->name); // check
+                $$->symbol = gentemp($2->symbol->type->type);
+
+                emit("=-", $$->symbol->name, $2->symbol->name); 
                 break;
 
             case '~':
                 // bitwise not
                 cout<<"gentemp called by unary_expression ~"<<endl;
-                $$->addr = gentemp($2->type->type);
-                emit("~", $$->addr->name, $2->addr->name);
+                $$->symbol = gentemp($2->symbol->type->type);
+
+                emit("~", $$->symbol->name, $2->symbol->name);
                 break;
 
             case '!':
                 // logical not
                 cout<<"gentemp called by unary_expression !"<<endl;
-                $$->addr = gentemp($2->type->type);
-                emit("!", $$->addr->name, $2->addr->name);
+                $$->symbol = gentemp($2->symbol->type->type);
+
+                emit("!", $$->symbol->name, $2->symbol->name);
                 break;
 
             case '&':
                 // address of -> generate new pointer type
-                $$->addr = gentemp(TYPE_POINTER);
-                cout<<"gentemp called by unary_expression &"<<endl;
-                $$->addr->type->arr_type = $2->addr->type;
-                emit("=&", $$->addr->name, $2->addr->name);
+                $$->symbol = gentemp(TYPE_POINTER);
+                $$->symbol->type->arr_type = $2->symbol->type;
+
+                emit("=&", $$->symbol->name, $2->symbol->name);
                 break;
 
             case '*':
                 // dereference 
-                $$->arr_type = TYPE_POINTER;
-                cout<<"gentemp called by unary_expression *"<<endl;
-                $$->addr = gentemp($2->addr->type->arr_type->type); // here
-                $$->addr = $2->addr;
-                emit("=*", $$->addr->name, $2->addr->name);
+                $$->symbol = $2->symbol;
+                $$->loc = gentemp($2->loc->type->arr_type->type);
+                $$->loc->type->arr_type = $2->loc->type->arr_type->arr_type;
+                $$->type = TYPE_POINTER;
+
+                emit("=*", $$->loc->name, $2->loc->name);
                 break;
         }
 
@@ -436,7 +433,7 @@ cast_expression:
     | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE cast_expression
     { 
         $$ = new Array();
-        $$->addr = convertType($4->addr, currentType); // convert type of cast expression to type name -> check
+        $$->symbol = convertType($4->symbol, currentType); // convert type of cast expression to type name
         printf("cast_expression -> ( type_name ) cast_expression\n"); 
     }
     ;
@@ -447,33 +444,52 @@ multiplicative_expression:
     { 
         $$ = new Expression();
 
-        // check - add comments
-        if ($1->arr_type == TYPE_ARRAY) {
-            cout<<"gentemp called by multiplicative_expression"<<endl;
-            $$->entry = gentemp($1->entry->type->type); // here
-            emit("=[]",$$->entry->name, $1->addr->name, $1->entry->name);
+        // we have to obtain the base type of the expression 
+        SymType* bType = $1->symbol->type;
+        while(bType->arr_type != NULL)
+            bType = bType->arr_type;
+
+        // now depending on the type, we have to generate a temporary variable
+
+        if ($1->type == TYPE_ARRAY) {
+            $$->symbol = gentemp(bType->type);
+            emit("=[]",$$->symbol->name, $1->symbol->name, $1->loc->name);
         }
 
-        else if ($1->arr_type == TYPE_POINTER) {
-            $$->entry = $1->entry;
-        }
-        else {
-            $$->entry = $1->addr;
-        }
+        else if ($1->type == TYPE_POINTER)
+            $$->symbol = $1->loc;
+
+        else
+            $$->symbol = $1->symbol;
 
         printf("multiplicative_expression -> cast_expression\n"); 
     }
 
     | multiplicative_expression STAR cast_expression
     {   
-        if(!typecheck($1->entry, $3->entry)) {
+        // similar to above, we obtain base type and create temp symbol
+        SymType* bType = $3->symbol->type;
+        while(bType->arr_type != NULL)
+            bType = bType->arr_type;
+
+        Sym* temp; 
+        if($3->type == TYPE_ARRAY) {
+            temp = gentemp(bType->type);
+            emit("=[]", temp->name, $3->symbol->name, $3->loc->name);
+        }
+        else if ($3->type == TYPE_POINTER)
+            temp = $3->loc; 
+        else 
+            temp = $3->symbol;
+
+        // now we execute the required operation (here, multiplication)
+        if(!typecheck($1->symbol, temp)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
-            cout<<"gentemp called by multiplicative_expression STAR"<<endl;
-            $$->entry = gentemp($1->entry->type->type); // check
-            emit("*", $$->entry->name, $1->entry->name, $3->addr->name);
+            $$->symbol = gentemp($1->symbol->type->type); 
+            emit("*", $$->symbol->name, $1->symbol->name, temp->name);
         }
 
         printf("multiplicative_expression -> multiplicative_expression * cast_expression\n"); 
@@ -481,14 +497,28 @@ multiplicative_expression:
 
     | multiplicative_expression DIVIDE cast_expression
     { 
-        if(!typecheck($1->entry, $3->entry)) {
+        // similar to above again
+        SymType* bType = $3->symbol->type;
+        while(bType->arr_type != NULL)
+            bType = bType->arr_type;
+
+        Sym* temp; 
+        if($3->type == TYPE_ARRAY) {
+            temp = gentemp(bType->type);
+            emit("=[]", temp->name, $3->symbol->name, $3->loc->name);
+        }
+        else if ($3->type == TYPE_POINTER)
+            temp = $3->loc; 
+        else 
+            temp = $3->symbol;
+
+        if(!typecheck($1->symbol, temp)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
-            cout<<"gentemp called by multiplicative_expression DIVIDE"<<endl;
-            $$->entry = gentemp($1->entry->type->type); // check
-            emit("/", $$->entry->name, $1->entry->name, $3->addr->name);
+            $$->symbol = gentemp($1->symbol->type->type); 
+            emit("/", $$->symbol->name, $1->symbol->name, temp->name);
         }
 
         printf("multiplicative_expression -> multiplicative_expression / cast_expression\n"); 
@@ -496,14 +526,27 @@ multiplicative_expression:
 
     | multiplicative_expression PERCENTAGE cast_expression
     { 
-        if(!typecheck($1->entry, $3->entry)) {
+        SymType* bType = $3->symbol->type;
+        while(bType->arr_type != NULL)
+            bType = bType->arr_type;
+
+        Sym* temp; 
+        if($3->type == TYPE_ARRAY) {
+            temp = gentemp(bType->type);
+            emit("=[]", temp->name, $3->symbol->name, $3->loc->name);
+        }
+        else if ($3->type == TYPE_POINTER)
+            temp = $3->loc; 
+        else 
+            temp = $3->symbol;
+
+        if(!typecheck($1->symbol, temp)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
-            cout<<"gentemp called by multiplicative_expression PERCENTAGE"<<endl;
-            $$->entry = gentemp($1->entry->type->type); // check
-            emit("%", $$->entry->name, $1->entry->name, $3->addr->name);
+            $$->symbol = gentemp($1->symbol->type->type); 
+            emit("%", $$->symbol->name, $1->symbol->name, temp->name);
         }
 
         printf("multiplicative_expression -> multiplicative_expression %% cast_expression\n"); 
@@ -519,14 +562,13 @@ additive_expression:
 
     | additive_expression PLUS multiplicative_expression
     {   
-        if(!typecheck($1->entry, $3->entry)) {
+        if(!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
-            cout<<"gentemp called by additive_expression PLUS"<<endl;
-            $$->entry = gentemp($1->entry->type->type); // check
-            emit("+", $$->entry->name, $1->entry->name, $3->entry->name);
+            $$->symbol = gentemp($1->symbol->type->type); 
+            emit("+", $$->symbol->name, $1->symbol->name, $3->symbol->name);
         }
 
         printf("additive_expression -> additive_expression + multiplicative_expression\n"); 
@@ -534,14 +576,13 @@ additive_expression:
 
     | additive_expression MINUS multiplicative_expression
     { 
-        if(!typecheck($1->entry, $3->entry)) {
+        if(!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
-            cout<<"gentemp called by additive_expression MINUS"<<endl;
-            $$->entry = gentemp($1->entry->type->type); // check
-            emit("-", $$->entry->name, $1->entry->name, $3->entry->name);
+            $$->symbol = gentemp($1->symbol->type->type); 
+            emit("-", $$->symbol->name, $1->symbol->name, $3->symbol->name);
         }
 
         printf("additive_expression -> additive_expression - multiplicative_expression\n"); 
@@ -557,14 +598,13 @@ shift_expression:
 
     | shift_expression LEFT_OP additive_expression
     { 
-        if($1->entry->type->type != TYPE_INT) {
+        if($1->symbol->type->type != TYPE_INT) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
-            cout<<"gentemp called by shift_expression LEFTOP"<<endl;
-            $$->entry = gentemp(TYPE_INT); // check
-            emit("<<", $$->entry->name, $1->entry->name, $3->entry->name);
+            $$->symbol = gentemp(TYPE_INT); 
+            emit("<<", $$->symbol->name, $1->symbol->name, $3->symbol->name);
         }
 
         printf("shift_expression -> shift_expression << additive_expression\n"); 
@@ -572,19 +612,21 @@ shift_expression:
 
     | shift_expression RIGHT_OP additive_expression
     { 
-        if($1->entry->type->type != TYPE_INT) {
+        if($1->symbol->type->type != TYPE_INT) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
             cout<<"gentemp called by shift_expression RIGHTOP"<<endl;
-            $$->entry = gentemp(TYPE_INT); // check
-            emit(">>", $$->entry->name, $1->entry->name, $3->entry->name);
+            $$->symbol = gentemp(TYPE_INT); // check
+            emit(">>", $$->symbol->name, $1->symbol->name, $3->symbol->name);
         }
 
         printf("shift_expression -> shift_expression >> additive_expression\n"); 
     }
     ;
+
+// boolean expressions -> truelist and falselist is made as discussed in class, then backpatching will be done later on
 
 relational_expression:
     shift_expression
@@ -595,7 +637,7 @@ relational_expression:
 
     | relational_expression LT_OP shift_expression
     { 
-        if (!typecheck($1->entry, $3->entry)) {
+        if (!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         // check - add comments
@@ -604,7 +646,7 @@ relational_expression:
             $$->type = Expression::TYPE_BOOL;
             $$->truelist = makelist(nextinstr());
             $$->falselist = makelist(nextinstr()+1);
-            emit("<", "", $1->entry->name, $3->entry->name);
+            emit("<", "", $1->symbol->name, $3->symbol->name);
             emit("goto", "");
         }
 
@@ -613,7 +655,7 @@ relational_expression:
 
     | relational_expression GT_OP shift_expression
     { 
-        if (!typecheck($1->entry, $3->entry)) {
+        if (!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
@@ -621,7 +663,7 @@ relational_expression:
             $$->type = Expression::TYPE_BOOL;
             $$->truelist = makelist(nextinstr());
             $$->falselist = makelist(nextinstr()+1);
-            emit(">", "", $1->entry->name, $3->entry->name);
+            emit(">", "", $1->symbol->name, $3->symbol->name);
             emit("goto", "");
         }
 
@@ -630,7 +672,7 @@ relational_expression:
 
     | relational_expression LTE_OP shift_expression
     { 
-        if (!typecheck($1->entry, $3->entry)) {
+        if (!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
@@ -638,15 +680,16 @@ relational_expression:
             $$->type = Expression::TYPE_BOOL;
             $$->truelist = makelist(nextinstr());
             $$->falselist = makelist(nextinstr()+1);
-            emit("<=", "", $1->entry->name, $3->entry->name);
+            emit("<=", "", $1->symbol->name, $3->symbol->name);
             emit("goto", "");
         }
+
         printf("relational_expression -> relational_expression <= shift_expression\n"); 
     }
 
     | relational_expression GTE_OP shift_expression
     { 
-        if (!typecheck($1->entry, $3->entry)) {
+        if (!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
@@ -654,9 +697,10 @@ relational_expression:
             $$->type = Expression::TYPE_BOOL;
             $$->truelist = makelist(nextinstr());
             $$->falselist = makelist(nextinstr()+1);
-            emit(">=", "", $1->entry->name, $3->entry->name);
+            emit(">=", "", $1->symbol->name, $3->symbol->name);
             emit("goto", "");
         }
+
         printf("relational_expression -> relational_expression >= shift_expression\n"); 
     }
     ;
@@ -670,7 +714,7 @@ equality_expression:
 
     | equality_expression EQ_OP relational_expression
     { 
-        if (!typecheck($1->entry, $3->entry)) {
+        if (!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
@@ -682,28 +726,36 @@ equality_expression:
             convBool2Int($1); // check
             convBool2Int($3);
 
-            emit("==", "", $1->entry->name, $3->entry->name);
+            emit("==", "", $1->symbol->name, $3->symbol->name);
             emit("goto", "");
         }
+
         printf("equality_expression -> equality_expression == relational_expression\n"); 
     }
 
     | equality_expression NE_OP relational_expression
-    { 
-        $$ = new Expression(); 
-        $$->type = Expression::TYPE_BOOL;
-        $$->truelist = makelist(nextinstr());
-        $$->falselist = makelist(nextinstr()+1);
+    {   
+        if (!typecheck($1->symbol, $3->symbol)) {
+            yyerror("Type mismatch!");
+        }
+        else {
+            $$ = new Expression(); 
+            $$->type = Expression::TYPE_BOOL;
+            $$->truelist = makelist(nextinstr());
+            $$->falselist = makelist(nextinstr()+1);
 
-        convBool2Int($1); // check
-        convBool2Int($3);
+            convBool2Int($1); // check
+            convBool2Int($3);
 
-        emit("!=", "", $1->entry->name, $3->entry->name);
-        emit("goto", "");
+            emit("!=", "", $1->symbol->name, $3->symbol->name);
+            emit("goto", "");
+        }
+
         printf("equality_expression -> equality_expression != relational_expression\n"); 
     }
     ;
 
+// check - add comments
 and_expression:
     equality_expression
     { 
@@ -713,20 +765,20 @@ and_expression:
 
     | and_expression BITWISEAND equality_expression
     { 
-        if(!typecheck($1->entry, $3->entry)) {
+        if(!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
             $$->type = Expression::TYPE_NBOOL;
-            cout<<"gentemp called by and_expression"<<endl;
-            $$->entry = gentemp(TYPE_INT);
+            $$->symbol = gentemp(TYPE_INT);
 
             convBool2Int($1);
             convBool2Int($3);
 
-            emit("&", $$->entry->name, $1->entry->name, $3->entry->name);
+            emit("&", $$->symbol->name, $1->symbol->name, $3->symbol->name);
         }
+
         printf("and_expression -> and_expression & equality_expression\n"); 
     }
     ;
@@ -740,20 +792,20 @@ exclusive_or_expression:
 
     | exclusive_or_expression BITWISEXOR and_expression
     { 
-        if(!typecheck($1->entry, $3->entry)) {
+        if(!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
             $$->type = Expression::TYPE_NBOOL;
-            cout<<"gentemp called by exclusive_or_expression"<<endl;
-            $$->entry = gentemp(TYPE_INT);
+            $$->symbol = gentemp(TYPE_INT);
 
             convBool2Int($1);
             convBool2Int($3);
 
-            emit("^", $$->entry->name, $1->entry->name, $3->entry->name);
+            emit("^", $$->symbol->name, $1->symbol->name, $3->symbol->name);
         }
+
         printf("exclusive_or_expression -> exclusive_or_expression ^ and_expression\n"); 
     }
     ;
@@ -767,20 +819,20 @@ inclusive_or_expression:
 
     | inclusive_or_expression BITWISEOR exclusive_or_expression
     { 
-        if(!typecheck($1->entry, $3->entry)) {
+        if(!typecheck($1->symbol, $3->symbol)) {
             yyerror("Type mismatch!");
         }
         else {
             $$ = new Expression();
             $$->type = Expression::TYPE_NBOOL;
-            cout<<"gentemp called by inclusive_or_expression"<<endl; 
-            $$->entry = gentemp(TYPE_INT);
+            $$->symbol = gentemp(TYPE_INT);
 
             convBool2Int($1);
             convBool2Int($3);
 
-            emit("|", $$->entry->name, $1->entry->name, $3->entry->name);
+            emit("|", $$->symbol->name, $1->symbol->name, $3->symbol->name);
         }
+
         printf("inclusive_or_expression -> inclusive_or_expression | exclusive_or_expression\n"); 
     }
     ;
@@ -796,11 +848,12 @@ logical_and_expression:
 
     | logical_and_expression AND_OP M inclusive_or_expression
     { 
+        $$ = new Expression();
+        $$->type = Expression::TYPE_BOOL;
+
         convInt2Bool($1);
         convInt2Bool($4);
 
-        $$ = new Expression();
-        $$->type = Expression::TYPE_BOOL;
         backpatch($1->truelist, $3);    // backpatching
         $$->truelist = $4->truelist;    // B.truelist = B2.truelist
         $$->falselist = merge($1->falselist, $4->falselist); // B.falselist = merge(B1.falselist, B2.falselist)
@@ -818,11 +871,12 @@ logical_or_expression:
 
     | logical_or_expression OR_OP M logical_and_expression
     { 
+        $$ = new Expression();
+        $$->type = Expression::TYPE_BOOL;
+
         convInt2Bool($1);
         convInt2Bool($4);
 
-        $$ = new Expression();
-        $$->type = Expression::TYPE_BOOL;
         backpatch($1->falselist, $3);    // backpatching
         $$->truelist = merge($1->truelist, $4->truelist); // B.truelist = merge(B1.truelist, B2.truelist)
         $$->falselist = $4->falselist;    // B.falselist = B2.falselist
@@ -842,16 +896,15 @@ conditional_expression:
     | logical_or_expression N QUESTION_MARK M expression N COLON M conditional_expression
     // check - add comments
     {   
-        cout<<"gentemp called by conditional_expression"<<endl;
-        $$->entry = gentemp($5->entry->type->type); // here
-        $$->entry->update($5->entry->type);
-        emit("=", $$->entry->name, $9->entry->name);
+        $$->symbol = gentemp($5->symbol->type->type); 
+        // $$->entry->update($5->entry->type); // check
+        emit("=", $$->symbol->name, $9->symbol->name);
 
         list<int> li = makelist(nextinstr());
         emit("goto", "");
 
         backpatch($6->nextlist, nextinstr());
-        emit("=", $$->entry->name, $5->entry->name);
+        emit("=", $$->symbol->name, $5->symbol->name);
 
         list<int> li2 = makelist(nextinstr());
         li = merge(li, li2);
@@ -877,16 +930,17 @@ assignment_expression:
 
     | unary_expression assignment_operator assignment_expression
     { 
-        if($1->arr_type == TYPE_ARRAY) {
-            $3->entry = convertType($3->entry, $1->entry->type->type); // check
-            emit("[]=", $1->addr->name, $1->entry->name, $3->entry->name);
+        if($1->type == TYPE_ARRAY) {
+            $3->symbol = convertType($3->symbol, $1->subarr_type->type); 
+            emit("[]=", $1->symbol->name, $1->loc->name, $3->symbol->name);
         }
-        else if ($1->arr_type == TYPE_POINTER) {    
-            emit("*=", $1->addr->name, $3->entry->name); // check
+        else if ($1->type == TYPE_POINTER) {    
+            $3->symbol = convertType($3->symbol, $1->loc->type->type); 
+            emit("*=", $1->loc->name, $3->symbol->name); 
         }
         else {
-            $3->entry = convertType($3->entry, $1->addr->type->type); // check
-            emit("=", $1->addr->name, $3->entry->name);
+            $3->symbol = convertType($3->symbol, $1->symbol->type->type); 
+            emit("=", $1->symbol->name, $3->symbol->name);
         }
 
         $$ = $3; 
@@ -1013,6 +1067,7 @@ declaration_specifiers_opt:
     { 
         // printf("declaration_specifiers_opt -> declaration_specifiers\n");
     }
+
     | /* empty */
     { 
         // printf("declaration_specifiers_opt -> epsilon\n"); 
@@ -1314,11 +1369,13 @@ direct_declarator:
         }
 
         if(prev) {
-            prev->arr_type = new SymType(TYPE_ARRAY, atoi($3->entry->init_val.c_str()), temp);
+            // case of multi-dimensional array
+            prev->arr_type = new SymType(TYPE_ARRAY, atoi($3->symbol->init_val.c_str()), temp);
             $$ = $1->update($1->type);
         }
         else {
-            SymType* new_type = new SymType(TYPE_ARRAY, atoi($3->entry->init_val.c_str()), $1->type); // check
+            // just 1D array
+            SymType* new_type = new SymType(TYPE_ARRAY, atoi($3->symbol->init_val.c_str()), $1->type); 
             $$ = $1->update(new_type);
         }
         
@@ -1327,7 +1384,7 @@ direct_declarator:
 
     | direct_declarator SQR_BRACE_OPEN SQR_BRACE_CLOSE
     {   
-        // there is no initial value, so keep it 0
+        // similar to previous one, but initial value is kept as 0
         SymType *temp = $1->type;
         SymType *prev = NULL;
         while(temp->type == TYPE_ARRAY) {
@@ -1391,7 +1448,8 @@ direct_declarator:
     }
 
     | direct_declarator PARENTHESIS_OPEN CT PARENTHESIS_CLOSE
-    { 
+    {   
+        // same as previous one
         currentST->name = $1->name;
         if($1->type->type != TYPE_VOID){
             Sym* S = currentST->lookup("return");
@@ -1409,13 +1467,14 @@ direct_declarator:
 
 CT: 
     {
-        // check
         // checking whether function ST already exists
         if(currentSymbol->parent_table == NULL) changeTable(new SymTable());
         else {
             changeTable(currentSymbol->parent_table); 
             emit("label", currentST->name);
         }
+
+        printf("Ct -> epsilon\n");
     }
 
 pointer: 
@@ -1427,7 +1486,7 @@ pointer:
 
     | STAR type_qualifier_list_opt pointer
     { 
-        $$ = new SymType(TYPE_POINTER);
+        $$ = new SymType(TYPE_POINTER, 0, $3); // check 
         printf("pointer -> * pointer\n"); 
     }
     ;
@@ -1516,7 +1575,7 @@ type_name:
 initializer: 
     assignment_expression
     { 
-        $$ = $1->entry; // depends on assignment expression
+        $$ = $1->symbol; // depends on assignment expression
         printf("initializer -> assignment_expression\n"); 
     }
 
@@ -1645,10 +1704,22 @@ labeled_statement:
     }
     ;
 
+CB:
+    {
+        // changes symbol table when new block is encountered
+        string name = currentST->name + "_" + to_string(block_count++);
+        Sym* S = currentST->lookup(name);
+        S->parent_table = new SymTable(name, currentST);
+        S->type = new SymType(TYPE_BLOCK);
+        currentSymbol = S;
+    }
+
+/* check - change block? */
 compound_statement:
-    CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
+    CURLY_BRACE_OPEN CB CT block_item_list_opt CURLY_BRACE_CLOSE
     { 
-        $$ = $2; 
+        $$ = $4; 
+        changeTable(currentST->parent); // return to parent ST
         printf("compound_statement -> { block_item_list_opt }\n"); 
     }
     ;
@@ -1663,7 +1734,7 @@ block_item_list:
     | block_item_list M block_item
     { 
         // check - add comments
-        $$ = $1; 
+        $$ = $3; 
         backpatch($1->nextlist, $2);
         printf("block_item_list -> block_item_list block_item\n"); 
     }
@@ -1696,17 +1767,11 @@ block_item:
     }
     ;
 
-/* expression_opt replaced with expression and epsilon */
 expression_statement:
-    expression SEMI_COLON
+    expression_opt SEMI_COLON
     { 
         $$ = $1; 
-        printf("expression_statemnet -> expression ;\n"); 
-    }
-    | SEMI_COLON
-    { 
-        $$ = new Expression();
-        printf("expression_statement -> ;\n"); 
+        printf("expression_statement -> expression_opt ;\n"); 
     }
     ;
 
@@ -1732,11 +1797,14 @@ selection_statement:
     IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement N ELSE M statement
     {   
         $$ = new Statement();
+
         convInt2Bool($3);
-        backpatch($3->truelist, $5);
-        backpatch($3->falselist, $9);
+
+        backpatch($3->truelist, $5); // if true, go to M1 (if-statement)
+        backpatch($3->falselist, $9); // if false, go to M2 (else-statement)
+
         list <int> li = merge($6->nextlist, $7->nextlist);
-        $$->nextlist = merge($10->nextlist, li);
+        $$->nextlist = merge($10->nextlist, li); // to go out of if-else
 
         printf("selection_statement -> if ( expression ) statement else statement\n"); 
     }
@@ -1746,10 +1814,13 @@ selection_statement:
     { 
         // check - add comments
         $$ = new Statement();
+
         convInt2Bool($3);
-        backpatch($3->truelist, $5); 
+
+        backpatch($3->truelist, $5);  // if true, go to M1 (if-statement)
+
         list <int> li = merge($6->nextlist, $7->nextlist);
-        $$->nextlist = merge($3->falselist,li);
+        $$->nextlist = merge($3->falselist,li); // to go out of if-statement
 
         printf("selection_statement -> if ( expression ) statement\n"); 
     }
@@ -1765,13 +1836,15 @@ iteration_statement:
     WHILE M PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement
     {   
         $$ = new Statement();
+
         convInt2Bool($4);
+
         backpatch($7->nextlist, $2); // M1 -> to go back to start of loop
         backpatch($4->truelist, $6); // M2 -> to go to statement if expression is true
+
         $$->nextlist = $4->falselist; // to go out of loop if expression is false
 
-        string s = to_string($2);
-        emit("goto", s); 
+        emit("goto", to_string($2)); 
 
         printf("iteration_statement -> while ( expression ) statement\n"); 
     }
@@ -1781,32 +1854,37 @@ iteration_statement:
     | DO M statement M WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMI_COLON
     {
         $$ = new Statement();
+
         convInt2Bool($7);
+
         backpatch($7->truelist, $2); // M1 -> to go back to statement if expression is true
         backpatch($3->nextlist, $4); // M2 -> to go to check expression once statement is executed
+
         $$->nextlist = $7->falselist; // to go out of loop if expression is false
 
         printf("iteration_statement -> do statement while ( expression ) ;\n"); 
     }
 
-
+    // again similar to while ...
     | FOR PARENTHESIS_OPEN expression_opt SEMI_COLON M expression_opt SEMI_COLON M expression_opt N PARENTHESIS_CLOSE M statement
-    { 
+    {   
 
         $$ = new Statement();
-        convInt2Bool($6); // check 
+
+        convInt2Bool($6); 
+
         backpatch($6->truelist, $12); // M3 -> to go to loop body if true
         backpatch($10->nextlist, $5); // go to M1 after N1 (for checking condition)
         backpatch($13->nextlist, $8); // go to M2 after S1 (loop body)
 
-        string s = to_string($8);
-        emit("goto", s);
+        emit("goto", to_string($8));
 
         $$->nextlist = $6->falselist; // to go out of loop if expression is false
 
         printf("iteration_statement -> for ( expression_opt ; expression_opt ; expression_opt ) statement\n"); 
     }
 
+    /* for loop with declaration -> ignored */
     | FOR PARENTHESIS_OPEN declaration expression_opt SEMI_COLON expression_opt PARENTHESIS_CLOSE statement
     { 
         // printf("iteration_statement -> for ( declaration expression_opt ; expression_opt ) statement\n"); 
@@ -1835,7 +1913,8 @@ jump_statement:
     | RETURN expression SEMI_COLON
     { 
         $$ = new Statement(); 
-        emit("return", $2->entry->name);
+        
+        emit("return", ($2->symbol==NULL)? " ": $2->symbol->name);
 
         printf("jump_statement -> return expression ;\n"); 
     }
@@ -1851,7 +1930,7 @@ jump_statement:
 
 // ----------4. External definitions----------
 
-/* external_declaration not removed, but nothing is done when it is encountered */
+/* external_declaration ignored */
 translation_unit:
     external_declaration
     { 

@@ -648,6 +648,7 @@ designation:
 designation_opt:
     designation
     { printf("designation_opt -> designation\n");}
+    
     | /* empty */
     { printf("designation_opt -> epsilon\n");}
     ;

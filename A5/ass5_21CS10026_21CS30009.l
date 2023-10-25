@@ -12,7 +12,7 @@
     #include "ass5_21CS10026_21CS30009_translator.h"
     #include "y.tab.h"
 
-/*although the tokens have been kept same as in assignment 4, some of them are unnecessary: 
+/* although the tokens have been kept same as in assignment 4, some of them are unnecessary: 
     short, long, double, _Bool, _Complex, _Imaginary 
     extern, static, auto, register (storage-class-specifiers)
 
