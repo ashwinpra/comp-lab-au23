@@ -1,7 +1,7 @@
 %{
     #include "ass5_19CS30031_19CS10070_translator.h"
     extern int yylex();
-    extern int yylineno;
+    extern int lineCount;
     void yyerror(string);
     void yyinfo(string);
 %}
@@ -31,27 +31,43 @@
     Symbol *symbol;
 }
 
-%token PARENTHESIS_OPEN PARENTHESIS_CLOSE CURLY_BRACE_OPEN CURLY_BRACE_CLOSE SQR_BRACE_OPEN SQR_BRACE_CLOSE 
-
-// operators
-%token INC_OP DEC_OP LEFT_OP RIGHT_OP EQ_OP NE_OP LTE_OP GTE_OP AND_OP OR_OP PTR_OP LT_OP GT_OP EQ DOT BITWISEAND BITWISEOR BITWISEXOR STAR PLUS MINUS NOT EXCLAMATION DIVIDE PERCENTAGE
-
-// assignment operators
-%token ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN OR_ASSIGN AND_ASSIGN XOR_ASSIGN
-
-// other tokens
-%token COLON SEMI_COLON ELLIPSIS QUESTION_MARK COMMA HASH
-
-// keywords
-%token EXTERN STATIC AUTO REGISTER
-%token VOIDTYPE CHARTYPE SHORT INTTYPE LONG FLOATTYPE DOUBLE SIGNED UNSIGNED BOOL COMPLEX IMAGINARY
-%token CONST RESTRICT VOLATILE ENUM INLINE
-%token SIZEOF STRUCT TYPEDEF UNION
-%token IF ELSE CASE DEFAULT WHILE CONTINUE DO GOTO FOR RETURN BREAK SWITCH
-
-// default case - unexpected token
-%token UNEXPECTED_TOKEN
-
+%token AUTO
+%token BREAK
+%token CASE
+%token CHAR_TYPE
+%token CONST
+%token CONTINUE
+%token DEFAULT
+%token DO
+%token DOUBLE
+%token ELSE
+%token ENUM
+%token EXTERN
+%token FLOAT_TYPE
+%token FOR
+%token GOTO
+%token IF
+%token INLINE
+%token INT_TYPE
+%token LONG
+%token REGISTER
+%token RESTRICT
+%token RETURN
+%token SHORT
+%token SIGNED
+%token SIZEOF
+%token STATIC
+%token STRUCT
+%token SWITCH
+%token TYPEDEF
+%token UNION
+%token UNSIGNED
+%token VOID_TYPE
+%token VOLATILE
+%token WHILE
+%token BOOL
+%token COMPLEX
+%token IMAGINARY
 
 /*
 IDENTIFIER points to its entry in the symbol table
@@ -59,10 +75,60 @@ The remaining are constants from the code
 */
 
 %token<symbol> IDENTIFIER
-%token<intVal> INTEGER_CONST
-%token<floatVal> FLOAT_CONST
-%token<charVal> CHAR_CONST
+%token<intVal> INTEGER_CONSTANT
+%token<floatVal> FLOATING_CONSTANT
+%token<charVal> CHARACTER_CONSTANT
 %token<stringVal> STRING_LITERAL
+
+%token LEFT_SQUARE_BRACKET
+%token INCREMENT
+%token SLASH
+%token QUESTION_MARK
+%token ASSIGNMENT
+%token COMMA
+%token RIGHT_SQUARE_BRACKET
+%token LEFT_PARENTHESES
+%token LEFT_CURLY_BRACKET
+%token RIGHT_CURLY_BRACKET
+%token DOT
+%token ARROW
+%token ASTERISK
+%token PLUS
+%token MINUS
+%token TILDE
+%token EXCLAMATION
+%token MODULO
+%token LEFT_SHIFT
+%token RIGHT_SHIFT
+%token LESS_THAN
+%token GREATER_THAN
+%token LESS_EQUAL_THAN
+%token GREATER_EQUAL_THAN
+%token COLON
+%token SEMI_COLON
+%token ELLIPSIS
+%token ASTERISK_ASSIGNMENT
+%token SLASH_ASSIGNMENT
+%token MODULO_ASSIGNMENT
+%token PLUS_ASSIGNMENT
+%token MINUS_ASSIGNMENT
+%token LEFT_SHIFT_ASSIGNMENT
+%token HASH
+%token DECREMENT
+%token RIGHT_PARENTHESES
+%token BITWISE_AND
+%token EQUALS
+%token BITWISE_XOR
+%token BITWISE_OR
+%token LOGICAL_AND
+%token LOGICAL_OR
+%token RIGHT_SHIFT_ASSIGNMENT
+%token NOT_EQUALS
+%token BITWISE_AND_ASSIGNMENT
+%token BITWISE_OR_ASSIGNMENT
+%token BITWISE_XOR_ASSIGNMENT
+
+%token INVALID_TOKEN
 
 %start translation_unit
 %right THEN ELSE
@@ -147,23 +213,23 @@ primary_expression:
                             $$->symbol = $1;
                             $$->type = Expression::NONBOOLEAN; 
                         }
-                    | INTEGER_CONST 
+                    | INTEGER_CONSTANT 
                         { 
-                            yyinfo("primary_expression => INTEGER_CONST"); 
+                            yyinfo("primary_expression => INTEGER_CONSTANT"); 
                             $$ = new Expression();
                             $$->symbol = gentemp(INT, toString($1));
                             emit("=", $$->symbol->name, $1);
                         }
-                    | FLOAT_CONST 
+                    | FLOATING_CONSTANT 
                         { 
-                            yyinfo("primary_expression => FLOAT_CONST"); 
+                            yyinfo("primary_expression => FLOATING_CONSTANT"); 
                             $$ = new Expression();
                             $$->symbol = gentemp(FLOAT, $1);
                             emit("=", $$->symbol->name, $1);
                         }
-                    | CHAR_CONST 
+                    | CHARACTER_CONSTANT 
                         { 
-                            yyinfo("primary_expression => CHAR_CONST"); 
+                            yyinfo("primary_expression => CHARACTER_CONSTANT"); 
                             $$ = new Expression();
                             $$->symbol = gentemp(CHAR, $1);
                             emit("=", $$->symbol->name, $1);
@@ -175,7 +241,7 @@ primary_expression:
 		                    $$->symbol = gentemp(POINTER, $1);
 		                    $$->symbol->type->arr_type = new SymType(CHAR);
                         }
-                    | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
+                    | LEFT_PARENTHESES expression RIGHT_PARENTHESES
                         { 
                             yyinfo("primary_expression => ( expression )"); 
                             $$ = $2;
@@ -192,7 +258,7 @@ postfix_expression:
                             $$->loc = $$->symbol;
                             $$->subarr_type = $1->symbol->type;
                         }
-                    | postfix_expression SQR_BRACE_OPEN expression SQR_BRACE_CLOSE
+                    | postfix_expression LEFT_SQUARE_BRACKET expression RIGHT_SQUARE_BRACKET
                         { 
                             // this is an array expression, create a new array
                             yyinfo("postfix_expression => postfix_expression [ expression ]"); 
@@ -212,7 +278,7 @@ postfix_expression:
                             }
 
                         }
-                    | postfix_expression PARENTHESIS_OPEN argument_expression_list_opt PARENTHESIS_CLOSE
+                    | postfix_expression LEFT_PARENTHESES argument_expression_list_opt RIGHT_PARENTHESES
                         { 
                             // function call, number of parameters stored in argument_expression_list_opt
                             yyinfo("postfix_expression => postfix_expression ( argument_expression_list_opt )"); 
@@ -224,11 +290,11 @@ postfix_expression:
                         { 
                             yyinfo("postfix_expression => postfix_expression . IDENTIFIER"); 
                         }
-                    | postfix_expression PTR_OP IDENTIFIER
+                    | postfix_expression ARROW IDENTIFIER
                         { 
                             yyinfo("postfix_expression => postfix_expression -> IDENTIFIER"); 
                         }
-                    | postfix_expression INC_OP
+                    | postfix_expression INCREMENT
                         { 
                             // post increment, first generate temporary with old value, then add 1
                             yyinfo("postfix_expression => postfix_expression ++");
@@ -237,7 +303,7 @@ postfix_expression:
                             emit("=", $$->symbol->name, $1->symbol->name);
                             emit("+", $1->symbol->name, $1->symbol->name, toString(1)); 
                         }
-                    | postfix_expression DEC_OP
+                    | postfix_expression DECREMENT
                         { 
                             // post decrement, first generate temporary with old value, then subtract 1
                             yyinfo("postfix_expression => postfix_expression --"); 
@@ -246,11 +312,11 @@ postfix_expression:
                             emit("=", $$->symbol->name, $1->symbol->name);
                             emit("-", $1->symbol->name, $1->symbol->name, toString(1));
                         }
-                    | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE CURLY_BRACE_OPEN initialiser_list CURLY_BRACE_CLOSE
+                    | LEFT_PARENTHESES type_name RIGHT_PARENTHESES LEFT_CURLY_BRACKET initialiser_list RIGHT_CURLY_BRACKET
                         { 
                             yyinfo("postfix_expression => ( type_name ) { initialiser_list }"); 
                         }
-                    | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE CURLY_BRACE_OPEN initialiser_list COMMA CURLY_BRACE_CLOSE
+                    | LEFT_PARENTHESES type_name RIGHT_PARENTHESES LEFT_CURLY_BRACKET initialiser_list COMMA RIGHT_CURLY_BRACKET
                         { 
                             yyinfo("postfix_expression => ( type_name ) { initialiser_list , }"); 
                         }
@@ -295,14 +361,14 @@ unary_expression:
                             yyinfo("unary_expression => postfix_expression"); 
                             $$ = $1;
                         }
-                    | INC_OP unary_expression
+                    | INCREMENT unary_expression
                         { 
                             // pre increment, no new temporary simply add 1
                             yyinfo("unary_expression => ++ unary_expression"); 
                             $$ = $2;
                             emit("+", $2->symbol->name, $2->symbol->name, toString(1));
                         }
-                    | DEC_OP unary_expression
+                    | DECREMENT unary_expression
                         { 
                             // pre decrement, no new temporary simply subtract 1
                             yyinfo("unary_expression => -- unary_expression"); 
@@ -340,7 +406,7 @@ unary_expression:
                         { 
                             yyinfo("unary_expression => sizeof unary_expression"); 
                         }
-                    | SIZEOF PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE
+                    | SIZEOF LEFT_PARENTHESES type_name RIGHT_PARENTHESES
                         { 
                             yyinfo("unary_expression => sizeof ( type_name )"); 
                         }
@@ -351,12 +417,12 @@ Store the unary operator read
 */
 
 unary_operator:
-                BITWISEAND
+                BITWISE_AND
                     { 
                         yyinfo("unary_operator => &"); 
                         $$ = strdup("&"); 
                     }
-                | STAR
+                | ASTERISK
                     { 
                         yyinfo("unary_operator => *"); 
                         $$ = strdup("*"); 
@@ -371,7 +437,7 @@ unary_operator:
                         yyinfo("unary_operator => -"); 
                         $$ = strdup("=-"); 
                     }
-                | NOT
+                | TILDE
                     { 
                         yyinfo("unary_operator => ~"); 
                         $$ = strdup("~"); 
@@ -389,7 +455,7 @@ cast_expression:
                         yyinfo("cast_expression => unary_expression"); 
                         $$ = $1;
                     }
-                | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE cast_expression /* can be ignored */
+                | LEFT_PARENTHESES type_name RIGHT_PARENTHESES cast_expression /* can be ignored */
                     { 
                         yyinfo("cast_expression => ( type_name ) cast_expression"); 
                         $$ = new Array();
@@ -428,7 +494,7 @@ multiplicative_expression:
                                         $$->symbol = $1->symbol;
                                     }
                                 }
-                            | multiplicative_expression STAR cast_expression
+                            | multiplicative_expression ASTERISK cast_expression
                                 { 
                                     SymType *baseType = $3->symbol->type;
                                     while(baseType->arr_type)
@@ -451,7 +517,7 @@ multiplicative_expression:
                                         yyerror("Type error.");
                                     }
                                 }
-                            | multiplicative_expression DIVIDE cast_expression
+                            | multiplicative_expression SLASH cast_expression
                                 { 
                                     SymType *baseType = $3->symbol->type;
                                     while(baseType->arr_type)
@@ -474,7 +540,7 @@ multiplicative_expression:
                                         yyerror("Type error.");
                                     }
                                 }
-                            | multiplicative_expression PERCENTAGE cast_expression
+                            | multiplicative_expression MODULO cast_expression
                                 { 
                                     SymType *baseType = $3->symbol->type;
                                     while(baseType->arr_type)
@@ -535,7 +601,7 @@ shift_expression:
                             yyinfo("shift_expression => additive_expression");
                             $$ = $1;
                         }
-                    | shift_expression LEFT_OP additive_expression
+                    | shift_expression LEFT_SHIFT additive_expression
                         { 
                             yyinfo("shift_expression => shift_expression << additive_expression"); 
                             if($3->symbol->type->type == INT) {
@@ -546,7 +612,7 @@ shift_expression:
                                 yyerror("Type error.");
                             }
                         }
-                    | shift_expression RIGHT_OP additive_expression
+                    | shift_expression RIGHT_SHIFT additive_expression
                         { 
                             yyinfo("shift_expression => shift_expression >> additive_expression"); 
                             if($3->symbol->type->type == INT) {
@@ -574,7 +640,7 @@ relational_expression:
                                 yyinfo("relational_expression => shift_expression"); 
                                 $$ = $1;
                             }
-                        | relational_expression LT_OP shift_expression
+                        | relational_expression LESS_THAN shift_expression
                             { 
                                 yyinfo("relational_expression => relational_expression < shift_expression"); 
                                 if(typeCheck($1->symbol, $3->symbol)) {
@@ -588,7 +654,7 @@ relational_expression:
                                     yyerror("Type error.");
                                 }
                             }
-                        | relational_expression GT_OP shift_expression
+                        | relational_expression GREATER_THAN shift_expression
                             { 
                                 yyinfo("relational_expression => relational_expression > shift_expression"); 
                                 if(typeCheck($1->symbol, $3->symbol)) {
@@ -602,7 +668,7 @@ relational_expression:
                                     yyerror("Type error.");
                                 }
                             }
-                        | relational_expression LTE_OP shift_expression
+                        | relational_expression LESS_EQUAL_THAN shift_expression
                             { 
                                 yyinfo("relational_expression => relational_expression <= shift_expression"); 
                                 if(typeCheck($1->symbol, $3->symbol)) {
@@ -616,7 +682,7 @@ relational_expression:
                                     yyerror("Type error.");
                                 }
                             }
-                        | relational_expression GTE_OP shift_expression
+                        | relational_expression GREATER_EQUAL_THAN shift_expression
                             { 
                                 yyinfo("relational_expression => relational_expression >= shift_expression"); 
                                 if(typeCheck($1->symbol, $3->symbol)) {
@@ -638,7 +704,7 @@ equality_expression:
                             yyinfo("equality_expression => relational_expression"); 
                             $$ = $1;
                         }
-                    | equality_expression EQ_OP relational_expression
+                    | equality_expression EQUALS relational_expression
                         { 
                             yyinfo("equality_expression => equality_expression == relational_expression"); 
                             if(typeCheck($1->symbol, $3->symbol)) {
@@ -654,7 +720,7 @@ equality_expression:
                                 yyerror("Type error.");
                             }
                         }
-                    | equality_expression NE_OP relational_expression
+                    | equality_expression NOT_EQUALS relational_expression
                         { 
                             yyinfo("equality_expression => equality_expression != relational_expression"); 
                             if(typeCheck($1->symbol, $3->symbol)) {
@@ -689,7 +755,7 @@ AND_expression:
                         yyinfo("AND_expression => equality_expression"); 
                         $$ = $1;
                     }
-                | AND_expression BITWISEAND equality_expression
+                | AND_expression BITWISE_AND equality_expression
                     { 
                         yyinfo("AND_expression => AND_expression & equality_expression"); 
                         $1->toInt();
@@ -707,7 +773,7 @@ exclusive_OR_expression:
                                 yyinfo("exclusive_OR_expression => AND_expression"); 
                                 $$ = $1;
                             }
-                        | exclusive_OR_expression BITWISEXOR AND_expression
+                        | exclusive_OR_expression BITWISE_XOR AND_expression
                             { 
                                 yyinfo("exclusive_OR_expression => exclusive_OR_expression ^ AND_expression"); 
                                 $1->toInt();
@@ -725,7 +791,7 @@ inclusive_OR_expression:
                                 yyinfo("inclusive_OR_expression => exclusive_OR_expression"); 
                                 $$ = $1;
                             }
-                        | inclusive_OR_expression BITWISEOR exclusive_OR_expression
+                        | inclusive_OR_expression BITWISE_OR exclusive_OR_expression
                             { 
                                 yyinfo("inclusive_OR_expression => inclusive_OR_expression | exclusive_OR_expression"); 
                                 $1->toInt();
@@ -802,7 +868,7 @@ logical_AND_expression:
                                 yyinfo("logical_AND_expression => inclusive_OR_expression"); 
                                 $$ = $1;
                             }
-                        | logical_AND_expression AND_OP M inclusive_OR_expression
+                        | logical_AND_expression LOGICAL_AND M inclusive_OR_expression
                             { 
                                 yyinfo("logical_AND_expression => logical_AND_expression && inclusive_OR_expression");
                                 $1->toBool();
@@ -821,7 +887,7 @@ logical_OR_expression:
                                 yyinfo("logical_OR_expression => logical_AND_expression"); 
                                 $$ = $1;
                             }
-                        | logical_OR_expression OR_OP M logical_AND_expression
+                        | logical_OR_expression LOGICAL_OR M logical_AND_expression
                             { 
                                 yyinfo("logical_OR_expression => logical_OR_expression || logical_AND_expression"); 
                                 $1->toBool();
@@ -886,47 +952,47 @@ assignment_expression:
                         ;
 
 assignment_operator:
-                    EQ
+                    ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => ="); 
                         }
-                    | MUL_ASSIGN
+                    | ASTERISK_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => *="); 
                         }
-                    | DIV_ASSIGN
+                    | SLASH_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => /="); 
                         }
-                    | MOD_ASSIGN
+                    | MODULO_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => %="); 
                         }
-                    | ADD_ASSIGN
+                    | PLUS_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => += "); 
                         }
-                    | SUB_ASSIGN
+                    | MINUS_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => -= "); 
                         }
-                    | LEFT_ASSIGN
+                    | LEFT_SHIFT_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => <<="); 
                         }
-                    | RIGHT_ASSIGN
+                    | RIGHT_SHIFT_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => >>="); 
                         }
-                    | AND_ASSIGN
+                    | BITWISE_AND_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => &="); 
                         }
-                    | XOR_ASSIGN
+                    | BITWISE_XOR_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => ^="); 
                         }
-                    | OR_ASSIGN
+                    | BITWISE_OR_ASSIGNMENT
                         { 
                             yyinfo("assignment_operator => |="); 
                         }
@@ -1018,7 +1084,7 @@ init_declarator:
                         yyinfo("init_declarator => declarator"); 
                         $$ = $1;
                     }
-                | declarator EQ initialiser
+                | declarator ASSIGNMENT initialiser
                     { 
                         yyinfo("init_declarator => declarator = initialiser");
                         // if there is some initial value assign it 
@@ -1049,12 +1115,12 @@ storage_class_specifier:
                         ;
 
 type_specifier:
-                VOIDTYPE
+                VOID_TYPE
                     { 
                         yyinfo("type_specifier => void");
                         currentType = VOID;
                     }
-                | CHARTYPE
+                | CHAR_TYPE
                     { 
                         yyinfo("type_specifier => char"); 
                         currentType = CHAR;
@@ -1063,7 +1129,7 @@ type_specifier:
                     {
                          yyinfo("type_specifier => short"); 
                     }
-                | INTTYPE
+                | INT_TYPE
                     { 
                         yyinfo("type_specifier => int"); 
                         currentType = INT;
@@ -1072,7 +1138,7 @@ type_specifier:
                     {
                          yyinfo("type_specifier => long"); 
                     }
-                | FLOATTYPE
+                | FLOAT_TYPE
                     { 
                         yyinfo("type_specifier => float"); 
                         currentType = FLOAT;
@@ -1130,11 +1196,11 @@ specifier_qualifier_list_opt:
                                 ;
 
 enum_specifier:
-                ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list CURLY_BRACE_CLOSE 
+                ENUM identifier_opt LEFT_CURLY_BRACKET enumerator_list RIGHT_CURLY_BRACKET 
                     { 
                         yyinfo("enum_specifier => enum identifier_opt { enumerator_list }"); 
                     }
-                | ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list COMMA CURLY_BRACE_CLOSE
+                | ENUM identifier_opt LEFT_CURLY_BRACKET enumerator_list COMMA RIGHT_CURLY_BRACKET
                     { 
                         yyinfo("enum_specifier => enum identifier_opt { enumerator_list , }"); 
                     }
@@ -1171,7 +1237,7 @@ enumerator:
                 { 
                     yyinfo("enumerator => ENUMERATION_CONSTANT"); 
                 }
-            | IDENTIFIER EQ constant_expression
+            | IDENTIFIER ASSIGNMENT constant_expression
                 { 
                     yyinfo("enumerator => ENUMERATION_CONSTANT = constant_expression"); 
                 }
@@ -1240,20 +1306,20 @@ direct_declarator:
                             $$ = $1->update(new SymType(currentType)); // update type to the last type seen
                             currentSymbol = $$;
                         }
-                    | PARENTHESIS_OPEN declarator PARENTHESIS_CLOSE
+                    | LEFT_PARENTHESES declarator RIGHT_PARENTHESES
                         { 
                             yyinfo("direct_declarator => ( declarator )"); 
                             $$ = $2;
                         }
-                    | direct_declarator SQR_BRACE_OPEN type_qualifier_list assignment_expression SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET type_qualifier_list assignment_expression RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ type_qualifier_list assignment_expression ]"); 
                         }
-                    | direct_declarator SQR_BRACE_OPEN type_qualifier_list SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET type_qualifier_list RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ type_qualifier_list ]"); 
                         }
-                    | direct_declarator SQR_BRACE_OPEN assignment_expression SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET assignment_expression RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ assignment_expression ]"); 
                             SymType *it1 = $1->type, *it2 = NULL;
@@ -1271,7 +1337,7 @@ direct_declarator:
                                 $$ = $1->update(new SymType(ARRAY, $1->type, atoi($3->symbol->initialValue.c_str())));
                             }
                         }
-                    | direct_declarator SQR_BRACE_OPEN SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ ]"); 
                             // same as the previous rule, just we dont know the size so put it as 0
@@ -1290,27 +1356,27 @@ direct_declarator:
                                 $$ = $1->update(new SymType(ARRAY, $1->type, 0));
                             }
                         }
-                    | direct_declarator SQR_BRACE_OPEN STATIC type_qualifier_list assignment_expression SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET STATIC type_qualifier_list assignment_expression RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ static type_qualifier_list assignment_expression ]"); 
                         }
-                    | direct_declarator SQR_BRACE_OPEN STATIC assignment_expression SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET STATIC assignment_expression RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ assignment_expression ]"); 
                         }
-                    | direct_declarator SQR_BRACE_OPEN type_qualifier_list STATIC assignment_expression SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET type_qualifier_list STATIC assignment_expression RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ type_qualifier_list static assignment_expression ]"); 
                         }
-                    | direct_declarator SQR_BRACE_OPEN type_qualifier_list STAR SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET type_qualifier_list ASTERISK RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ type_qualifier_list * ]"); 
                         }
-                    | direct_declarator SQR_BRACE_OPEN STAR SQR_BRACE_CLOSE
+                    | direct_declarator LEFT_SQUARE_BRACKET ASTERISK RIGHT_SQUARE_BRACKET
                         { 
                             yyinfo("direct_declarator => direct_declarator [ * ]"); 
                         }
-                    | direct_declarator PARENTHESIS_OPEN change_scope parameter_type_list PARENTHESIS_CLOSE
+                    | direct_declarator LEFT_PARENTHESES change_scope parameter_type_list RIGHT_PARENTHESES
                         { 
                             yyinfo("direct_declarator => direct_declarator ( parameter_type_list )"); 
                             // function declaration
@@ -1325,11 +1391,11 @@ direct_declarator:
                             changeTable(globalTable);
                             currentSymbol = $$;
                         }
-                    | direct_declarator PARENTHESIS_OPEN identifier_list PARENTHESIS_CLOSE
+                    | direct_declarator LEFT_PARENTHESES identifier_list RIGHT_PARENTHESES
                         { 
                             yyinfo("direct_declarator => direct_declarator ( identifier_list )"); 
                         }
-                    | direct_declarator PARENTHESIS_OPEN change_scope PARENTHESIS_CLOSE
+                    | direct_declarator LEFT_PARENTHESES change_scope RIGHT_PARENTHESES
                         { 
                             yyinfo("direct_declarator => direct_declarator ( )"); 
                             // same as the previous rule
@@ -1387,13 +1453,13 @@ Generate new symbol with type pointer
 */
 
 pointer:
-        STAR type_qualifier_list_opt
+        ASTERISK type_qualifier_list_opt
             { 
                 yyinfo("pointer => * type_qualifier_list_opt"); 
                 // fresh pointer
                 $$ = new SymType(POINTER);
             }
-        | STAR type_qualifier_list_opt pointer
+        | ASTERISK type_qualifier_list_opt pointer
             { 
                 yyinfo("pointer => * type_qualifier_list_opt pointer"); 
                 // nested pointer
@@ -1469,11 +1535,11 @@ initialiser:
                     yyinfo("initialiser => assignment_expression"); 
                     $$ = $1->symbol;
                 }
-            | CURLY_BRACE_OPEN initialiser_list CURLY_BRACE_CLOSE
+            | LEFT_CURLY_BRACKET initialiser_list RIGHT_CURLY_BRACKET
                 { 
                     yyinfo("initialiser => { initialiser_list }"); 
                 }  
-            | CURLY_BRACE_OPEN initialiser_list COMMA CURLY_BRACE_CLOSE
+            | LEFT_CURLY_BRACKET initialiser_list COMMA RIGHT_CURLY_BRACKET
                 { 
                     yyinfo("initialiser => { initialiser_list , }"); 
                 }
@@ -1502,7 +1568,7 @@ designation_opt:
                 ;
 
 designation:
-            designator_list EQ
+            designator_list ASSIGNMENT
                 { 
                     yyinfo("designation => designator_list ="); 
                 }
@@ -1520,7 +1586,7 @@ designator_list:
                 ;
 
 designator:
-            SQR_BRACE_OPEN constant_expression SQR_BRACE_CLOSE
+            LEFT_SQUARE_BRACKET constant_expression RIGHT_SQUARE_BRACKET
                 { 
                     yyinfo("designator => [ constant_expression ]"); 
                 }
@@ -1599,7 +1665,7 @@ change_block:
                 ;
 
 compound_statement:
-                    CURLY_BRACE_OPEN change_block change_scope block_item_list_opt CURLY_BRACE_CLOSE
+                    LEFT_CURLY_BRACKET change_block change_scope block_item_list_opt RIGHT_CURLY_BRACKET
                         { 
                             yyinfo("compound_statement => { block_item_list_opt }"); 
                             $$ = $4;
@@ -1689,7 +1755,7 @@ S.nextlist = merge(merge(S1.nextlist, N.nextlist), S2 .nextlist)
 */
 
 selection_statement:
-                    IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement N %prec THEN
+                    IF LEFT_PARENTHESES expression RIGHT_PARENTHESES M statement N %prec THEN
                         { 
                             yyinfo("selection_statement => if ( expression ) statement"); 
                             $$ = new Statement();
@@ -1697,7 +1763,7 @@ selection_statement:
                             backpatch($3->trueList, $5); // if true go to M
                             $$->nextList = merge($3->falseList, merge($6->nextList, $7->nextList)); // exits
                         }
-                    | IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement N ELSE M statement
+                    | IF LEFT_PARENTHESES expression RIGHT_PARENTHESES M statement N ELSE M statement
                         { 
                             yyinfo("selection_statement => if ( expression ) statement else statement"); 
                             $$ = new Statement();
@@ -1706,7 +1772,7 @@ selection_statement:
                             backpatch($3->falseList, $9); // if false go to else
                             $$->nextList = merge($10->nextList, merge($6->nextList, $7->nextList)); // exits
                         }
-                    | SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement
+                    | SWITCH LEFT_PARENTHESES expression RIGHT_PARENTHESES statement
                         { 
                             yyinfo("selection_statement => switch ( expression ) statement"); 
                         }
@@ -1737,7 +1803,7 @@ S.nextlist = B.falselist;
 */
 
 iteration_statement:
-                    WHILE M PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement
+                    WHILE M LEFT_PARENTHESES expression RIGHT_PARENTHESES M statement
                         { 
                             yyinfo("iteration_statement => while ( expression ) statement"); 
                             $$ = new Statement();
@@ -1747,7 +1813,7 @@ iteration_statement:
                             $$->nextList = $4->falseList; // exit if false
                             emit("goto", toString($2));
                         }
-                    | DO M statement M WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMI_COLON
+                    | DO M statement M WHILE LEFT_PARENTHESES expression RIGHT_PARENTHESES SEMI_COLON
                         { 
                             yyinfo("iteration_statement => do statement while ( expression ) ;"); 
                             $$ = new Statement();
@@ -1756,7 +1822,7 @@ iteration_statement:
                             backpatch($3->nextList, $4); // after statement is executed go to M2
                             $$->nextList = $7->falseList; // exit if false
                         }
-                    | FOR PARENTHESIS_OPEN expression_opt SEMI_COLON M expression_opt SEMI_COLON M expression_opt N PARENTHESIS_CLOSE M statement
+                    | FOR LEFT_PARENTHESES expression_opt SEMI_COLON M expression_opt SEMI_COLON M expression_opt N RIGHT_PARENTHESES M statement
                         { 
                             yyinfo("iteration_statement => for ( expression_opt ; expression_opt ; expression_opt ) statement"); 
                             $$ = new Statement();
@@ -1767,7 +1833,7 @@ iteration_statement:
                             emit("goto", toString($8));
                             $$->nextList = $6->falseList; // exit if false
                         }
-                    | FOR PARENTHESIS_OPEN declaration expression_opt SEMI_COLON expression_opt PARENTHESIS_CLOSE statement
+                    | FOR LEFT_PARENTHESES declaration expression_opt SEMI_COLON expression_opt RIGHT_PARENTHESES statement
                         { 
                             yyinfo("iteration_statement => for ( declaration expression_opt ; expression_opt ) statement"); 
                         }
@@ -1824,7 +1890,7 @@ external_declaration:
 
 function_definition: // to prevent block change here which is there in the compound statement grammar rule
                      // this rule is slightly modified by expanding the original compound statement rule over here
-                    declaration_specifiers declarator declaration_list_opt change_scope CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
+                    declaration_specifiers declarator declaration_list_opt change_scope LEFT_CURLY_BRACKET block_item_list_opt RIGHT_CURLY_BRACKET
                         { 
                             yyinfo("function_definition => declaration_specifiers declarator declaration_list_opt compound_statement"); 
                             tableCount = 0;
@@ -1858,11 +1924,11 @@ declaration_list:
 %%
 
 void yyerror(string s) {
-    printf("ERROR [Line %d] : %s\n", yylineno, s.c_str());
+    printf("ERROR [Line %d] : %s\n", lineCount, s.c_str());
 }
 
 void yyinfo(string s) {
     #ifdef _DEBUG
-        printf("INFO [Line %d] : %s\n", yylineno, s.c_str());
+        printf("INFO [Line %d] : %s\n", lineCount, s.c_str());
     #endif
 }

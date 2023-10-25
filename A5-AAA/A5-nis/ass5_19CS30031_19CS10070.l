@@ -3,21 +3,7 @@
     #include <stdlib.h>
     #include "ass5_19CS30031_19CS10070_translator.h"
     #include "y.tab.h"
-
-    /* 
-        although the tokens have been kept same as in assignment 4, some of them are unnecessary: 
-        short, long, double, _Bool, _Complex, _Imaginary 
-        extern, static, auto, register (storage-class-specifiers)
-
-        enum  (enum-specifier)
-        const, restrict, volatile, inline (type-qualifiers and function-specifier)
-
-        case and default (labeled-statements)
-        swtich  (in selection-statement)
-        goto, continue, break  (jump-statements)
-
-        +=, -=, *=, /=, %=, <<=, >>=, |=, &=, ^= (assignment-operators)
-    */
+    int lineCount = 1;
 %}
 
 %x multi_line_comment
@@ -54,12 +40,12 @@ whitespace [ \t\n]
 "static"                    {return STATIC;}
 "auto"                      {return AUTO;}
 "register"                  {return REGISTER;}
-"void"                      {return VOID;}
-"char"                      {return CHAR;}
+"void"                      {return VOID_TYPE;}
+"char"                      {return CHAR_TYPE;}
 "short"                     {return SHORT;}
-"int"                       {return INT;}
+"int"                       {return INT_TYPE;}
 "long"                      {return LONG;}
-"float"                     {return FLOAT;}
+"float"                     {return FLOAT_TYPE;}
 "double"                    {return DOUBLE;}
 "signed"                    {return SIGNED;}
 "unsigned"                  {return UNSIGNED;}
@@ -91,80 +77,59 @@ whitespace [ \t\n]
 "return"                    {return RETURN;}
 "break"                     {return BREAK;}
 
-{identifier}                    { 
-                                    yylval.symbol = currentTable->lookup(yytext);
-                                    return IDENTIFIER; 
-                                }
+{identifier}                    { yylval.symbol = currentTable->lookup(yytext);; return IDENTIFIER; }
+{integer_constant}              { yylval.intVal = atoi(yytext); return INTEGER_CONSTANT; }
+{float_constant}                 { yylval.floatVal = strdup(yytext); return FLOATING_CONSTANT; }
+{char_constant}                 { yylval.charVal = strdup(yytext); return CHARACTER_CONSTANT; }
+{string_literal}                { yylval.stringVal = strdup(yytext); return STRING_LITERAL; }
 
-{integer_constant}              { 
-                                    yylval.intVal = atoi(yytext); return INTEGER_CONST; 
-                                }
-
-{float_constant}                { 
-                                    yylval.floatVal = strdup(yytext); 
-                                    return FLOAT_CONST; 
-                                }
-
-{char_constant}                 { 
-                                    yylval.charVal = strdup(yytext); 
-                                    return CHAR_CONST; 
-                                }
-{string_literal}                {
-                                    yylval.stringVal = strdup(yytext); 
-                                    return STRING_LITERAL; 
-                                }
-
-"("                         {return PARENTHESIS_OPEN;}
-")"                         {return PARENTHESIS_CLOSE;}
-"{"                         {return CURLY_BRACE_OPEN;}
-"}"                         {return CURLY_BRACE_CLOSE;}
-"["                         {return SQR_BRACE_OPEN;}
-"]"                         {return SQR_BRACE_CLOSE;}
-
-"++"                        {return INC_OP;}
-"--"                        {return DEC_OP;}
-"<<"                        {return LEFT_OP;}
-">>"                        {return RIGHT_OP;}
-"=="                        {return EQ_OP;}
-"!="                        {return NE_OP;}
-"<="                        {return LTE_OP;}
-">="                        {return GTE_OP;}
-"&&"                        {return AND_OP;}
-"||"                        {return OR_OP;}
-"->"                        {return PTR_OP;}
-"<"                         {return LT_OP;}
-">"                         {return GT_OP;}
-"="                         {return EQ;}
-"."                         {return DOT;}
-"&"                         {return BITWISEAND;}
-"|"                         {return BITWISEOR;}
-"^"                         {return BITWISEXOR;}
-"*"                         {return STAR;}
-"+"                         {return PLUS;}
-"-"                         {return MINUS;}
-"~"                         {return NOT;}
-"!"                         {return EXCLAMATION;}
-"/"                         {return DIVIDE;}
-"%"                         {return PERCENTAGE;}
-
-"+="                        {return ADD_ASSIGN;}
-"-="                        {return SUB_ASSIGN;}
-"*="                        {return MUL_ASSIGN;}
-"/="                        {return DIV_ASSIGN;}
-"%="                        {return MOD_ASSIGN;}
-"<<="                       {return LEFT_ASSIGN;}
-">>="                       {return RIGHT_ASSIGN;}
-"|="                        {return OR_ASSIGN;}
-"&="                        {return AND_ASSIGN;}
-"^="                        {return XOR_ASSIGN;}
-
-":"                         {return COLON;}
-";"                         {return SEMI_COLON;}
-"..."                       {return ELLIPSIS;}
-"?"                         {return QUESTION_MARK;}
-","                         {return COMMA;}
-"#"                         {return HASH;}
-
+"["                             { return LEFT_SQUARE_BRACKET; }
+"++"                            { return INCREMENT; }
+"/"                             { return SLASH; }
+"?"                             { return QUESTION_MARK; }
+"="                             { return ASSIGNMENT; }
+","                             { return COMMA; }
+"]"                             { return RIGHT_SQUARE_BRACKET; }
+"("                             { return LEFT_PARENTHESES; }
+"{"                             { return LEFT_CURLY_BRACKET; }
+"}"                             { return RIGHT_CURLY_BRACKET; }
+"."                             { return DOT; }
+"->"                            { return ARROW; }
+"*"                             { return ASTERISK; }
+"+"                             { return PLUS; }
+"-"                             { return MINUS; }
+"~"                             { return TILDE; }
+"!"                             { return EXCLAMATION; }
+"%"                             { return MODULO; }
+"<<"                            { return LEFT_SHIFT; }
+">>"                            { return RIGHT_SHIFT; }
+"<"                             { return LESS_THAN; }
+">"                             { return GREATER_THAN; }
+"<="                            { return LESS_EQUAL_THAN; }
+">="                            { return GREATER_EQUAL_THAN; }
+":"                             { return COLON; }
+";"                             { return SEMI_COLON; }
+"..."                           { return ELLIPSIS; }
+"*="                            { return ASTERISK_ASSIGNMENT; }
+"/="                            { return SLASH_ASSIGNMENT; }
+"%="                            { return MODULO_ASSIGNMENT; }
+"+="                            { return PLUS_ASSIGNMENT; }
+"-="                            { return MINUS_ASSIGNMENT; }
+"<<="                           { return LEFT_SHIFT_ASSIGNMENT; }
+"#"                             { return HASH; }
+"--"                            { return DECREMENT; }
+")"                             { return RIGHT_PARENTHESES; }
+"&"                             { return BITWISE_AND; }
+"=="                            { return EQUALS; }
+"^"                             { return BITWISE_XOR; }
+"|"                             { return BITWISE_OR; }
+"&&"                            { return LOGICAL_AND; }
+"||"                            { return LOGICAL_OR; }
+">>="                           { return RIGHT_SHIFT_ASSIGNMENT; }
+"!="                            { return NOT_EQUALS; }
+"&="                            { return BITWISE_AND_ASSIGNMENT; }
+"|="                            { return BITWISE_OR_ASSIGNMENT; }
+"^="                            { return BITWISE_XOR_ASSIGNMENT; }
 
 "/*"                            { BEGIN(multi_line_comment); }
 <multi_line_comment>"*/"        { BEGIN(INITIAL); }
@@ -175,11 +140,9 @@ whitespace [ \t\n]
 <single_line_comment>"\n"       { BEGIN(INITIAL); }
 <single_line_comment>.          { }
 
-\n                          {yylineno++;}
-
-{whitespace}                { }
-
-.                           {return UNEXPECTED_TOKEN;} // if no matches, return unexpected token
+{whitespace}                    { }
+"\n"                            { yylineno++; }
+.                               { return INVALID_TOKEN; }
 
 %%
 
