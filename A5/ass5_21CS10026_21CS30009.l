@@ -6,8 +6,25 @@
     Flex Specification for tinyC
 */
 
-%{
-#include "y.tab.h"
+%{  
+    #include <stdio.h>
+    #include <string.h>
+    #include "ass5_21CS10026_21CS30009_translator.h"
+    #include "y.tab.h"
+
+/*although the tokens have been kept same as in assignment 4, some of them are unnecessary: 
+    short, long, double, _Bool, _Complex, _Imaginary 
+    extern, static, auto, register (storage-class-specifiers)
+
+    enum  (enum-specifier)
+    const, restrict, volatile, inline (type-qualifiers and function-specifier)
+
+    case and default (labeled-statements)
+    swtich  (in selection-statement)
+    goto, continue, break  (jump-statements)
+
+    +=, -=, *=, /=, %=, <<=, >>=, |=, &=, ^= (assignment-operators)
+*/
 %}
 
 %x multi_line_comment
@@ -40,36 +57,51 @@ whitespace [ \t\n]
 
 %%
 
-// short, long, double, _Bool, _Complex, _Imaginary removed
-// extern, static, auto, register removed (storage-class-specifiers)
+"extern"                    {return EXTERN;}
+"static"                    {return STATIC;}
+"auto"                      {return AUTO;}
+"register"                  {return REGISTER;}
 "void"                      {return VOID;}
 "char"                      {return CHAR;}
+"short"                     {return SHORT;}
 "int"                       {return INT;}
+"long"                      {return LONG;}
 "float"                     {return FLOAT;}
+"double"                    {return DOUBLE;}
 "signed"                    {return SIGNED;}
 "unsigned"                  {return UNSIGNED;}
+"_Bool"                     {return BOOL;}
+"_Complex"                  {return COMPLEX;}
+"_Imaginary"                {return IMAGINARY;}
 
-// enum removed (enum-specifier)
-// const, restrict, volatile, inline removed (type-qualifiers and function-specifier)
+"const"                     {return CONST;}
+"restrict"                  {return RESTRICT;}
+"volatile"                  {return VOLATILE;}
+"enum"                      {return ENUM;}
+"inline"                    {return INLINE;}
 
+"sizeof"                    {return SIZEOF;}
 "struct"                    {return STRUCT;}
 "typedef"                   {return TYPEDEF;}
 "union"                     {return UNION;}
 
-// case and default removed (labeled-statements)
-// swtich removed (in selection-statement)
-// goto, continue, break removed (jump-statements)
 "if"                        {return IF;}
 "else"                      {return ELSE;}
+"switch"                    {return SWITCH;}
+"case"                      {return CASE;}
+"default"                   {return DEFAULT;}
 "while"                     {return WHILE;}
+"continue"                  {return CONTINUE;}
 "do"                        {return DO;}
+"goto"                      {return GOTO;}
 "for"                       {return FOR;}
 "return"                    {return RETURN;}
+"break"                     {return BREAK;}
 
 
 
 {identifier}                {
-                                // check
+                                yylval.sym = currentST->lookup(yytext);
                                 return IDENTIFIER;
                             }
 
@@ -79,7 +111,7 @@ whitespace [ \t\n]
                             }
 
 {float_constant}            {
-                                yylval.fval = atof(yytext); // check
+                                yylval.fval = atof(yytext); 
                                 return FLOAT_CONST;
                             }
 
@@ -125,6 +157,17 @@ whitespace [ \t\n]
 "!"                         {return EXCLAMATION;}
 "/"                         {return DIVIDE;}
 "%"                         {return PERCENTAGE;}
+
+"+="                        {return ADD_ASSIGN;}
+"-="                        {return SUB_ASSIGN;}
+"*="                        {return MUL_ASSIGN;}
+"/="                        {return DIV_ASSIGN;}
+"%="                        {return MOD_ASSIGN;}
+"<<="                       {return LEFT_ASSIGN;}
+">>="                       {return RIGHT_ASSIGN;}
+"|="                        {return OR_ASSIGN;}
+"&="                        {return AND_ASSIGN;}
+"^="                        {return XOR_ASSIGN;}
 
 ":"                         {return COLON;}
 ";"                         {return SEMI_COLON;}
