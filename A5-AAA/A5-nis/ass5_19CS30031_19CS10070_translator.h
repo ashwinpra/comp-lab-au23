@@ -3,12 +3,13 @@
 
 #include <iostream>
 #include <string>
-#include <map>
 #include <vector>
 #include <list>
-#include <functional>
-#include <iomanip>
+#include <iomanip> // remove this along with setw
 #include <string.h>
+
+extern int yyparse(); 
+
 using namespace std;
 
 // defining size of data types (can be changed as it is machine-dependent)
@@ -18,14 +19,15 @@ using namespace std;
 #define SIZE_OF_FLOAT 8
 #define SIZE_OF_POINTER 4
 
-class SymType;
-class SymTable;
-class Symbol;
-class Quad;
-class Expression;
-class Array;
-class Statement;
+class Symbol;       // symbol table entry
+class SymType;      // type of a symbol
+class SymTable;     // symbol table
+class Quad;         // entry in quad array
+class Expression;   // expression attributes (used while parsing)
+class Array;        // array attributes (used while parsing)
+class Statement;    // statement attributes (used while parsing)
 
+// Enum for types used in SymType
 enum TYPE {
     VOID,
     CHAR, 
@@ -37,106 +39,94 @@ enum TYPE {
     BLOCK
 };
 
-// Symbol type class
-class SymType {
-    public:
-        TYPE type; // type of symbol (enum)
-        int width;   // width of the symbol
-        SymType *arr_type;  // type of the array elements
-
-        SymType(TYPE type_, SymType *arr_type_ = NULL, int width_ = 1);  // constructor
-
-        int getSize();  // returns the size(width) of the symbol
-        string toString(); // returns the string representation of the type
-};
-
-// Symbol table class
-class SymTable {
-    public:
-        string name;  // name of the symbol table
-        list <Symbol> symbols;    // list of all symbols in this table, mapped by their names for fast access
-        SymTable *parent;            // parent symbol table of this symbol table
-        
-        SymTable(string = "NULL", SymTable * = NULL); // constructor
-        Symbol *lookup(string); // returns the symbol with the given name, adds new entry if not found
-        void print();  // prints the symbol table
-        void update(); // updates the symbol table
-};
-
-// Symbol class ( represents a single symbol in the symbol table )
 class Symbol {
     public:
-        string name;  // name of the symbol
-        int size, offset; // size and offset of the symbol
-        SymType *type;  // type of the symbol
-        SymTable *nestedTable;  // pointer to the symbol table if it is a nested entry
-        string initialValue;  // initial value of the symbol
+        string name;                    // name of the symbol
+        int size;                       // size of the symbol
+        int offset;                     // offset of the symbol
+        SymType *type;                   // type of the symbol
+        SymTable *nestedTable;          // pointer to parent symbol table if any
+        string initialValue;            // initial value of the symbol
+
+        // check this
         bool isFunction; // flag to indicate if the symbol represents a function or not
                          // if it does represent a function the return type will be given by the type attribute
 
         Symbol(string, TYPE = INT, string = "");  // constructor
-        Symbol *update(SymType*);  // updates the symbol with the given type
-        Symbol *convert(TYPE);  // converts the symbol to the given type
+
+        Symbol *update(SymType*);  // update the symbol with given type
+        Symbol *convert(TYPE);  // convert the symbol to given type
 };
 
-// Quad class ( represents a 3-address quad )
+class SymType {
+    public:
+        TYPE type;              // type of the symbol 
+        int width;              // width of the symbol -> for arrays, 1 if not array
+        SymType *arr_type;      // for arrays, NULL if not array
+
+        SymType(TYPE type_, SymType *arr_type_ = NULL, int width_ = 1);  // constructor
+
+        int getSize();  // to compute size of the symbol type
+
+        string toString(); // returns the string representation of the type
+};
+
+class SymTable {
+    public:
+        string name;                // name of the symbol table
+        list <Symbol> symbols;      // list of symbols in the ST
+        SymTable *parent;            // pointer to parent ST, NULL for global ST
+        
+        SymTable(string = "NULL", SymTable * = NULL); // constructor
+
+        Symbol *lookup(string); // lookup for a symbol in the symbol table, or add if not present - as mentioned in the assignment
+        void print();  // print the symbol table - as mentioned in the assignment
+        void update(); // update the symbol table - as mentioned in the assignment
+};
+
+
 class Quad {
     public:
-        string op, arg1, arg2, result;  // parameters of the quad
+        // result = arg1 op arg2
+        string op;
+        string arg1;
+        string arg2; 
+        string result; 
 
-        Quad(string, string, string = "=", string = "");  // constructor
-        Quad(string, int, string = "=", string = ""); // constructor
-        void print();  // prints the quad
+        // overloaded constructors - supporting different types of arg1
+        Quad(string, string, string = "=", string = "");  
+        Quad(string, int, string = "=", string = ""); 
+
+        void print();  // print the quad
 };
 
-// Expression attributes
+
 class Expression {
     public:
-        Symbol *symbol;  // symbol of the expression
-        enum typeEnum {NONBOOLEAN, BOOLEAN} type;  // type of the expression scoped enum
-        list<int> trueList, falseList, nextList;  // lists of quad numbers for next, true and false jumps
+        Symbol *symbol;                             // symbol corresponding to the expression
+        enum typeEnum {NONBOOLEAN, BOOLEAN} type;   // type of the expression 
+        list<int> trueList;                         // truelist for the expression
+        list<int> falseList;                        // falselist for the expression
+        list<int> nextList;                         // nextlist for the expression
 
-        void toInt();  // converts the expression to an integer
-        void toBool();  // converts the expression to a boolean
+        void toInt();  // convert boolean expression to integer
+        void toBool();  // convert integer expression to boolean
 };
 
-// Array attributes
+
 class Array {
     public:
-        Symbol *loc;    // temporary used for computing the offset for the array reference
-        enum typeEnum {OTHER, POINTER, ARRAY} type;    // Pointers, arrays and normal expressions are all stored using array attributes initially
-        Symbol *symbol;  // pointer to the symbol table entry
-        SymType *subarr_type;   // type of the sub-array generated by A
+        Symbol *loc;                                    // address of the array (for offset calculation)
+        enum typeEnum {POINTER, ARRAY, NEITHER} type;    // type of the array (array or pointer, or neither is also possible initially)
+        Symbol *symbol;                                 // symbol corresponding to the array
+        SymType *subarr_type;                           // for multidimensional arrays -> type of the subarray
 };
 
-// Statement attributes
+
 class Statement {
     public:
-        list<int> nextList;     // List of quads having dangling exits for this statement
+        list<int> nextList;     // nextlist for the statement
 };
-
-// Emit functions for generating quads
-void emit(string, string, string = "", string = "");  // emits a quad with the given parameters
-void emit(string, string, int, string = "");  // emits a quad with the given parameters
-
-// Backpatching functions
-void backpatch(list<int>, int);  // backpatches the list of quads with the given address
-list<int> makelist(int);  // makes a list with the given number
-list<int> merge(list<int>, list<int>); // merges the two lists
-
-// Other helper functions
-
-int nextinstr();  // returns the next instruction number
-Symbol *gentemp(TYPE, string = "");  // generates a new temporary symbol
-void changeTable(SymTable *);  // changes the current symbol table to the given one
-
-// Type checking and conversions
-bool typeCheck(Symbol *&, Symbol *&);  // checks if the two symbols have the same type
-
-// Utility functions
-string toString(int);  // returns the string representation of the given integer
-string toString(float);  // returns the string representation of the given float
-string toString(char);  // returns the string representation of the given character
 
 // Global variables
 extern vector<Quad *> quadArray; // array of quads
@@ -145,6 +135,28 @@ extern Symbol *currentSymbol;  // current symbol
 extern TYPE currentType;  // current type
 extern int tableCount, temporaryCount; // counters for symbol table and temporary symbols
 
-extern int yyparse();
+// overloaded functions for emit
+void emit(string, string, string = "", string = "");  
+void emit(string, string, int, string = "");  
+
+// global functions, as mentioned in the assignment
+
+list<int> makelist(int);  
+list<int> merge(list<int>, list<int>); 
+void backpatch(list<int>, int);  
+bool typeCheck(Symbol *&, Symbol *&);  
+
+// other function
+
+int nextinstr();  // returns the next instruction number
+
+Symbol *gentemp(TYPE, string = "");  // generates a new temporary symbol
+
+void changeTable(SymTable *);  // changes the current symbol table to the given one
+
+// Utility functions
+string toString(int);  // returns the string representation of the given integer
+string toString(float);  // returns the string representation of the given float
+string toString(char);  // returns the string representation of the given character
 
 #endif
