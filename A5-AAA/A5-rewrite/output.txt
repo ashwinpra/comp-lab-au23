@@ -1,0 +1,178 @@
+In symtable constructor
+type_specifier -> int
+In symtable lookup
+In symtype constructor
+In sym constructor
+declaration_specifiers_opt -> epsilon
+declaration_specifiers -> type_specifier declaration_specifiers_opt
+direct_declarator -> identifier
+In symtype constructor
+In sym update
+CT -> epsilon
+In symtable constructor
+In changeTable
+direct_declarator -> direct_declarator (  )
+In symtable lookup
+In symtype constructor
+In sym constructor
+In sym update
+In changeTable
+declarator -> direct_declarator
+declaration_list_opt -> epsilon
+In symtable lookup
+In symtype constructor
+In sym constructor
+In symtable constructor
+In symtype constructor
+CT -> epsilon
+In changeTable
+In emit 1
+Quad made with (op, res, arg1, arg2) = (label, Global_0,  ,  )
+type_specifier -> int
+In symtable lookup
+In symtype constructor
+In sym constructor
+declaration_specifiers_opt -> epsilon
+declaration_specifiers -> type_specifier declaration_specifiers_opt
+direct_declarator -> identifier
+In symtype constructor
+In sym update
+declarator -> direct_declarator
+init_declarator -> declarator
+init_declarator_list -> init_declarator
+In symtable lookup
+In symtype constructor
+In sym constructor
+direct_declarator -> identifier
+In symtype constructor
+In sym update
+declarator -> direct_declarator
+init_declarator -> declarator
+init_declarator_list -> init_declarator_list , init_declarator
+In symtable lookup
+In symtype constructor
+In sym constructor
+direct_declarator -> identifier
+In symtype constructor
+In sym update
+declarator -> direct_declarator
+init_declarator -> declarator
+init_declarator_list -> init_declarator_list , init_declarator
+init_declarator_list_opt -> init_declarator_list
+declaration -> declaration_specifiers init_declarator_list_opt ;
+block_item -> declaration
+block_item_list -> block_item
+M -> epsilon
+In nextinstr
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+assignment_operator -> =
+constant -> integer_constant
+In gentemp
+In symtype constructor
+In sym constructor
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=, t0, 0,  )
+primary_expression -> constant
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+In gentemp
+In symtype constructor
+In sym constructor
+0 0
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=[], t1, t0, t0)
+additive_expression -> multiplicative_expression
+shift_expression -> additive_expression
+relational_expression -> shift_expression
+equality_expression -> relational_expression
+and_expression -> equality_expression
+exclusive_or_expression -> and_expression
+inclusive_or_expression -> exclusive_or_expression
+logical_and_expression -> inclusive_or_expression
+logical_or_expression -> logical_and_expression
+conditional_expression -> logical_or_expression
+assignment_expression -> conditional_expression
+assignment_expression -> unary_expression assignment_operator assignment_expression
+In convertType
+In emit 1
+Quad made with (op, res, arg1, arg2) = ([]=, i, i, t1)
+expression -> assignment_expression
+expression_opt -> expression
+M -> epsilon
+In nextinstr
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+In gentemp
+In symtype constructor
+In sym constructor
+0 0
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=[], t2, i, i)
+additive_expression -> multiplicative_expression
+shift_expression -> additive_expression
+relational_expression -> shift_expression
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+In gentemp
+In symtype constructor
+In sym constructor
+0 0
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=[], t3, j, j)
+additive_expression -> multiplicative_expression
+shift_expression -> additive_expression
+relational_expression -> relational_expression < shift_expression
+In typecheck Sym
+In typecheck SymType
+In typecheck SymType
+In nextinstr
+In makelist
+In nextinstr
+In makelist
+In emit 1
+Quad made with (op, res, arg1, arg2) = (<, , t2, t3)
+In emit 1
+Quad made with (op, res, arg1, arg2) = (goto, ,  ,  )
+equality_expression -> relational_expression
+and_expression -> equality_expression
+exclusive_or_expression -> and_expression
+inclusive_or_expression -> exclusive_or_expression
+logical_and_expression -> inclusive_or_expression
+logical_or_expression -> logical_and_expression
+conditional_expression -> logical_or_expression
+assignment_expression -> conditional_expression
+expression -> assignment_expression
+expression_opt -> expression
+M -> epsilon
+In nextinstr
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+postfix_expression -> postfix_expression ++
+In gentemp
+In symtype constructor
+In sym constructor
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=, t4, i,  )
+In emit 1
+Quad made with (op, res, arg1, arg2) = (+, i, i, 1)
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+In gentemp
+In symtype constructor
+In sym constructor
+0 1

@@ -1,0 +1,223 @@
+In symtable constructor
+type_specifier -> int
+In symtable lookup
+In symtype constructor
+In sym constructor
+In computeSize
+In symtype constructor
+In sym update
+In computeSize
+direct_declarator -> identifier
+In symtable constructor
+In changeTable
+Ct -> epsilon
+In symtable lookup
+In symtype constructor
+In sym constructor
+In computeSize
+In sym update
+In computeSize
+In changeTable
+direct_declarator -> direct_declarator (  )
+In symtable lookup
+In symtype constructor
+In sym constructor
+In computeSize
+In symtable constructor
+In symtype constructor
+In changeTable
+In emit 1
+Quad made with (op, res, arg1, arg2) = (label, Global_0,  ,  )
+Ct -> epsilon
+type_specifier -> int
+In symtable lookup
+In symtype constructor
+In sym constructor
+In computeSize
+In symtype constructor
+In sym update
+In computeSize
+direct_declarator -> identifier
+init_declarator -> declarator
+In symtable lookup
+In symtype constructor
+In sym constructor
+In computeSize
+In symtype constructor
+In sym update
+In computeSize
+direct_declarator -> identifier
+init_declarator -> declarator
+In symtable lookup
+In symtype constructor
+In sym constructor
+In computeSize
+In symtype constructor
+In sym update
+In computeSize
+direct_declarator -> identifier
+init_declarator -> declarator
+block_item -> declaration
+block_item_list -> block_item
+M -> epsilon
+In nextinstr
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+In gentemp
+In symtype constructor
+In sym constructor
+In computeSize
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=, t0, 0,  )
+constant -> integer_constant
+primary_expression -> constant
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+additive_expression -> multiplicative_expression
+shift_expression -> additive_expression
+relational_expression -> shift_expression
+equality_expression -> relational_expression
+and_expression -> equality_expression
+exclusive_or_expression -> and_expression
+inclusive_or_expression -> exclusive_or_expression
+logical_and_expression -> inclusive_or_expression
+logical_or_expression -> logical_and_expression
+conditional_expression -> logical_or_expression
+assignment_expression -> conditional_expression
+In convertType
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=, i, t0,  )
+assignment_expression -> unary_expression assignment_operator assignment_expression
+expression -> assignment_expression
+expression_opt -> expression
+M -> epsilon
+In nextinstr
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+additive_expression -> multiplicative_expression
+shift_expression -> additive_expression
+relational_expression -> shift_expression
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+additive_expression -> multiplicative_expression
+shift_expression -> additive_expression
+In typecheck Sym
+In typecheck SymType
+In typecheck SymType
+In nextinstr
+In makelist
+In nextinstr
+In makelist
+In emit 1
+Quad made with (op, res, arg1, arg2) = (<, , i, j)
+In emit 1
+Quad made with (op, res, arg1, arg2) = (goto, ,  ,  )
+relational_expression -> relational_expression < shift_expression
+equality_expression -> relational_expression
+and_expression -> equality_expression
+exclusive_or_expression -> and_expression
+inclusive_or_expression -> exclusive_or_expression
+logical_and_expression -> inclusive_or_expression
+logical_or_expression -> logical_and_expression
+conditional_expression -> logical_or_expression
+assignment_expression -> conditional_expression
+expression -> assignment_expression
+expression_opt -> expression
+M -> epsilon
+In nextinstr
+In symtable lookup
+primary_expression -> identifier
+postfix_expression -> primary_expression
+In gentemp
+In symtype constructor
+In sym constructor
+In computeSize
+In emit 1
+Quad made with (op, res, arg1, arg2) = (=, t1, i,  )
+In emit 1
+Quad made with (op, res, arg1, arg2) = (+, i, i, 1)
+postfix_expression -> postfix_expression ++
+unary_expression -> postfix_expression
+cast_expression -> unary_expression
+multiplicative_expression -> cast_expression
+additive_expression -> multiplicative_expression
+shift_expression -> additive_expression
+relational_expression -> shift_expression
+equality_expression -> relational_expression
+and_expression -> equality_expression
+exclusive_or_expression -> and_expression
+inclusive_or_expression -> exclusive_or_expression
+logical_and_expression -> inclusive_or_expression
+logical_or_expression -> logical_and_expression
+conditional_expression -> logical_or_expression
+assignment_expression -> conditional_expression
+expression -> assignment_expression
+expression_opt -> expression
+N -> epsilon
+In nextinstr
+In makelist
+In emit 1
+Quad made with (op, res, arg1, arg2) = (goto,  ,  ,  )
+M -> epsilon
+In nextinstr
+expression_opt -> epsilon
+ERROR [Line 5] : syntax error, unable to parse : {
+    
+In symtable update
+In computeSize
+In computeSize
+In symtable update
+In computeSize
+In symtable update
+In computeSize
+In computeSize
+In computeSize
+In computeSize
+In computeSize
+---------------------------------------------------------------------------------------------
+Symbol Table : Global						Parent: NULL
+---------------------------------------------------------------------------------------------
+Name			Type		Initial Value	Size	Offset		Parent Table
+main				int			-				4		0			main
+Global_0				unknown			-				-1		4			Global_0
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : main						Parent: Global
+---------------------------------------------------------------------------------------------
+Name			Type		Initial Value	Size	Offset		Parent Table
+return				int			-				4		0			NULL
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : Global_0						Parent: Global
+---------------------------------------------------------------------------------------------
+Name			Type		Initial Value	Size	Offset		Parent Table
+i				int			-				4		0			NULL
+j				int			-				4		4			NULL
+k				int			-				4		8			NULL
+t0				int			0				4		12			NULL
+t1				int			-				4		16			NULL
+---------------------------------------------------------------------------------------------
+
+Three Address Codes: 
+0: Global_0:
+1: t0 = 0
+2: i = t0
+3: if i < j goto 
+4: goto 
+5: t1 = i
+6: i = i + 1
+7: goto  
