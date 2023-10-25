@@ -39,190 +39,190 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     AUTO = 258,
-     BREAK = 259,
-     CASE = 260,
-     CHARTYPE = 261,
-     CONST = 262,
-     CONTINUE = 263,
-     DEFAULT = 264,
-     DO = 265,
-     DOUBLE = 266,
-     ELSE = 267,
-     ENUM = 268,
-     EXTERN = 269,
-     FLOATTYPE = 270,
-     FOR = 271,
-     GOTO = 272,
-     IF = 273,
-     INLINE = 274,
-     INTTYPE = 275,
-     LONG = 276,
-     REGISTER = 277,
-     RESTRICT = 278,
-     RETURN = 279,
-     SHORT = 280,
-     SIGNED = 281,
-     SIZEOF = 282,
-     STATIC = 283,
-     STRUCT = 284,
-     SWITCH = 285,
-     TYPEDEF = 286,
-     UNION = 287,
-     UNSIGNED = 288,
-     VOIDTYPE = 289,
-     VOLATILE = 290,
-     WHILE = 291,
-     _BOOL = 292,
-     _COMPLEX = 293,
-     _IMAGINARY = 294,
-     IDENTIFIER = 295,
-     INTEGER_CONSTANT = 296,
-     FLOATING_CONSTANT = 297,
-     CHARACTER_CONSTANT = 298,
-     STRING_LITERAL = 299,
-     LEFT_SQUARE_BRACKET = 300,
-     INCREMENT = 301,
-     SLASH = 302,
-     QUESTION_MARK = 303,
-     ASSIGNMENT = 304,
-     COMMA = 305,
-     RIGHT_SQUARE_BRACKET = 306,
-     LEFT_PARENTHESES = 307,
-     LEFT_CURLY_BRACKET = 308,
-     RIGHT_CURLY_BRACKET = 309,
-     DOT = 310,
-     ARROW = 311,
-     ASTERISK = 312,
-     PLUS = 313,
-     MINUS = 314,
-     TILDE = 315,
-     EXCLAMATION = 316,
-     MODULO = 317,
-     LEFT_SHIFT = 318,
-     RIGHT_SHIFT = 319,
-     LESS_THAN = 320,
-     GREATER_THAN = 321,
-     LESS_EQUAL_THAN = 322,
-     GREATER_EQUAL_THAN = 323,
-     COLON = 324,
-     SEMI_COLON = 325,
-     ELLIPSIS = 326,
-     ASTERISK_ASSIGNMENT = 327,
-     SLASH_ASSIGNMENT = 328,
-     MODULO_ASSIGNMENT = 329,
-     PLUS_ASSIGNMENT = 330,
-     MINUS_ASSIGNMENT = 331,
-     LEFT_SHIFT_ASSIGNMENT = 332,
-     HASH = 333,
-     DECREMENT = 334,
-     RIGHT_PARENTHESES = 335,
-     BITWISE_AND = 336,
-     EQUALS = 337,
-     BITWISE_XOR = 338,
-     BITWISE_OR = 339,
-     LOGICAL_AND = 340,
-     LOGICAL_OR = 341,
-     RIGHT_SHIFT_ASSIGNMENT = 342,
-     NOT_EQUALS = 343,
-     BITWISE_AND_ASSIGNMENT = 344,
-     BITWISE_OR_ASSIGNMENT = 345,
-     BITWISE_XOR_ASSIGNMENT = 346,
-     INVALID_TOKEN = 347,
+     PARENTHESIS_OPEN = 258,
+     PARENTHESIS_CLOSE = 259,
+     CURLY_BRACE_OPEN = 260,
+     CURLY_BRACE_CLOSE = 261,
+     SQR_BRACE_OPEN = 262,
+     SQR_BRACE_CLOSE = 263,
+     INC_OP = 264,
+     DEC_OP = 265,
+     LEFT_OP = 266,
+     RIGHT_OP = 267,
+     EQ_OP = 268,
+     NE_OP = 269,
+     LTE_OP = 270,
+     GTE_OP = 271,
+     AND_OP = 272,
+     OR_OP = 273,
+     PTR_OP = 274,
+     LT_OP = 275,
+     GT_OP = 276,
+     EQ = 277,
+     DOT = 278,
+     BITWISEAND = 279,
+     BITWISEOR = 280,
+     BITWISEXOR = 281,
+     STAR = 282,
+     PLUS = 283,
+     MINUS = 284,
+     NOT = 285,
+     EXCLAMATION = 286,
+     DIVIDE = 287,
+     PERCENTAGE = 288,
+     ADD_ASSIGN = 289,
+     SUB_ASSIGN = 290,
+     MUL_ASSIGN = 291,
+     DIV_ASSIGN = 292,
+     MOD_ASSIGN = 293,
+     LEFT_ASSIGN = 294,
+     RIGHT_ASSIGN = 295,
+     OR_ASSIGN = 296,
+     AND_ASSIGN = 297,
+     XOR_ASSIGN = 298,
+     COLON = 299,
+     SEMI_COLON = 300,
+     ELLIPSIS = 301,
+     QUESTION_MARK = 302,
+     COMMA = 303,
+     HASH = 304,
+     EXTERN = 305,
+     STATIC = 306,
+     AUTO = 307,
+     REGISTER = 308,
+     VOIDTYPE = 309,
+     CHARTYPE = 310,
+     SHORT = 311,
+     INTTYPE = 312,
+     LONG = 313,
+     FLOATTYPE = 314,
+     DOUBLE = 315,
+     SIGNED = 316,
+     UNSIGNED = 317,
+     BOOL = 318,
+     COMPLEX = 319,
+     IMAGINARY = 320,
+     CONST = 321,
+     RESTRICT = 322,
+     VOLATILE = 323,
+     ENUM = 324,
+     INLINE = 325,
+     SIZEOF = 326,
+     STRUCT = 327,
+     TYPEDEF = 328,
+     UNION = 329,
+     IF = 330,
+     ELSE = 331,
+     CASE = 332,
+     DEFAULT = 333,
+     WHILE = 334,
+     CONTINUE = 335,
+     DO = 336,
+     GOTO = 337,
+     FOR = 338,
+     RETURN = 339,
+     BREAK = 340,
+     SWITCH = 341,
+     UNEXPECTED_TOKEN = 342,
+     IDENTIFIER = 343,
+     INTEGER_CONST = 344,
+     FLOAT_CONST = 345,
+     CHAR_CONST = 346,
+     STRING_LITERAL = 347,
      THEN = 348
    };
 #endif
 /* Tokens.  */
-#define AUTO 258
-#define BREAK 259
-#define CASE 260
-#define CHARTYPE 261
-#define CONST 262
-#define CONTINUE 263
-#define DEFAULT 264
-#define DO 265
-#define DOUBLE 266
-#define ELSE 267
-#define ENUM 268
-#define EXTERN 269
-#define FLOATTYPE 270
-#define FOR 271
-#define GOTO 272
-#define IF 273
-#define INLINE 274
-#define INTTYPE 275
-#define LONG 276
-#define REGISTER 277
-#define RESTRICT 278
-#define RETURN 279
-#define SHORT 280
-#define SIGNED 281
-#define SIZEOF 282
-#define STATIC 283
-#define STRUCT 284
-#define SWITCH 285
-#define TYPEDEF 286
-#define UNION 287
-#define UNSIGNED 288
-#define VOIDTYPE 289
-#define VOLATILE 290
-#define WHILE 291
-#define _BOOL 292
-#define _COMPLEX 293
-#define _IMAGINARY 294
-#define IDENTIFIER 295
-#define INTEGER_CONSTANT 296
-#define FLOATING_CONSTANT 297
-#define CHARACTER_CONSTANT 298
-#define STRING_LITERAL 299
-#define LEFT_SQUARE_BRACKET 300
-#define INCREMENT 301
-#define SLASH 302
-#define QUESTION_MARK 303
-#define ASSIGNMENT 304
-#define COMMA 305
-#define RIGHT_SQUARE_BRACKET 306
-#define LEFT_PARENTHESES 307
-#define LEFT_CURLY_BRACKET 308
-#define RIGHT_CURLY_BRACKET 309
-#define DOT 310
-#define ARROW 311
-#define ASTERISK 312
-#define PLUS 313
-#define MINUS 314
-#define TILDE 315
-#define EXCLAMATION 316
-#define MODULO 317
-#define LEFT_SHIFT 318
-#define RIGHT_SHIFT 319
-#define LESS_THAN 320
-#define GREATER_THAN 321
-#define LESS_EQUAL_THAN 322
-#define GREATER_EQUAL_THAN 323
-#define COLON 324
-#define SEMI_COLON 325
-#define ELLIPSIS 326
-#define ASTERISK_ASSIGNMENT 327
-#define SLASH_ASSIGNMENT 328
-#define MODULO_ASSIGNMENT 329
-#define PLUS_ASSIGNMENT 330
-#define MINUS_ASSIGNMENT 331
-#define LEFT_SHIFT_ASSIGNMENT 332
-#define HASH 333
-#define DECREMENT 334
-#define RIGHT_PARENTHESES 335
-#define BITWISE_AND 336
-#define EQUALS 337
-#define BITWISE_XOR 338
-#define BITWISE_OR 339
-#define LOGICAL_AND 340
-#define LOGICAL_OR 341
-#define RIGHT_SHIFT_ASSIGNMENT 342
-#define NOT_EQUALS 343
-#define BITWISE_AND_ASSIGNMENT 344
-#define BITWISE_OR_ASSIGNMENT 345
-#define BITWISE_XOR_ASSIGNMENT 346
-#define INVALID_TOKEN 347
+#define PARENTHESIS_OPEN 258
+#define PARENTHESIS_CLOSE 259
+#define CURLY_BRACE_OPEN 260
+#define CURLY_BRACE_CLOSE 261
+#define SQR_BRACE_OPEN 262
+#define SQR_BRACE_CLOSE 263
+#define INC_OP 264
+#define DEC_OP 265
+#define LEFT_OP 266
+#define RIGHT_OP 267
+#define EQ_OP 268
+#define NE_OP 269
+#define LTE_OP 270
+#define GTE_OP 271
+#define AND_OP 272
+#define OR_OP 273
+#define PTR_OP 274
+#define LT_OP 275
+#define GT_OP 276
+#define EQ 277
+#define DOT 278
+#define BITWISEAND 279
+#define BITWISEOR 280
+#define BITWISEXOR 281
+#define STAR 282
+#define PLUS 283
+#define MINUS 284
+#define NOT 285
+#define EXCLAMATION 286
+#define DIVIDE 287
+#define PERCENTAGE 288
+#define ADD_ASSIGN 289
+#define SUB_ASSIGN 290
+#define MUL_ASSIGN 291
+#define DIV_ASSIGN 292
+#define MOD_ASSIGN 293
+#define LEFT_ASSIGN 294
+#define RIGHT_ASSIGN 295
+#define OR_ASSIGN 296
+#define AND_ASSIGN 297
+#define XOR_ASSIGN 298
+#define COLON 299
+#define SEMI_COLON 300
+#define ELLIPSIS 301
+#define QUESTION_MARK 302
+#define COMMA 303
+#define HASH 304
+#define EXTERN 305
+#define STATIC 306
+#define AUTO 307
+#define REGISTER 308
+#define VOIDTYPE 309
+#define CHARTYPE 310
+#define SHORT 311
+#define INTTYPE 312
+#define LONG 313
+#define FLOATTYPE 314
+#define DOUBLE 315
+#define SIGNED 316
+#define UNSIGNED 317
+#define BOOL 318
+#define COMPLEX 319
+#define IMAGINARY 320
+#define CONST 321
+#define RESTRICT 322
+#define VOLATILE 323
+#define ENUM 324
+#define INLINE 325
+#define SIZEOF 326
+#define STRUCT 327
+#define TYPEDEF 328
+#define UNION 329
+#define IF 330
+#define ELSE 331
+#define CASE 332
+#define DEFAULT 333
+#define WHILE 334
+#define CONTINUE 335
+#define DO 336
+#define GOTO 337
+#define FOR 338
+#define RETURN 339
+#define BREAK 340
+#define SWITCH 341
+#define UNEXPECTED_TOKEN 342
+#define IDENTIFIER 343
+#define INTEGER_CONST 344
+#define FLOAT_CONST 345
+#define CHAR_CONST 346
+#define STRING_LITERAL 347
 #define THEN 348
 
 
