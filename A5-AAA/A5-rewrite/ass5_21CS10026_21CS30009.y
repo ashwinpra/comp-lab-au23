@@ -326,43 +326,44 @@ unary_expression:
         $$ = new Array();
 
         // operation depends on unary operator
-        if(!strcmp($1,"+")){
+
+        if(strcmp($1,"&")==0){
+            // address of -> generate new pointer type
+            $$->symbol = gentemp(POINTER);
+            $$->symbol->type->arr_type = $2->symbol->type;
+            emit("=&", $$->symbol->name, $2->symbol->name);
+        }
+
+        else if(strcmp($1,"*")==0){
+            // dereference 
+            $$->symbol = $2->symbol;
+            $$->loc = gentemp($2->loc->type->arr_type->type);
+            $$->loc->type->arr_type = $2->loc->type->arr_type->arr_type;
+            $$->type = Array::POINTER;
+            emit("=*", $$->loc->name, $2->loc->name);
+        }
+
+        else if(strcmp($1,"+")==0){
             // unary plus
             $$=$2;
         }
             
-        else if(!strcmp($1,"-")){
+        else if(strcmp($1,"-")==0){
             // unary minus - negation of cast expression
             $$->symbol = gentemp($2->symbol->type->type);
             emit("=-", $$->symbol->name, $2->symbol->name); 
         }
 
-        else if(!strcmp($1,"~")){
+        else if(strcmp($1,"~")==0){
             // bitwise not
             $$->symbol = gentemp($2->symbol->type->type);
             emit("~", $$->symbol->name, $2->symbol->name);
         }
         
-        else if(!strcmp($1,"!")){
+        else if(strcmp($1,"!")==0){
             // logical not
             $$->symbol = gentemp($2->symbol->type->type);
             emit("!", $$->symbol->name, $2->symbol->name);
-        }
-
-        else if(!strcmp($1,"&")){
-            // address of -> generate new pointer type
-            $$->symbol = gentemp(TYPE_POINTER);
-            $$->symbol->type->arr_type = $2->symbol->type;
-            emit("=&", $$->symbol->name, $2->symbol->name);
-        }
-
-        else if(!strcmp($1,"*")){
-            // dereference 
-            $$->symbol = $2->symbol;
-            $$->loc = gentemp($2->loc->type->arr_type->type);
-            $$->loc->type->arr_type = $2->loc->type->arr_type->arr_type;
-            $$->type = Array::TYPE_POINTER;
-            emit("=*", $$->loc->name, $2->loc->name);
         }
     }
 
@@ -1813,7 +1814,7 @@ selection_statement:
         backpatch($3->falselist, $9); // if false, go to M2 (else-statement)
 
         list <int> li = merge($6->nextlist, $7->nextlist);
-        $$->nextlist = merge($10->nextlist, li); // to go out of if-else
+        $$->nextlist = merge($10->nextlist, li); // to go out of if-else after it's done
     }
 
     /* %prec THEN added to remove translation conflicts */
@@ -1829,7 +1830,7 @@ selection_statement:
         backpatch($3->truelist, $5);  // if true, go to M1 (if-statement)
 
         list <int> li = merge($6->nextlist, $7->nextlist);
-        $$->nextlist = merge($3->falselist,li); // to go out of if-statement
+        $$->nextlist = merge($3->falselist,li); // to go out of if-statement if expression is false
     }
 
     | SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement

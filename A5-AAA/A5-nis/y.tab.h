@@ -125,9 +125,9 @@
      SWITCH = 341,
      UNEXPECTED_TOKEN = 342,
      IDENTIFIER = 343,
-     INTEGER_CONSTANT = 344,
-     FLOATING_CONSTANT = 345,
-     CHARACTER_CONSTANT = 346,
+     INTEGER_CONST = 344,
+     FLOAT_CONST = 345,
+     CHAR_CONST = 346,
      STRING_LITERAL = 347,
      THEN = 348
    };
@@ -219,9 +219,9 @@
 #define SWITCH 341
 #define UNEXPECTED_TOKEN 342
 #define IDENTIFIER 343
-#define INTEGER_CONSTANT 344
-#define FLOATING_CONSTANT 345
-#define CHARACTER_CONSTANT 346
+#define INTEGER_CONST 344
+#define FLOAT_CONST 345
+#define CHAR_CONST 346
 #define STRING_LITERAL 347
 #define THEN 348
 
@@ -230,19 +230,19 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "ass5_19CS30031_19CS10070.y"
+#line 9 "ass5_19CS30031_19CS10070.y"
 {
-    int intVal;
-    char *floatVal;
-    char *charVal;
-    char *stringVal;
-    char *unaryOperator;
-    int instructionNumber;
-    int parameterCount;
-    Expression *expression;
-    Statement *statement;
+    int ival;
+    char *fval;
+    char *cval;
+    char *sval;
+    char *unary_op;
+    int instr_num;
+    int num_params;
+    Expression *expr;
+    Statement *stmt;
     Array *array;
-    SymType *SymType;
+    SymType *sym_type;
     Symbol *symbol;
 }
 /* Line 1529 of yacc.c.  */

@@ -78,10 +78,10 @@ whitespace [ \t\n]
 "break"                     {return BREAK;}
 
 {identifier}                    { yylval.symbol = currentTable->lookup(yytext);; return IDENTIFIER; }
-{integer_constant}              { yylval.intVal = atoi(yytext); return INTEGER_CONSTANT; }
-{float_constant}                 { yylval.floatVal = strdup(yytext); return FLOATING_CONSTANT; }
-{char_constant}                 { yylval.charVal = strdup(yytext); return CHARACTER_CONSTANT; }
-{string_literal}                { yylval.stringVal = strdup(yytext); return STRING_LITERAL; }
+{integer_constant}              { yylval.ival = atoi(yytext); return INTEGER_CONST; }
+{float_constant}                 { yylval.fval = strdup(yytext); return FLOAT_CONST; }
+{char_constant}                 { yylval.cval = strdup(yytext); return CHAR_CONST; }
+{string_literal}                { yylval.sval = strdup(yytext); return STRING_LITERAL; }
 
 "("                         {return PARENTHESIS_OPEN;}
 ")"                         {return PARENTHESIS_CLOSE;}

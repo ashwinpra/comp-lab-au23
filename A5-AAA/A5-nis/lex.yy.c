@@ -1096,22 +1096,22 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 81 "ass5_19CS30031_19CS10070.l"
-{ yylval.intVal = atoi(yytext); return INTEGER_CONSTANT; }
+{ yylval.ival = atoi(yytext); return INTEGER_CONST; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 82 "ass5_19CS30031_19CS10070.l"
-{ yylval.floatVal = strdup(yytext); return FLOATING_CONSTANT; }
+{ yylval.fval = strdup(yytext); return FLOAT_CONST; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 83 "ass5_19CS30031_19CS10070.l"
-{ yylval.charVal = strdup(yytext); return CHARACTER_CONSTANT; }
+{ yylval.cval = strdup(yytext); return CHAR_CONST; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 84 "ass5_19CS30031_19CS10070.l"
-{ yylval.stringVal = strdup(yytext); return STRING_LITERAL; }
+{ yylval.sval = strdup(yytext); return STRING_LITERAL; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
