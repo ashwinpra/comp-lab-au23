@@ -13,10 +13,12 @@ int block_count;
 // Sym class methods 
 
 Sym::Sym(string name_, TYPE type_, SymType* arr_type_, int width_, string init_val_): name(name_), type(new SymType(type_, width_, arr_type_)), init_val(init_val_), offset(0), parent_table(NULL) {
+    cout<<"In sym constructor"<<endl;
     this->size = computeSize(this->type);
 }
 
 Sym* Sym::update(SymType* type){
+    cout<<"In sym update"<<endl;
     this->type = type;
     this->size = computeSize(type);
     return this;
@@ -24,15 +26,19 @@ Sym* Sym::update(SymType* type){
 
 // SymType class methods
 
-SymType::SymType(TYPE type_, int width_, SymType* arr_type_): type(type_), width(width_), arr_type(arr_type_)  {}
+SymType::SymType(TYPE type_, int width_, SymType* arr_type_): type(type_), width(width_), arr_type(arr_type_)  {
+    cout<<"In symtype constructor"<<endl;
+}
 
 // SymTable class methods
 
-SymTable::SymTable(string name_, SymTable* parent_): name(name_), count(0), parent(parent_) {}
+SymTable::SymTable(string name_, SymTable* parent_): name(name_), count(0), parent(parent_) {
+    cout<<"In symtable constructor"<<endl;
+}
 
 // lookup for a symbol in the symbol table, or add if not present - as mentioned in the assignment
 Sym* SymTable::lookup(string name){
-
+    cout<<"In symtable lookup"<<endl;
     list<Sym>::iterator it = (this->table).begin();
 
     while(it != (this->table).end()){
@@ -50,7 +56,7 @@ Sym* SymTable::lookup(string name){
 
 // update offset of existing entries - as mentioned in the assignment
 void SymTable::update() {
-
+    cout<<"In symtable update"<<endl;
     int offs = 0;
     list<SymTable*> parent_tables;
     list<Sym>::iterator it = (this->table).begin();
@@ -224,16 +230,19 @@ void Quad::print() {
 // global functions
 
 list<int> makelist(int i){
+    cout<<"In makelist"<<endl;
     list<int> l(1,i);
     return l;
 }
 
 list<int> merge(list<int> &a, list<int> &b){
+    cout<<"In merge"<<endl;
     a.merge(b);
     return a;
 }
 
 void backpatch(list<int> &a, int i){
+    cout<<"In backpatch"<<endl;
     list<int>::iterator it = a.begin();
     while(it != a.end()){
         qArr[*it]->res = to_string(i);
@@ -242,6 +251,7 @@ void backpatch(list<int> &a, int i){
 }
 
 bool typecheck(Sym* s1, Sym* s2){
+    cout<<"In typecheck Sym"<<endl;
     if(typecheck(s1->type, s2->type))
         return true;
     else {
@@ -262,6 +272,7 @@ bool typecheck(Sym* s1, Sym* s2){
 }
 
 bool typecheck(SymType* t1, SymType* t2){
+    cout<<"In typecheck SymType"<<endl;
     // check recursively if symbol types are same 
 
     // if both of them reach NULL together
@@ -277,7 +288,7 @@ bool typecheck(SymType* t1, SymType* t2){
 
 // converts to "ret_type" if possible, else returns the same symbol
 Sym* convertType(Sym* sym, TYPE ret_type){
-
+    cout<<"In convertType"<<endl;
     if(sym->type->type == TYPE_INT){
         if(ret_type == TYPE_FLOAT){
             Sym* temp = gentemp(TYPE_FLOAT);
@@ -325,8 +336,14 @@ Sym* convertType(Sym* sym, TYPE ret_type){
 
 
 Expression* convInt2Bool(Expression* e){
+    cout<<"In convInt2Bool"<<endl;
     e->falselist = makelist(nextinstr());
-    emit("==", "", e->symbol->name, "0");
+    cout<<"here 1"<<endl;
+    if(e->symbol==NULL)
+        cout<<"symbol is null"<<endl;
+    else
+        emit("==", "", e->symbol->name, "0");
+    cout<<"here 2"<<endl;
     e->truelist = makelist(nextinstr());
     emit("goto", "");
 
@@ -334,6 +351,7 @@ Expression* convInt2Bool(Expression* e){
 }
 
 Expression* convBool2Int(Expression* e){
+    cout<<"In convBool2Int"<<endl;
     e->symbol = gentemp(TYPE_INT);
     backpatch(e->truelist, nextinstr());
     emit("=", e->symbol->name, "true"); // check
@@ -346,10 +364,12 @@ Expression* convBool2Int(Expression* e){
 
 
 int nextinstr(){
+    cout<<"In nextinstr"<<endl;
     return qArr.size();
 }
 
 int computeSize(SymType* st){
+    cout<<"In computeSize"<<endl;
     if(st->type == TYPE_VOID)
         return SIZE_OF_VOID;
     else if(st->type == TYPE_CHAR)
@@ -378,26 +398,30 @@ void printQuadArray(){
 }
 
 void changeTable(SymTable* st){
+    cout<<"In changeTable"<<endl;
     currentST = st;
 }
 
 void emit(string op, string res, string arg1, string arg2){
+    cout<<"In emit 1"<<endl;
     Quad* q = new Quad(op, res, arg1, arg2);
     qArr.push_back(q);
 }
 
 void emit(string op, string res, int arg1, string arg2){
+    cout<<"In emit 2"<<endl;
     Quad* q = new Quad(op, res, arg1, arg2);
     qArr.push_back(q);
 }
 
 void emit(string op, string res, float arg1, string arg2){
+    cout<<"In emit 3"<<endl;
     Quad* q = new Quad(op, res, arg1, arg2);
     qArr.push_back(q);
 }
 
 Sym* gentemp(TYPE type, string init_val){
-    cout<<"generating temp with init_val = "<<init_val<<" currentST->count = "<<to_string(currentST->count)<<endl;
+    cout<<"In gentemp"<<endl;
     string name = "t" + to_string(currentST->count++);
     Sym* s = new Sym(name, type, NULL, 0, init_val);
     currentST->table.push_back(*s);
