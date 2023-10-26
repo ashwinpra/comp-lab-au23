@@ -1104,324 +1104,340 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 94 "ass5_19CS30031_19CS10070.l"
-{ yylval.symbol = currentTable->lookup(yytext);; return IDENTIFIER; }
+#line 95 "ass5_19CS30031_19CS10070.l"
+{ 
+                                    yylval.symbol = currentST->lookup(yytext); 
+                                    return IDENTIFIER; 
+                                
+                                }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 95 "ass5_19CS30031_19CS10070.l"
-{ yylval.ival = atoi(yytext); return INTEGER_CONST; }
+#line 100 "ass5_19CS30031_19CS10070.l"
+{ 
+                                    yylval.ival = atoi(yytext); 
+                                    return INTEGER_CONST; 
+                                }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 96 "ass5_19CS30031_19CS10070.l"
-{ yylval.fval = strdup(yytext); return FLOAT_CONST; }
+#line 105 "ass5_19CS30031_19CS10070.l"
+{ 
+                                    yylval.fval = strdup(yytext); 
+                                    return FLOAT_CONST; 
+                                }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 97 "ass5_19CS30031_19CS10070.l"
-{ yylval.cval = strdup(yytext); return CHAR_CONST; }
+#line 110 "ass5_19CS30031_19CS10070.l"
+{ 
+                                    yylval.cval = strdup(yytext); 
+                                    return CHAR_CONST; 
+                                }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 98 "ass5_19CS30031_19CS10070.l"
-{ yylval.sval = strdup(yytext); return STRING_LITERAL; }
+#line 115 "ass5_19CS30031_19CS10070.l"
+{ 
+                                    yylval.sval = strdup(yytext);
+                                     return STRING_LITERAL; 
+                                }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 100 "ass5_19CS30031_19CS10070.l"
+#line 121 "ass5_19CS30031_19CS10070.l"
 {return PARENTHESIS_OPEN;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 101 "ass5_19CS30031_19CS10070.l"
+#line 122 "ass5_19CS30031_19CS10070.l"
 {return PARENTHESIS_CLOSE;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 102 "ass5_19CS30031_19CS10070.l"
+#line 123 "ass5_19CS30031_19CS10070.l"
 {return CURLY_BRACE_OPEN;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 103 "ass5_19CS30031_19CS10070.l"
+#line 124 "ass5_19CS30031_19CS10070.l"
 {return CURLY_BRACE_CLOSE;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 104 "ass5_19CS30031_19CS10070.l"
+#line 125 "ass5_19CS30031_19CS10070.l"
 {return SQR_BRACE_OPEN;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 105 "ass5_19CS30031_19CS10070.l"
+#line 126 "ass5_19CS30031_19CS10070.l"
 {return SQR_BRACE_CLOSE;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 107 "ass5_19CS30031_19CS10070.l"
+#line 128 "ass5_19CS30031_19CS10070.l"
 {return INC_OP;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 108 "ass5_19CS30031_19CS10070.l"
+#line 129 "ass5_19CS30031_19CS10070.l"
 {return DEC_OP;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 109 "ass5_19CS30031_19CS10070.l"
+#line 130 "ass5_19CS30031_19CS10070.l"
 {return LEFT_OP;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 110 "ass5_19CS30031_19CS10070.l"
+#line 131 "ass5_19CS30031_19CS10070.l"
 {return RIGHT_OP;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 111 "ass5_19CS30031_19CS10070.l"
+#line 132 "ass5_19CS30031_19CS10070.l"
 {return EQ_OP;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 112 "ass5_19CS30031_19CS10070.l"
+#line 133 "ass5_19CS30031_19CS10070.l"
 {return NE_OP;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 113 "ass5_19CS30031_19CS10070.l"
+#line 134 "ass5_19CS30031_19CS10070.l"
 {return LTE_OP;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 114 "ass5_19CS30031_19CS10070.l"
+#line 135 "ass5_19CS30031_19CS10070.l"
 {return GTE_OP;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 115 "ass5_19CS30031_19CS10070.l"
+#line 136 "ass5_19CS30031_19CS10070.l"
 {return AND_OP;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 116 "ass5_19CS30031_19CS10070.l"
+#line 137 "ass5_19CS30031_19CS10070.l"
 {return OR_OP;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 117 "ass5_19CS30031_19CS10070.l"
+#line 138 "ass5_19CS30031_19CS10070.l"
 {return PTR_OP;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 118 "ass5_19CS30031_19CS10070.l"
+#line 139 "ass5_19CS30031_19CS10070.l"
 {return LT_OP;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 119 "ass5_19CS30031_19CS10070.l"
+#line 140 "ass5_19CS30031_19CS10070.l"
 {return GT_OP;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 120 "ass5_19CS30031_19CS10070.l"
+#line 141 "ass5_19CS30031_19CS10070.l"
 {return EQ;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 121 "ass5_19CS30031_19CS10070.l"
+#line 142 "ass5_19CS30031_19CS10070.l"
 {return DOT;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 122 "ass5_19CS30031_19CS10070.l"
+#line 143 "ass5_19CS30031_19CS10070.l"
 {return BITWISEAND;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 123 "ass5_19CS30031_19CS10070.l"
+#line 144 "ass5_19CS30031_19CS10070.l"
 {return BITWISEOR;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 124 "ass5_19CS30031_19CS10070.l"
+#line 145 "ass5_19CS30031_19CS10070.l"
 {return BITWISEXOR;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 125 "ass5_19CS30031_19CS10070.l"
+#line 146 "ass5_19CS30031_19CS10070.l"
 {return STAR;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 126 "ass5_19CS30031_19CS10070.l"
+#line 147 "ass5_19CS30031_19CS10070.l"
 {return PLUS;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 127 "ass5_19CS30031_19CS10070.l"
+#line 148 "ass5_19CS30031_19CS10070.l"
 {return MINUS;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 128 "ass5_19CS30031_19CS10070.l"
+#line 149 "ass5_19CS30031_19CS10070.l"
 {return NOT;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 129 "ass5_19CS30031_19CS10070.l"
+#line 150 "ass5_19CS30031_19CS10070.l"
 {return EXCLAMATION;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 130 "ass5_19CS30031_19CS10070.l"
+#line 151 "ass5_19CS30031_19CS10070.l"
 {return DIVIDE;}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 131 "ass5_19CS30031_19CS10070.l"
+#line 152 "ass5_19CS30031_19CS10070.l"
 {return PERCENTAGE;}
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 133 "ass5_19CS30031_19CS10070.l"
+#line 154 "ass5_19CS30031_19CS10070.l"
 {return ADD_ASSIGN;}
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 134 "ass5_19CS30031_19CS10070.l"
+#line 155 "ass5_19CS30031_19CS10070.l"
 {return SUB_ASSIGN;}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 135 "ass5_19CS30031_19CS10070.l"
+#line 156 "ass5_19CS30031_19CS10070.l"
 {return MUL_ASSIGN;}
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 136 "ass5_19CS30031_19CS10070.l"
+#line 157 "ass5_19CS30031_19CS10070.l"
 {return DIV_ASSIGN;}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 137 "ass5_19CS30031_19CS10070.l"
+#line 158 "ass5_19CS30031_19CS10070.l"
 {return MOD_ASSIGN;}
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 138 "ass5_19CS30031_19CS10070.l"
+#line 159 "ass5_19CS30031_19CS10070.l"
 {return LEFT_ASSIGN;}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 139 "ass5_19CS30031_19CS10070.l"
+#line 160 "ass5_19CS30031_19CS10070.l"
 {return RIGHT_ASSIGN;}
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 140 "ass5_19CS30031_19CS10070.l"
+#line 161 "ass5_19CS30031_19CS10070.l"
 {return OR_ASSIGN;}
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 141 "ass5_19CS30031_19CS10070.l"
+#line 162 "ass5_19CS30031_19CS10070.l"
 {return AND_ASSIGN;}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 142 "ass5_19CS30031_19CS10070.l"
+#line 163 "ass5_19CS30031_19CS10070.l"
 {return XOR_ASSIGN;}
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 144 "ass5_19CS30031_19CS10070.l"
+#line 165 "ass5_19CS30031_19CS10070.l"
 {return COLON;}
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 145 "ass5_19CS30031_19CS10070.l"
+#line 166 "ass5_19CS30031_19CS10070.l"
 {return SEMI_COLON;}
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 146 "ass5_19CS30031_19CS10070.l"
+#line 167 "ass5_19CS30031_19CS10070.l"
 {return ELLIPSIS;}
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 147 "ass5_19CS30031_19CS10070.l"
+#line 168 "ass5_19CS30031_19CS10070.l"
 {return QUESTION_MARK;}
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 148 "ass5_19CS30031_19CS10070.l"
+#line 169 "ass5_19CS30031_19CS10070.l"
 {return COMMA;}
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 149 "ass5_19CS30031_19CS10070.l"
+#line 170 "ass5_19CS30031_19CS10070.l"
 {return HASH;}
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 151 "ass5_19CS30031_19CS10070.l"
+#line 172 "ass5_19CS30031_19CS10070.l"
 { BEGIN(multi_line_comment); }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 152 "ass5_19CS30031_19CS10070.l"
+#line 173 "ass5_19CS30031_19CS10070.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 153 "ass5_19CS30031_19CS10070.l"
+#line 174 "ass5_19CS30031_19CS10070.l"
 { }
 	YY_BREAK
 case 93:
 /* rule 93 can match eol */
 YY_RULE_SETUP
-#line 154 "ass5_19CS30031_19CS10070.l"
+#line 175 "ass5_19CS30031_19CS10070.l"
 { yylineno++; }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 156 "ass5_19CS30031_19CS10070.l"
+#line 177 "ass5_19CS30031_19CS10070.l"
 { BEGIN(single_line_comment); }
 	YY_BREAK
 case 95:
 /* rule 95 can match eol */
 YY_RULE_SETUP
-#line 157 "ass5_19CS30031_19CS10070.l"
+#line 178 "ass5_19CS30031_19CS10070.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 158 "ass5_19CS30031_19CS10070.l"
+#line 179 "ass5_19CS30031_19CS10070.l"
 { }
 	YY_BREAK
 case 97:
 /* rule 97 can match eol */
 YY_RULE_SETUP
-#line 160 "ass5_19CS30031_19CS10070.l"
+#line 181 "ass5_19CS30031_19CS10070.l"
 { yylineno++; }
 	YY_BREAK
 case 98:
 /* rule 98 can match eol */
 YY_RULE_SETUP
-#line 162 "ass5_19CS30031_19CS10070.l"
+#line 183 "ass5_19CS30031_19CS10070.l"
 { }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 164 "ass5_19CS30031_19CS10070.l"
+#line 185 "ass5_19CS30031_19CS10070.l"
 { return UNEXPECTED_TOKEN; } // if no matches, return unexpected token
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 166 "ass5_19CS30031_19CS10070.l"
+#line 187 "ass5_19CS30031_19CS10070.l"
 ECHO;
 	YY_BREAK
-#line 1424 "lex.yy.c"
+#line 1440 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(multi_line_comment):
 case YY_STATE_EOF(single_line_comment):
@@ -2428,7 +2444,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 166 "ass5_19CS30031_19CS10070.l"
+#line 187 "ass5_19CS30031_19CS10070.l"
 
 
 int yywrap() { return 1; }

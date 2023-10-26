@@ -2,7 +2,7 @@
 
 // Global Variables
 vector<Quad *> quadArray;  // Quad Array
-SymTable *currentTable, *globalTable, *parentTable;  // Symbol Tables
+SymTable *currentST, *globalST, *parentTable;  // Symbol Tables
 Symbol *currentSymbol;  // Current Symbol
 TYPE currentType;  // Current Type
 int tableCount;  // Counts of number of tables and number of temps generated
@@ -13,7 +13,7 @@ int tableCount;  // Counts of number of tables and number of temps generated
 SymType::SymType(TYPE type_, SymType *arr_type_, int width_) : type(type_), width(width_), arr_type(arr_type_) {}
 
 // to get size (machine-dependent)
-int SymType::getSize() {
+int SymType::computeSize() {
     if (type == CHAR)
         return SIZE_OF_CHAR;
     else if (type == INT)
@@ -23,7 +23,7 @@ int SymType::getSize() {
     else if (type == POINTER)
         return SIZE_OF_POINTER;
     else if (type == ARRAY)
-        return width * (arr_type->getSize());
+        return width * (arr_type->computeSize());
     else
         return -1;
 }
@@ -88,8 +88,8 @@ void SymTable::update() {
             it->offset = offset;
             offset += it->size;
         }
-        if (it->nestedTable) {
-            nested_tables.push_back(it->nestedTable);
+        if (it->nestedST) {
+            nested_tables.push_back(it->nestedST);
         }
         it++;
     }
@@ -119,11 +119,11 @@ void SymTable::print() {
         <<it->init_val<<"\t\t\t\t"
         <<it->size<<"\t\t"
         <<it->offset<<"\t\t\t"
-        <<(it->nestedTable == NULL ? "NULL" : it->nestedTable->name)<<endl;
+        <<(it->nestedST == NULL ? "NULL" : it->nestedST->name)<<endl;
 
-        // parent tables are also printed recursively
-        if(it->nestedTable != NULL)
-            nested_tables.push_back(it->nestedTable);
+        // nested tables stored to print them later on, recursively
+        if(it->nestedST != NULL)
+            nested_tables.push_back(it->nestedST);
 
         it++;
     }
@@ -142,14 +142,14 @@ void SymTable::print() {
 
 // Symbol class methods
 
-Symbol::Symbol(string name_, TYPE type_, string init_val_) : name(name_), type(new SymType(type_)), offset(0), nestedTable(NULL), init_val(init_val_), isFunction(false) {
-    size = this->type->getSize();
+Symbol::Symbol(string name_, TYPE type_, string init_val_) : name(name_), type(new SymType(type_)), offset(0), nestedST(NULL), init_val(init_val_), isFunction(false) {
+    size = this->type->computeSize();
 }
 
 // update type to given type
 Symbol *Symbol::update(SymType *type) {
     this->type = type;
-    size = this->type->getSize();
+    size = this->type->computeSize();
     return this;
 }
 
@@ -275,7 +275,6 @@ void Quad::print() {
     else if (op == "[]=")
         cout<<this->res<<"["<<this->arg1<<"]"<<" = "<<this->arg2<<endl;
 
-
     // goto res
     else if (op == "goto")
         cout<<"goto "<<this->res<<endl;
@@ -367,13 +366,13 @@ int nextinstr() {
 }
 
 Symbol *gentemp(TYPE type, string val) {
-    Symbol *temp = new Symbol("t" + to_string(currentTable->count++), type, val);
-    (currentTable->symbols).push_back(*temp);
+    Symbol *temp = new Symbol("t" + to_string(currentST->count++), type, val);
+    (currentST->symbols).push_back(*temp);
     return temp;
 }
 
 void changeTable(SymTable *ST) {
-    currentTable = ST;
+    currentST = ST;
 }
 
 
@@ -425,13 +424,13 @@ void printQuadArray() {
 
 int main() {
     tableCount = 0;
-    globalTable = new SymTable("global");
-    currentTable = globalTable;
+    globalST = new SymTable("global");
+    currentST = globalST;
 
     yyparse();
 
-    globalTable->update();
-    globalTable->print();
+    globalST->update();
+    globalST->print();
     
     printQuadArray();
 

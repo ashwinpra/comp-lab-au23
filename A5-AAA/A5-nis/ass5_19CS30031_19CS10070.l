@@ -91,11 +91,32 @@ whitespace [ \t\n]
 "return"                    {return RETURN;}
 "break"                     {return BREAK;}
 
-{identifier}                    { yylval.symbol = currentTable->lookup(yytext);; return IDENTIFIER; }
-{integer_constant}              { yylval.ival = atoi(yytext); return INTEGER_CONST; }
-{float_constant}                 { yylval.fval = strdup(yytext); return FLOAT_CONST; }
-{char_constant}                 { yylval.cval = strdup(yytext); return CHAR_CONST; }
-{string_literal}                { yylval.sval = strdup(yytext); return STRING_LITERAL; }
+
+{identifier}                    { 
+                                    yylval.symbol = currentST->lookup(yytext); 
+                                    return IDENTIFIER; 
+                                
+                                }
+{integer_constant}              { 
+                                    yylval.ival = atoi(yytext); 
+                                    return INTEGER_CONST; 
+                                }
+
+{float_constant}                { 
+                                    yylval.fval = strdup(yytext); 
+                                    return FLOAT_CONST; 
+                                }
+
+{char_constant}                 { 
+                                    yylval.cval = strdup(yytext); 
+                                    return CHAR_CONST; 
+                                }
+
+{string_literal}                { 
+                                    yylval.sval = strdup(yytext);
+                                     return STRING_LITERAL; 
+                                }
+
 
 "("                         {return PARENTHESIS_OPEN;}
 ")"                         {return PARENTHESIS_CLOSE;}

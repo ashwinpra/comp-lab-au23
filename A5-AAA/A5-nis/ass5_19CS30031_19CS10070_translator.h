@@ -49,7 +49,7 @@ class SymType {
 
         SymType(TYPE type_, SymType *arr_type_ = NULL, int width_ = 1);  // constructor
 
-        int getSize();  // to compute size of the symbol type
+        int computeSize();  // to compute size of the symbol type
 
         string toString(); // returns the string representation of the type
 };
@@ -75,7 +75,7 @@ class Symbol {
         int size;                       // size of the symbol
         int offset;                     // offset of the symbol
         SymType *type;                   // type of the symbol
-        SymTable *nestedTable;          // pointer to parent symbol table if any
+        SymTable *nestedST;          // pointer to parent symbol table if any
         string init_val;            // initial value of the symbol
 
         // check this
@@ -134,7 +134,7 @@ class Statement {
 
 // Global variables
 extern vector<Quad *> quadArray; // array of quads
-extern SymTable *currentTable, *globalTable; // current and global symbol tables
+extern SymTable *currentST, *globalST; // current and global symbol tables
 extern Symbol *currentSymbol;  // current symbol
 extern TYPE currentType;  // current type
 extern int tableCount;

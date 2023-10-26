@@ -99,12 +99,12 @@ N:
 // to change symbol table, in case of functions
 CT:
     {
-        if(currentSymbol->nestedTable == NULL) {
+        if(currentSymbol->nestedST == NULL) {
             changeTable(new SymTable(""));
         }
         else {
-            changeTable(currentSymbol->nestedTable);
-            emit("label", currentTable->name);
+            changeTable(currentSymbol->nestedST);
+            emit("label", currentST->name);
         }
     }
 ;
@@ -112,9 +112,9 @@ CT:
 // to change symbol table, in case of blocks
 CB: 
     {
-        string name = currentTable->name + "_" + to_string(tableCount++); // name for new ST
-        Symbol *s = currentTable->lookup(name); 
-        s->nestedTable = new SymTable(name, currentTable);
+        string name = currentST->name + "_" + to_string(tableCount++); // name for new ST
+        Symbol *s = currentST->lookup(name); 
+        s->nestedST = new SymTable(name, currentST);
         s->type = new SymType(BLOCK);
         currentSymbol = s;
     } 
@@ -196,12 +196,12 @@ postfix_expression:
             if($1->type == Array::ARRAY) {
                 // multi-dimensional array - so need to multiply size and add offset
                 Symbol *sym = gentemp(INT);
-                int size = $$->subarr_type->getSize();
+                int size = $$->subarr_type->computeSize();
                 emit("*", sym->name, $3->symbol->name, to_string(size));
                 emit("+", $$->loc->name, $1->loc->name, sym->name);
             } else {
                 // 1D array - just calculate size
-                int size = $$->subarr_type->getSize();
+                int size = $$->subarr_type->computeSize();
                 emit("*", $$->loc->name, $3->symbol->name, to_string(size));
             }
 
@@ -1174,18 +1174,18 @@ direct_declarator:
     | direct_declarator PARENTHESIS_OPEN CT parameter_type_list PARENTHESIS_CLOSE
         { 
             // function declaration
-            currentTable->name = $1->name;
+            currentST->name = $1->name;
 
             if($1->type->type != VOID) {
-                Symbol* s = currentTable->lookup("return");
+                Symbol* s = currentST->lookup("return");
                 s->update($1->type);
             }
 
             // set nested table for function
-            $1->nestedTable = currentTable;
-            currentTable->parent = globalTable;
+            $1->nestedST = currentST;
+            currentST->parent = globalST;
 
-            changeTable(globalTable); // change to global table
+            changeTable(globalST); // change to global table
             currentSymbol = $$;
         }
 
@@ -1195,18 +1195,18 @@ direct_declarator:
     | direct_declarator PARENTHESIS_OPEN CT PARENTHESIS_CLOSE
         { 
             // same as previous one
-            currentTable->name = $1->name;
+            currentST->name = $1->name;
 
             if($1->type->type != VOID) {
-                Symbol* s = currentTable->lookup("return");
+                Symbol* s = currentST->lookup("return");
                 s->update($1->type);
             }
 
             // set nested table for function
-            $1->nestedTable = currentTable;
-            currentTable->parent = globalTable;
+            $1->nestedST = currentST;
+            currentST->parent = globalST;
 
-            changeTable(globalTable); // change to global table
+            changeTable(globalST); // change to global table
             currentSymbol = $$;
         }
     ;
@@ -1381,7 +1381,7 @@ compound_statement:
     CURLY_BRACE_OPEN CB CT block_item_list_opt CURLY_BRACE_CLOSE
         { 
             $$ = $4;
-            changeTable(currentTable->parent); // return to parent ST
+            changeTable(currentST->parent); // return to parent ST
         }
     ;
 
@@ -1567,7 +1567,7 @@ function_definition:
         { 
             tableCount = 0;
             $2->isFunction = true;
-            changeTable(globalTable); // return to global ST
+            changeTable(globalST); // return to global ST
         }
     ;
 

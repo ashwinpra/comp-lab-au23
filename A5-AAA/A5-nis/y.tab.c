@@ -2037,12 +2037,12 @@ yyreduce:
   case 4:
 #line 101 "ass5_19CS30031_19CS10070.y"
     {
-        if(currentSymbol->nestedTable == NULL) {
+        if(currentSymbol->nestedST == NULL) {
             changeTable(new SymTable(""));
         }
         else {
-            changeTable(currentSymbol->nestedTable);
-            emit("label", currentTable->name);
+            changeTable(currentSymbol->nestedST);
+            emit("label", currentST->name);
         }
     }
     break;
@@ -2050,9 +2050,9 @@ yyreduce:
   case 5:
 #line 114 "ass5_19CS30031_19CS10070.y"
     {
-        string name = currentTable->name + "_" + to_string(tableCount++); // name for new ST
-        Symbol *s = currentTable->lookup(name); 
-        s->nestedTable = new SymTable(name, currentTable);
+        string name = currentST->name + "_" + to_string(tableCount++); // name for new ST
+        Symbol *s = currentST->lookup(name); 
+        s->nestedST = new SymTable(name, currentST);
         s->type = new SymType(BLOCK);
         currentSymbol = s;
     }
@@ -2141,12 +2141,12 @@ yyreduce:
             if((yyvsp[(1) - (4)].array)->type == Array::ARRAY) {
                 // multi-dimensional array - so need to multiply size and add offset
                 Symbol *sym = gentemp(INT);
-                int size = (yyval.array)->subarr_type->getSize();
+                int size = (yyval.array)->subarr_type->computeSize();
                 emit("*", sym->name, (yyvsp[(3) - (4)].expr)->symbol->name, to_string(size));
                 emit("+", (yyval.array)->loc->name, (yyvsp[(1) - (4)].array)->loc->name, sym->name);
             } else {
                 // 1D array - just calculate size
-                int size = (yyval.array)->subarr_type->getSize();
+                int size = (yyval.array)->subarr_type->computeSize();
                 emit("*", (yyval.array)->loc->name, (yyvsp[(3) - (4)].expr)->symbol->name, to_string(size));
             }
 
@@ -3288,18 +3288,18 @@ yyreduce:
 #line 1175 "ass5_19CS30031_19CS10070.y"
     { 
             // function declaration
-            currentTable->name = (yyvsp[(1) - (5)].symbol)->name;
+            currentST->name = (yyvsp[(1) - (5)].symbol)->name;
 
             if((yyvsp[(1) - (5)].symbol)->type->type != VOID) {
-                Symbol* s = currentTable->lookup("return");
+                Symbol* s = currentST->lookup("return");
                 s->update((yyvsp[(1) - (5)].symbol)->type);
             }
 
             // set nested table for function
-            (yyvsp[(1) - (5)].symbol)->nestedTable = currentTable;
-            currentTable->parent = globalTable;
+            (yyvsp[(1) - (5)].symbol)->nestedST = currentST;
+            currentST->parent = globalST;
 
-            changeTable(globalTable); // change to global table
+            changeTable(globalST); // change to global table
             currentSymbol = (yyval.symbol);
         }
     break;
@@ -3313,18 +3313,18 @@ yyreduce:
 #line 1196 "ass5_19CS30031_19CS10070.y"
     { 
             // same as previous one
-            currentTable->name = (yyvsp[(1) - (4)].symbol)->name;
+            currentST->name = (yyvsp[(1) - (4)].symbol)->name;
 
             if((yyvsp[(1) - (4)].symbol)->type->type != VOID) {
-                Symbol* s = currentTable->lookup("return");
+                Symbol* s = currentST->lookup("return");
                 s->update((yyvsp[(1) - (4)].symbol)->type);
             }
 
             // set nested table for function
-            (yyvsp[(1) - (4)].symbol)->nestedTable = currentTable;
-            currentTable->parent = globalTable;
+            (yyvsp[(1) - (4)].symbol)->nestedST = currentST;
+            currentST->parent = globalST;
 
-            changeTable(globalTable); // change to global table
+            changeTable(globalST); // change to global table
             currentSymbol = (yyval.symbol);
         }
     break;
@@ -3530,7 +3530,7 @@ yyreduce:
 #line 1382 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(4) - (5)].stmt);
-            changeTable(currentTable->parent); // return to parent ST
+            changeTable(currentST->parent); // return to parent ST
         }
     break;
 
@@ -3730,7 +3730,7 @@ yyreduce:
     { 
             tableCount = 0;
             (yyvsp[(2) - (7)].symbol)->isFunction = true;
-            changeTable(globalTable); // return to global ST
+            changeTable(globalST); // return to global ST
         }
     break;
 
