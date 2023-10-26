@@ -2,30 +2,30 @@
 Symbol Table : global						Parent: NULL
 ---------------------------------------------------------------------------------------------
 Name			Type		Initial Value	Size	Offset		Nested Table
-main				funct			-				4		0			main
+main				funct		-				4		0			main
 ---------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------
 Symbol Table : main						Parent: global
 ---------------------------------------------------------------------------------------------
 Name			Type		Initial Value	Size	Offset		Nested Table
-return				int			-				4		0			NULL
-i				int			-				4		4			NULL
-j				int			-				4		8			NULL
-k				int			-				4		12			NULL
-l				int			-				4		16			NULL
-main_0				block			-				4		20			main_0
-t0				int			0				4		24			NULL
+return				funct		-				4		0			NULL
+i				int		-				4		4			NULL
+j				int		-				4		8			NULL
+k				int		-				4		12			NULL
+l				int		-				4		16			NULL
+main_0				block		-				4		20			main_0
+t0				int		0				4		24			NULL
 ---------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------
 Symbol Table : main_0						Parent: main
 ---------------------------------------------------------------------------------------------
 Name			Type		Initial Value	Size	Offset		Nested Table
-j				int			-				4		0			NULL
-i				int			-				4		4			NULL
-l				int			-				4		8			NULL
-k				int			-				4		12			NULL
+j				int		-				4		0			NULL
+i				int		-				4		4			NULL
+l				int		-				4		8			NULL
+k				int		-				4		12			NULL
 ---------------------------------------------------------------------------------------------
 
 Three Address Codes:
