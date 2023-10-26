@@ -1,0 +1,112 @@
+---------------------------------------------------------------------------------------------
+Symbol Table : global						Parent: NULL
+---------------------------------------------------------------------------------------------
+Name			Type		Initial Value	Size	Offset		Nested Table
+main				funct		-				4		0			main
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : main						Parent: global
+---------------------------------------------------------------------------------------------
+Name			Type		Initial Value	Size	Offset		Nested Table
+return				funct		-				4		0			NULL
+x				array(10, array(20, array(30, int)))		-				24000		4			NULL
+t0				int		10				4		24004			NULL
+t1				int		20				4		24008			NULL
+t2				int		30				4		24012			NULL
+y				array(10, array(5, int))		-				200		24016			NULL
+t3				int		10				4		24216			NULL
+t4				int		5				4		24220			NULL
+z				array(5, int)		-				20		24224			NULL
+t5				int		5				4		24244			NULL
+t6				int		1				4		24248			NULL
+t7				int		-				4		24252			NULL
+t8				int		2				4		24256			NULL
+t9				int		-				4		24260			NULL
+t10				int		-				4		24264			NULL
+t11				int		3				4		24268			NULL
+t12				int		-				4		24272			NULL
+t13				int		-				4		24276			NULL
+t14				int		10				4		24280			NULL
+t15				int		1				4		24284			NULL
+t16				int		-				4		24288			NULL
+t17				int		2				4		24292			NULL
+t18				int		-				4		24296			NULL
+t19				int		-				4		24300			NULL
+t20				int		10				4		24304			NULL
+t21				int		3				4		24308			NULL
+t22				int		-				4		24312			NULL
+t23				int		1				4		24316			NULL
+t24				int		-				4		24320			NULL
+t25				int		5				4		24324			NULL
+t26				int		-				4		24328			NULL
+t27				int		-				4		24332			NULL
+t28				int		7				4		24336			NULL
+t29				int		-				4		24340			NULL
+t30				int		-				4		24344			NULL
+t31				int		-				4		24348			NULL
+p				ptr(int)		-				4		24352			NULL
+t32				int		3				4		24356			NULL
+t33				int		-				4		24360			NULL
+t34				int		4				4		24364			NULL
+t35				int		-				4		24368			NULL
+t36				int		-				4		24372			NULL
+t37				ptr(array(10, array(5, int)))		-				4		24376			NULL
+q				ptr(ptr(int))		-				4		24380			NULL
+t38				int		1				4		24384			NULL
+t39				int		-				4		24388			NULL
+t40				int		-				4		24392			NULL
+r				ptr(ptr(ptr(int)))		-				4		24396			NULL
+t41				ptr(ptr(ptr(int)))		-				4		24400			NULL
+---------------------------------------------------------------------------------------------
+
+Three Address Codes:
+1: main:
+2: t0 = 10
+3: t1 = 20
+4: t2 = 30
+5: t3 = 10
+6: t4 = 5
+7: t5 = 5
+8: t6 = 1
+9: t7 = t6 * 2400
+10: t8 = 2
+11: t10 = t8 * 120
+12: t9 = t7 + t10
+13: t11 = 3
+14: t13 = t11 * 4
+15: t12 = t9 + t13
+16: t14 = 10
+17: x[t12] = t14
+18: t15 = 1
+19: t16 = t15 * 20
+20: t17 = 2
+21: t19 = t17 * 4
+22: t18 = t16 + t19
+23: t20 = 10
+24: y[t18] = t20
+25: t21 = 3
+26: t22 = t21 * 4
+27: t23 = 1
+28: t24 = t23 * 2400
+29: t25 = 5
+30: t27 = t25 * 120
+31: t26 = t24 + t27
+32: t28 = 7
+33: t30 = t28 * 4
+34: t29 = t26 + t30
+35: t31 = x[t29]
+36: z[t22] = t31
+37: t32 = 3
+38: t33 = t32 * 20
+39: t34 = 4
+40: t36 = t34 * 4
+41: t35 = t33 + t36
+42: t37 = &y
+43: p = t37
+44: t38 = 1
+45: t39 = t38 * 2400
+46: t40 = x[t39]
+47: q = t40
+48: t41 = &q
+49: r = t41
