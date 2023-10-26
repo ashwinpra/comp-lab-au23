@@ -82,6 +82,7 @@
 %%
 
 // production rule of auxillary non-terminals 
+
 M:  
     {
         $$ = nextinstr();
@@ -112,7 +113,7 @@ CT:
 // to change symbol table, in case of blocks
 CB: 
     {
-        string name = currentST->name + "_" + to_string(tableCount++); // name for new ST
+        string name = currentST->name + "_" + to_string(block_count++); // name for new ST
         Symbol *s = currentST->lookup(name); 
         s->nestedST = new SymTable(name, currentST);
         s->type = new SymType(BLOCK);
@@ -632,8 +633,8 @@ equality_expression:
     | equality_expression EQ_OP relational_expression
         { 
             if(typecheck($1->symbol, $3->symbol)) {
-                $1->toInt();
-                $3->toInt();
+                $1->conv2Int();
+                $3->conv2Int();
 
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
@@ -652,8 +653,8 @@ equality_expression:
     | equality_expression NE_OP relational_expression
         { 
             if(typecheck($1->symbol, $3->symbol)) {
-                $1->toInt();
-                $3->toInt();
+                $1->conv2Int();
+                $3->conv2Int();
 
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
@@ -680,8 +681,8 @@ AND_expression:
 
     | AND_expression BITWISEAND equality_expression
         { 
-            $1->toInt();
-            $3->toInt();
+            $1->conv2Int();
+            $3->conv2Int();
 
             $$ = new Expression();
             $$->type = Expression::NONBOOLEAN;
@@ -698,8 +699,8 @@ exclusive_OR_expression:
         }
     | exclusive_OR_expression BITWISEXOR AND_expression
         { 
-            $1->toInt();
-            $3->toInt();
+            $1->conv2Int();
+            $3->conv2Int();
 
             $$ = new Expression();
             $$->type = Expression::NONBOOLEAN;
@@ -716,8 +717,8 @@ inclusive_OR_expression:
         }
     | inclusive_OR_expression BITWISEOR exclusive_OR_expression
         {  
-            $1->toInt();
-            $3->toInt();
+            $1->conv2Int();
+            $3->conv2Int();
 
             $$ = new Expression();
             $$->type = Expression::NONBOOLEAN;
@@ -737,8 +738,8 @@ logical_AND_expression:
 
     | logical_AND_expression AND_OP M inclusive_OR_expression
         { 
-            $1->toBool();
-            $4->toBool();
+            $1->conv2Bool();
+            $4->conv2Bool();
 
             $$ = new Expression();
             $$->type = Expression::BOOLEAN;
@@ -758,8 +759,8 @@ logical_OR_expression:
 
     | logical_OR_expression OR_OP M logical_AND_expression
         {  
-            $1->toBool();
-            $4->toBool();
+            $1->conv2Bool();
+            $4->conv2Bool();
 
             $$ = new Expression();
             $$->type = Expression::BOOLEAN;
@@ -793,7 +794,7 @@ conditional_expression:
 
             backpatch($2->nextlist, nextinstr());
 
-            $1->toBool();
+            $1->conv2Bool();
 
             backpatch($1->truelist, $4);
             backpatch($1->falselist, $8);
@@ -1449,7 +1450,7 @@ selection_statement:
         { 
             $$ = new Statement();
 
-            $3->toBool();
+            $3->conv2Bool();
 
             backpatch($3->truelist, $5); // if true, go to M1 (if-statement)
             backpatch($3->falselist, $9); // if false, go to M2 (else-statement)
@@ -1462,7 +1463,7 @@ selection_statement:
         { 
             $$ = new Statement();
 
-            $3->toBool();
+            $3->conv2Bool();
 
             backpatch($3->truelist, $5); // // if true, go to M1 (if-statement)
 
@@ -1480,7 +1481,7 @@ iteration_statement:
         { 
             $$ = new Statement();
 
-            $4->toBool();
+            $4->conv2Bool();
 
             backpatch($7->nextlist, $2); // M1 -> to go back to start of loop
             backpatch($4->truelist, $6); // if true, go to M2 (statement)
@@ -1496,7 +1497,7 @@ iteration_statement:
         { 
             $$ = new Statement();
 
-            $7->toBool();
+            $7->conv2Bool();
 
             backpatch($7->truelist, $2); // if true, go to M1 (statement)
             backpatch($3->nextlist, $4); // M2 -> to go to check expression once statement is executed
@@ -1509,7 +1510,7 @@ iteration_statement:
         { 
             $$ = new Statement();
 
-            $6->toBool();
+            $6->conv2Bool();
 
             backpatch($6->truelist, $12); // if true, go to M3 (statement)
             backpatch($10->nextlist, $5); // go to M1 after N1 (for checking condition)
@@ -1536,7 +1537,8 @@ jump_statement:
         { }
 
     | RETURN expression_opt SEMI_COLON
-        { 
+        {   
+            // depending on whether expression_opt is epsilon or not, return is handled
             $$ = new Statement();
             emit("return",($2->symbol == NULL) ? "" : $2->symbol->name);
         }
@@ -1565,7 +1567,7 @@ external_declaration:
 function_definition: 
     declaration_specifiers declarator declaration_list_opt CT CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
         { 
-            tableCount = 0;
+            block_count = 0;
             $2->isFunction = true;
             changeTable(globalST); // return to global ST
         }

@@ -5,7 +5,7 @@ vector<Quad *> quadArray;  // Quad Array
 SymTable *currentST, *globalST, *parentTable;  // Symbol Tables
 Symbol *currentSymbol;  // Current Symbol
 TYPE currentType;  // Current Type
-int tableCount;  // Counts of number of tables and number of temps generated
+int block_count;  // Counts of number of tables and number of temps generated
 
 
 // SymType class methods
@@ -14,16 +14,23 @@ SymType::SymType(TYPE type_, SymType *arr_type_, int width_) : type(type_), widt
 
 // to get size (machine-dependent)
 int SymType::computeSize() {
+
     if (type == CHAR)
         return SIZE_OF_CHAR;
+
     else if (type == INT)
         return SIZE_OF_INT;
+
     else if (type == FLOAT)
         return SIZE_OF_FLOAT;
+
     else if (type == POINTER)
         return SIZE_OF_POINTER;
+
+    // depends on type of constituent elements
     else if (type == ARRAY)
         return width * (arr_type->computeSize());
+
     else
         return -1;
 }
@@ -32,22 +39,30 @@ int SymType::computeSize() {
 string SymType::toString() {
     if(this->type == VOID)
         return "void";
+
     else if(this->type == CHAR)
         return "char";
+
     else if(this->type == INT)
         return "int";
+
     else if(this->type == FLOAT)
         return "float";
+
     else if(this->type == POINTER)
         return "ptr(" + this->arr_type->toString() + ")";
+
     else if(this->type == FUNCTION)
         return "funct";
+
     else if(this->type == ARRAY)
         return "array(" + to_string(this->width) + ", " + this->arr_type->toString() + ")";
+
     else if(this->type ==  BLOCK)
         return "block";
+
     else
-        return "NULL";
+        return "null";
 }
 
 
@@ -298,7 +313,7 @@ void Quad::print() {
 
 // Expression class methods
 
-void Expression::toInt() {
+void Expression::conv2Int() {
     if (this->type == Expression::BOOLEAN)
     {
         this->symbol = gentemp(INT);
@@ -313,7 +328,7 @@ void Expression::toInt() {
     }
 }
 
-void Expression::toBool() {
+void Expression::conv2Bool() {
     if (this->type == Expression::NONBOOLEAN)
     {
         this->falselist = makelist(nextinstr()); // falselist updation
@@ -423,7 +438,7 @@ void printQuadArray() {
 }
 
 int main() {
-    tableCount = 0;
+    block_count = 0;
     globalST = new SymTable("global");
     currentST = globalST;
 

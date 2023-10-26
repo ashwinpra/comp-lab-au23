@@ -65,7 +65,9 @@ class SymTable {
         SymTable(string = "NULL", SymTable * = NULL); // constructor
 
         Symbol *lookup(string); // lookup for a symbol in the symbol table, or add if not present - as mentioned in the assignment
+
         void print();  // print the symbol table - as mentioned in the assignment
+
         void update(); // update the symbol table - as mentioned in the assignment
 };
 
@@ -85,6 +87,7 @@ class Symbol {
         Symbol(string, TYPE = INT, string = "-");  // constructor
 
         Symbol *update(SymType*);  // update the symbol with given type
+
         Symbol *convert(TYPE);  // convert the symbol to given type - it covers all type conversions conv<type1>2<type2> in the assignment
 };
 
@@ -113,8 +116,9 @@ class Expression {
         list<int> falselist;                        // falselist for the expression
         list<int> nextlist;                         // nextlist for the expression
 
-        void toInt();  // convert boolean expression to integer
-        void toBool();  // convert integer expression to boolean
+        void conv2Int();  // convert boolean expression to integer
+
+        void conv2Bool();  // convert integer expression to boolean
 };
 
 
@@ -137,7 +141,7 @@ extern vector<Quad *> quadArray; // array of quads
 extern SymTable *currentST, *globalST; // current and global symbol tables
 extern Symbol *currentSymbol;  // current symbol
 extern TYPE currentType;  // current type
-extern int tableCount;
+extern int block_count;
 
 
 

@@ -692,28 +692,28 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    86,    86,    92,   101,   114,   129,   135,   140,   147,
-     155,   162,   169,   178,   187,   210,   219,   222,   225,   233,
-     242,   245,   252,   258,   264,   270,   278,   282,   289,   296,
-     335,   338,   344,   348,   352,   356,   360,   364,   371,   376,
-     385,   406,   435,   463,   493,   498,   511,   526,   531,   544,
-     561,   565,   580,   595,   610,   627,   632,   652,   676,   681,
-     695,   699,   713,   717,   733,   738,   754,   759,   774,   780,
-     806,   812,   832,   836,   838,   840,   842,   844,   846,   848,
-     850,   852,   854,   859,   865,   870,   878,   884,   887,   890,
-     893,   898,   902,   906,   909,   914,   918,   922,   926,   935,
-     938,   941,   944,   951,   956,   961,   964,   969,   972,   977,
-     980,   983,   986,   989,   992,   995,  1001,  1003,  1009,  1013,
-    1017,  1021,  1026,  1029,  1032,  1039,  1042,  1047,  1050,  1055,
-    1058,  1061,  1066,  1071,  1082,  1098,  1104,  1109,  1112,  1115,
-    1137,  1158,  1161,  1164,  1167,  1170,  1174,  1192,  1195,  1217,
-    1222,  1229,  1232,  1237,  1241,  1245,  1248,  1253,  1256,  1261,
-    1264,  1269,  1272,  1277,  1282,  1287,  1290,  1295,  1298,  1303,
-    1308,  1312,  1316,  1319,  1324,  1327,  1336,  1339,  1344,  1350,
-    1355,  1360,  1368,  1371,  1374,  1381,  1389,  1394,  1402,  1408,
-    1415,  1419,  1426,  1433,  1438,  1448,  1461,  1472,  1479,  1495,
-    1508,  1523,  1529,  1532,  1535,  1538,  1549,  1552,  1557,  1560,
-    1566,  1575,  1578,  1583,  1587
+       0,    87,    87,    93,   102,   115,   130,   136,   141,   148,
+     156,   163,   170,   179,   188,   211,   220,   223,   226,   234,
+     243,   246,   253,   259,   265,   271,   279,   283,   290,   297,
+     336,   339,   345,   349,   353,   357,   361,   365,   372,   377,
+     386,   407,   436,   464,   494,   499,   512,   527,   532,   545,
+     562,   566,   581,   596,   611,   628,   633,   653,   677,   682,
+     696,   700,   714,   718,   734,   739,   755,   760,   775,   781,
+     807,   813,   833,   837,   839,   841,   843,   845,   847,   849,
+     851,   853,   855,   860,   866,   871,   879,   885,   888,   891,
+     894,   899,   903,   907,   910,   915,   919,   923,   927,   936,
+     939,   942,   945,   952,   957,   962,   965,   970,   973,   978,
+     981,   984,   987,   990,   993,   996,  1002,  1004,  1010,  1014,
+    1018,  1022,  1027,  1030,  1033,  1040,  1043,  1048,  1051,  1056,
+    1059,  1062,  1067,  1072,  1083,  1099,  1105,  1110,  1113,  1116,
+    1138,  1159,  1162,  1165,  1168,  1171,  1175,  1193,  1196,  1218,
+    1223,  1230,  1233,  1238,  1242,  1246,  1249,  1254,  1257,  1262,
+    1265,  1270,  1273,  1278,  1283,  1288,  1291,  1296,  1299,  1304,
+    1309,  1313,  1317,  1320,  1325,  1328,  1337,  1340,  1345,  1351,
+    1356,  1361,  1369,  1372,  1375,  1382,  1390,  1395,  1403,  1409,
+    1416,  1420,  1427,  1434,  1439,  1449,  1462,  1473,  1480,  1496,
+    1509,  1524,  1530,  1533,  1536,  1539,  1551,  1554,  1559,  1562,
+    1568,  1577,  1580,  1585,  1589
 };
 #endif
 
@@ -2019,14 +2019,14 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 86 "ass5_19CS30031_19CS10070.y"
+#line 87 "ass5_19CS30031_19CS10070.y"
     {
         (yyval.instr_num) = nextinstr();
     }
     break;
 
   case 3:
-#line 92 "ass5_19CS30031_19CS10070.y"
+#line 93 "ass5_19CS30031_19CS10070.y"
     {
         (yyval.stmt) = new Statement();
         (yyval.stmt)->nextlist = makelist(nextinstr());
@@ -2035,7 +2035,7 @@ yyreduce:
     break;
 
   case 4:
-#line 101 "ass5_19CS30031_19CS10070.y"
+#line 102 "ass5_19CS30031_19CS10070.y"
     {
         if(currentSymbol->nestedST == NULL) {
             changeTable(new SymTable(""));
@@ -2048,9 +2048,9 @@ yyreduce:
     break;
 
   case 5:
-#line 114 "ass5_19CS30031_19CS10070.y"
+#line 115 "ass5_19CS30031_19CS10070.y"
     {
-        string name = currentST->name + "_" + to_string(tableCount++); // name for new ST
+        string name = currentST->name + "_" + to_string(block_count++); // name for new ST
         Symbol *s = currentST->lookup(name); 
         s->nestedST = new SymTable(name, currentST);
         s->type = new SymType(BLOCK);
@@ -2059,7 +2059,7 @@ yyreduce:
     break;
 
   case 6:
-#line 130 "ass5_19CS30031_19CS10070.y"
+#line 131 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = new Expression(); // making a new expression and storing the symbol
             (yyval.expr)->symbol = (yyvsp[(1) - (1)].symbol);
@@ -2068,14 +2068,14 @@ yyreduce:
     break;
 
   case 7:
-#line 136 "ass5_19CS30031_19CS10070.y"
+#line 137 "ass5_19CS30031_19CS10070.y"
     {
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on which type of constant
         }
     break;
 
   case 8:
-#line 141 "ass5_19CS30031_19CS10070.y"
+#line 142 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = new Expression();
             (yyval.expr)->symbol = gentemp(POINTER, (yyvsp[(1) - (1)].sval));
@@ -2084,14 +2084,14 @@ yyreduce:
     break;
 
   case 9:
-#line 148 "ass5_19CS30031_19CS10070.y"
+#line 149 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(2) - (3)].expr); // simply equate to expression
         }
     break;
 
   case 10:
-#line 156 "ass5_19CS30031_19CS10070.y"
+#line 157 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = new Expression();
             (yyval.expr)->symbol = gentemp(INT, to_string((yyvsp[(1) - (1)].ival)));
@@ -2100,7 +2100,7 @@ yyreduce:
     break;
 
   case 11:
-#line 163 "ass5_19CS30031_19CS10070.y"
+#line 164 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = new Expression();
             (yyval.expr)->symbol = gentemp(FLOAT, (yyvsp[(1) - (1)].fval));
@@ -2109,7 +2109,7 @@ yyreduce:
     break;
 
   case 12:
-#line 170 "ass5_19CS30031_19CS10070.y"
+#line 171 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = new Expression();
             (yyval.expr)->symbol = gentemp(CHAR, (yyvsp[(1) - (1)].cval));
@@ -2118,7 +2118,7 @@ yyreduce:
     break;
 
   case 13:
-#line 179 "ass5_19CS30031_19CS10070.y"
+#line 180 "ass5_19CS30031_19CS10070.y"
     { 
             // create a new array and append location of primary_expression
             (yyval.array) = new Array();
@@ -2129,7 +2129,7 @@ yyreduce:
     break;
 
   case 14:
-#line 188 "ass5_19CS30031_19CS10070.y"
+#line 189 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = new Array();
             (yyval.array)->symbol = (yyvsp[(1) - (4)].array)->symbol;    
@@ -2154,7 +2154,7 @@ yyreduce:
     break;
 
   case 15:
-#line 211 "ass5_19CS30031_19CS10070.y"
+#line 212 "ass5_19CS30031_19CS10070.y"
     { 
             // function call
             (yyval.array) = new Array();
@@ -2164,17 +2164,17 @@ yyreduce:
     break;
 
   case 16:
-#line 220 "ass5_19CS30031_19CS10070.y"
+#line 221 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 17:
-#line 223 "ass5_19CS30031_19CS10070.y"
+#line 224 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 18:
-#line 226 "ass5_19CS30031_19CS10070.y"
+#line 227 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = new Array();
             // temp with old value, then add 1
@@ -2185,7 +2185,7 @@ yyreduce:
     break;
 
   case 19:
-#line 234 "ass5_19CS30031_19CS10070.y"
+#line 235 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = new Array();
             // temp with old value, then subtract 1
@@ -2196,31 +2196,31 @@ yyreduce:
     break;
 
   case 20:
-#line 243 "ass5_19CS30031_19CS10070.y"
+#line 244 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 21:
-#line 246 "ass5_19CS30031_19CS10070.y"
+#line 247 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 22:
-#line 253 "ass5_19CS30031_19CS10070.y"
+#line 254 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.num_params) = (yyvsp[(1) - (1)].num_params); // depends on argument expression list
         }
     break;
 
   case 23:
-#line 258 "ass5_19CS30031_19CS10070.y"
+#line 259 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.num_params) = 0; // no arguments
         }
     break;
 
   case 24:
-#line 265 "ass5_19CS30031_19CS10070.y"
+#line 266 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.num_params) = 1; // 1 argument
             emit("param", (yyvsp[(1) - (1)].expr)->symbol->name);
@@ -2228,7 +2228,7 @@ yyreduce:
     break;
 
   case 25:
-#line 271 "ass5_19CS30031_19CS10070.y"
+#line 272 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.num_params) = (yyvsp[(1) - (3)].num_params) + 1; // one more argument added
             emit("param", (yyvsp[(3) - (3)].expr)->symbol->name);
@@ -2236,14 +2236,14 @@ yyreduce:
     break;
 
   case 26:
-#line 279 "ass5_19CS30031_19CS10070.y"
+#line 280 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = (yyvsp[(1) - (1)].array); // depends on postfix expression
         }
     break;
 
   case 27:
-#line 283 "ass5_19CS30031_19CS10070.y"
+#line 284 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = (yyvsp[(2) - (2)].array);
             // this is pre increment, so 1 is added directly
@@ -2252,7 +2252,7 @@ yyreduce:
     break;
 
   case 28:
-#line 290 "ass5_19CS30031_19CS10070.y"
+#line 291 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = (yyvsp[(2) - (2)].array);
             // similar to pre increment
@@ -2261,7 +2261,7 @@ yyreduce:
     break;
 
   case 29:
-#line 297 "ass5_19CS30031_19CS10070.y"
+#line 298 "ass5_19CS30031_19CS10070.y"
     { 
             // operation depends on unary operator
 
@@ -2301,66 +2301,66 @@ yyreduce:
     break;
 
   case 30:
-#line 336 "ass5_19CS30031_19CS10070.y"
+#line 337 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 31:
-#line 339 "ass5_19CS30031_19CS10070.y"
+#line 340 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 32:
-#line 345 "ass5_19CS30031_19CS10070.y"
+#line 346 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.unary_op) = strdup("&"); 
         }
     break;
 
   case 33:
-#line 349 "ass5_19CS30031_19CS10070.y"
+#line 350 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.unary_op) = strdup("*"); 
         }
     break;
 
   case 34:
-#line 353 "ass5_19CS30031_19CS10070.y"
+#line 354 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.unary_op) = strdup("+"); 
         }
     break;
 
   case 35:
-#line 357 "ass5_19CS30031_19CS10070.y"
+#line 358 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.unary_op) = strdup("=-"); 
         }
     break;
 
   case 36:
-#line 361 "ass5_19CS30031_19CS10070.y"
+#line 362 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.unary_op) = strdup("~"); 
         }
     break;
 
   case 37:
-#line 365 "ass5_19CS30031_19CS10070.y"
+#line 366 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.unary_op) = strdup("!"); 
         }
     break;
 
   case 38:
-#line 372 "ass5_19CS30031_19CS10070.y"
+#line 373 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = (yyvsp[(1) - (1)].array); // depends on unary expression
         }
     break;
 
   case 39:
-#line 377 "ass5_19CS30031_19CS10070.y"
+#line 378 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.array) = new Array();
             (yyval.array)->symbol = (yyvsp[(4) - (4)].array)->symbol->convert(currentType); // convert to required type
@@ -2368,7 +2368,7 @@ yyreduce:
     break;
 
   case 40:
-#line 386 "ass5_19CS30031_19CS10070.y"
+#line 387 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = new Expression();
 
@@ -2392,7 +2392,7 @@ yyreduce:
     break;
 
   case 41:
-#line 407 "ass5_19CS30031_19CS10070.y"
+#line 408 "ass5_19CS30031_19CS10070.y"
     { 
             // similar to above, we obtain base type and create temp symbol
             SymType *bType = (yyvsp[(1) - (3)].expr)->symbol->type;
@@ -2423,7 +2423,7 @@ yyreduce:
     break;
 
   case 42:
-#line 436 "ass5_19CS30031_19CS10070.y"
+#line 437 "ass5_19CS30031_19CS10070.y"
     { 
             // similar to above agains
             SymType *bType = (yyvsp[(1) - (3)].expr)->symbol->type;
@@ -2453,7 +2453,7 @@ yyreduce:
     break;
 
   case 43:
-#line 464 "ass5_19CS30031_19CS10070.y"
+#line 465 "ass5_19CS30031_19CS10070.y"
     { 
             // similar to above agains
             SymType *bType = (yyvsp[(1) - (3)].expr)->symbol->type;
@@ -2483,14 +2483,14 @@ yyreduce:
     break;
 
   case 44:
-#line 494 "ass5_19CS30031_19CS10070.y"
+#line 495 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on multiplicative expression
         }
     break;
 
   case 45:
-#line 499 "ass5_19CS30031_19CS10070.y"
+#line 500 "ass5_19CS30031_19CS10070.y"
     {   
             // addition operation
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
@@ -2505,7 +2505,7 @@ yyreduce:
     break;
 
   case 46:
-#line 512 "ass5_19CS30031_19CS10070.y"
+#line 513 "ass5_19CS30031_19CS10070.y"
     { 
             // subtraction operation
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
@@ -2520,14 +2520,14 @@ yyreduce:
     break;
 
   case 47:
-#line 527 "ass5_19CS30031_19CS10070.y"
+#line 528 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on additive expression
         }
     break;
 
   case 48:
-#line 532 "ass5_19CS30031_19CS10070.y"
+#line 533 "ass5_19CS30031_19CS10070.y"
     { 
             // left shift operation
             if((yyvsp[(3) - (3)].expr)->symbol->type->type == INT) {
@@ -2542,7 +2542,7 @@ yyreduce:
     break;
 
   case 49:
-#line 545 "ass5_19CS30031_19CS10070.y"
+#line 546 "ass5_19CS30031_19CS10070.y"
     { 
             // right shift operation
             if((yyvsp[(3) - (3)].expr)->symbol->type->type == INT) {
@@ -2557,14 +2557,14 @@ yyreduce:
     break;
 
   case 50:
-#line 562 "ass5_19CS30031_19CS10070.y"
+#line 563 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on shift expression
         }
     break;
 
   case 51:
-#line 566 "ass5_19CS30031_19CS10070.y"
+#line 567 "ass5_19CS30031_19CS10070.y"
     {   
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
@@ -2581,7 +2581,7 @@ yyreduce:
     break;
 
   case 52:
-#line 581 "ass5_19CS30031_19CS10070.y"
+#line 582 "ass5_19CS30031_19CS10070.y"
     { 
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
@@ -2598,7 +2598,7 @@ yyreduce:
     break;
 
   case 53:
-#line 596 "ass5_19CS30031_19CS10070.y"
+#line 597 "ass5_19CS30031_19CS10070.y"
     { 
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
@@ -2615,7 +2615,7 @@ yyreduce:
     break;
 
   case 54:
-#line 611 "ass5_19CS30031_19CS10070.y"
+#line 612 "ass5_19CS30031_19CS10070.y"
     { 
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
@@ -2632,18 +2632,18 @@ yyreduce:
     break;
 
   case 55:
-#line 628 "ass5_19CS30031_19CS10070.y"
+#line 629 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on relational expression
         }
     break;
 
   case 56:
-#line 633 "ass5_19CS30031_19CS10070.y"
+#line 634 "ass5_19CS30031_19CS10070.y"
     { 
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
-                (yyvsp[(1) - (3)].expr)->toInt();
-                (yyvsp[(3) - (3)].expr)->toInt();
+                (yyvsp[(1) - (3)].expr)->conv2Int();
+                (yyvsp[(3) - (3)].expr)->conv2Int();
 
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
@@ -2661,11 +2661,11 @@ yyreduce:
     break;
 
   case 57:
-#line 653 "ass5_19CS30031_19CS10070.y"
+#line 654 "ass5_19CS30031_19CS10070.y"
     { 
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
-                (yyvsp[(1) - (3)].expr)->toInt();
-                (yyvsp[(3) - (3)].expr)->toInt();
+                (yyvsp[(1) - (3)].expr)->conv2Int();
+                (yyvsp[(3) - (3)].expr)->conv2Int();
 
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
@@ -2683,17 +2683,17 @@ yyreduce:
     break;
 
   case 58:
-#line 677 "ass5_19CS30031_19CS10070.y"
+#line 678 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on equality expression
         }
     break;
 
   case 59:
-#line 682 "ass5_19CS30031_19CS10070.y"
+#line 683 "ass5_19CS30031_19CS10070.y"
     { 
-            (yyvsp[(1) - (3)].expr)->toInt();
-            (yyvsp[(3) - (3)].expr)->toInt();
+            (yyvsp[(1) - (3)].expr)->conv2Int();
+            (yyvsp[(3) - (3)].expr)->conv2Int();
 
             (yyval.expr) = new Expression();
             (yyval.expr)->type = Expression::NONBOOLEAN;
@@ -2704,17 +2704,17 @@ yyreduce:
     break;
 
   case 60:
-#line 696 "ass5_19CS30031_19CS10070.y"
+#line 697 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on AND expression
         }
     break;
 
   case 61:
-#line 700 "ass5_19CS30031_19CS10070.y"
+#line 701 "ass5_19CS30031_19CS10070.y"
     { 
-            (yyvsp[(1) - (3)].expr)->toInt();
-            (yyvsp[(3) - (3)].expr)->toInt();
+            (yyvsp[(1) - (3)].expr)->conv2Int();
+            (yyvsp[(3) - (3)].expr)->conv2Int();
 
             (yyval.expr) = new Expression();
             (yyval.expr)->type = Expression::NONBOOLEAN;
@@ -2725,17 +2725,17 @@ yyreduce:
     break;
 
   case 62:
-#line 714 "ass5_19CS30031_19CS10070.y"
+#line 715 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on exclusive OR expression
         }
     break;
 
   case 63:
-#line 718 "ass5_19CS30031_19CS10070.y"
+#line 719 "ass5_19CS30031_19CS10070.y"
     {  
-            (yyvsp[(1) - (3)].expr)->toInt();
-            (yyvsp[(3) - (3)].expr)->toInt();
+            (yyvsp[(1) - (3)].expr)->conv2Int();
+            (yyvsp[(3) - (3)].expr)->conv2Int();
 
             (yyval.expr) = new Expression();
             (yyval.expr)->type = Expression::NONBOOLEAN;
@@ -2746,17 +2746,17 @@ yyreduce:
     break;
 
   case 64:
-#line 734 "ass5_19CS30031_19CS10070.y"
+#line 735 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on inclusive OR expression
         }
     break;
 
   case 65:
-#line 739 "ass5_19CS30031_19CS10070.y"
+#line 740 "ass5_19CS30031_19CS10070.y"
     { 
-            (yyvsp[(1) - (4)].expr)->toBool();
-            (yyvsp[(4) - (4)].expr)->toBool();
+            (yyvsp[(1) - (4)].expr)->conv2Bool();
+            (yyvsp[(4) - (4)].expr)->conv2Bool();
 
             (yyval.expr) = new Expression();
             (yyval.expr)->type = Expression::BOOLEAN;
@@ -2768,17 +2768,17 @@ yyreduce:
     break;
 
   case 66:
-#line 755 "ass5_19CS30031_19CS10070.y"
+#line 756 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on logical AND expression
         }
     break;
 
   case 67:
-#line 760 "ass5_19CS30031_19CS10070.y"
+#line 761 "ass5_19CS30031_19CS10070.y"
     {  
-            (yyvsp[(1) - (4)].expr)->toBool();
-            (yyvsp[(4) - (4)].expr)->toBool();
+            (yyvsp[(1) - (4)].expr)->conv2Bool();
+            (yyvsp[(4) - (4)].expr)->conv2Bool();
 
             (yyval.expr) = new Expression();
             (yyval.expr)->type = Expression::BOOLEAN;
@@ -2790,14 +2790,14 @@ yyreduce:
     break;
 
   case 68:
-#line 775 "ass5_19CS30031_19CS10070.y"
+#line 776 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on logical OR expression
         }
     break;
 
   case 69:
-#line 781 "ass5_19CS30031_19CS10070.y"
+#line 782 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr)->symbol = gentemp((yyvsp[(5) - (9)].expr)->symbol->type->type);
             emit("=", (yyval.expr)->symbol->name, (yyvsp[(9) - (9)].expr)->symbol->name);
@@ -2813,7 +2813,7 @@ yyreduce:
 
             backpatch((yyvsp[(2) - (9)].stmt)->nextlist, nextinstr());
 
-            (yyvsp[(1) - (9)].expr)->toBool();
+            (yyvsp[(1) - (9)].expr)->conv2Bool();
 
             backpatch((yyvsp[(1) - (9)].expr)->truelist, (yyvsp[(4) - (9)].instr_num));
             backpatch((yyvsp[(1) - (9)].expr)->falselist, (yyvsp[(8) - (9)].instr_num));
@@ -2823,14 +2823,14 @@ yyreduce:
     break;
 
   case 70:
-#line 807 "ass5_19CS30031_19CS10070.y"
+#line 808 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on conditional expression
         }
     break;
 
   case 71:
-#line 813 "ass5_19CS30031_19CS10070.y"
+#line 814 "ass5_19CS30031_19CS10070.y"
     { 
             if((yyvsp[(1) - (3)].array)->type == Array::ARRAY) {
                 (yyvsp[(3) - (3)].expr)->symbol = (yyvsp[(3) - (3)].expr)->symbol->convert((yyvsp[(1) - (3)].array)->subarr_type->type);
@@ -2850,141 +2850,141 @@ yyreduce:
     break;
 
   case 72:
-#line 833 "ass5_19CS30031_19CS10070.y"
+#line 834 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 73:
-#line 837 "ass5_19CS30031_19CS10070.y"
+#line 838 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 74:
-#line 839 "ass5_19CS30031_19CS10070.y"
+#line 840 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 75:
-#line 841 "ass5_19CS30031_19CS10070.y"
+#line 842 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 76:
-#line 843 "ass5_19CS30031_19CS10070.y"
+#line 844 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 77:
-#line 845 "ass5_19CS30031_19CS10070.y"
+#line 846 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 78:
-#line 847 "ass5_19CS30031_19CS10070.y"
+#line 848 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 79:
-#line 849 "ass5_19CS30031_19CS10070.y"
+#line 850 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 80:
-#line 851 "ass5_19CS30031_19CS10070.y"
+#line 852 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 81:
-#line 853 "ass5_19CS30031_19CS10070.y"
+#line 854 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 82:
-#line 855 "ass5_19CS30031_19CS10070.y"
+#line 856 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 83:
-#line 860 "ass5_19CS30031_19CS10070.y"
+#line 861 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr); // depends on assignment expression
         }
     break;
 
   case 84:
-#line 866 "ass5_19CS30031_19CS10070.y"
+#line 867 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 85:
-#line 871 "ass5_19CS30031_19CS10070.y"
+#line 872 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 86:
-#line 879 "ass5_19CS30031_19CS10070.y"
+#line 880 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 87:
-#line 885 "ass5_19CS30031_19CS10070.y"
+#line 886 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 88:
-#line 888 "ass5_19CS30031_19CS10070.y"
+#line 889 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 89:
-#line 891 "ass5_19CS30031_19CS10070.y"
+#line 892 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 90:
-#line 894 "ass5_19CS30031_19CS10070.y"
+#line 895 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 91:
-#line 899 "ass5_19CS30031_19CS10070.y"
+#line 900 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 92:
-#line 902 "ass5_19CS30031_19CS10070.y"
+#line 903 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 93:
-#line 907 "ass5_19CS30031_19CS10070.y"
+#line 908 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 94:
-#line 910 "ass5_19CS30031_19CS10070.y"
+#line 911 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 95:
-#line 915 "ass5_19CS30031_19CS10070.y"
+#line 916 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 96:
-#line 918 "ass5_19CS30031_19CS10070.y"
+#line 919 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 97:
-#line 923 "ass5_19CS30031_19CS10070.y"
+#line 924 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.symbol) = (yyvsp[(1) - (1)].symbol); // depends on declarator
         }
     break;
 
   case 98:
-#line 927 "ass5_19CS30031_19CS10070.y"
+#line 928 "ass5_19CS30031_19CS10070.y"
     { 
             if((yyvsp[(3) - (3)].symbol)->init_val != "") (yyvsp[(1) - (3)].symbol)->init_val = (yyvsp[(3) - (3)].symbol)->init_val;
             emit("=", (yyvsp[(1) - (3)].symbol)->name, (yyvsp[(3) - (3)].symbol)->name);
@@ -2992,185 +2992,185 @@ yyreduce:
     break;
 
   case 99:
-#line 936 "ass5_19CS30031_19CS10070.y"
+#line 937 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 100:
-#line 939 "ass5_19CS30031_19CS10070.y"
+#line 940 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 101:
-#line 942 "ass5_19CS30031_19CS10070.y"
+#line 943 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 102:
-#line 945 "ass5_19CS30031_19CS10070.y"
+#line 946 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 103:
-#line 952 "ass5_19CS30031_19CS10070.y"
+#line 953 "ass5_19CS30031_19CS10070.y"
     { 
             currentType = VOID;
         }
     break;
 
   case 104:
-#line 957 "ass5_19CS30031_19CS10070.y"
+#line 958 "ass5_19CS30031_19CS10070.y"
     { 
             currentType = CHAR;
         }
     break;
 
   case 105:
-#line 962 "ass5_19CS30031_19CS10070.y"
+#line 963 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 106:
-#line 965 "ass5_19CS30031_19CS10070.y"
+#line 966 "ass5_19CS30031_19CS10070.y"
     { 
             currentType = INT;
         }
     break;
 
   case 107:
-#line 970 "ass5_19CS30031_19CS10070.y"
+#line 971 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 108:
-#line 973 "ass5_19CS30031_19CS10070.y"
+#line 974 "ass5_19CS30031_19CS10070.y"
     { 
             currentType = FLOAT;
         }
     break;
 
   case 109:
-#line 978 "ass5_19CS30031_19CS10070.y"
+#line 979 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 110:
-#line 981 "ass5_19CS30031_19CS10070.y"
+#line 982 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 111:
-#line 984 "ass5_19CS30031_19CS10070.y"
+#line 985 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 112:
-#line 987 "ass5_19CS30031_19CS10070.y"
+#line 988 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 113:
-#line 990 "ass5_19CS30031_19CS10070.y"
+#line 991 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 114:
-#line 993 "ass5_19CS30031_19CS10070.y"
+#line 994 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 115:
-#line 996 "ass5_19CS30031_19CS10070.y"
+#line 997 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 116:
-#line 1002 "ass5_19CS30031_19CS10070.y"
+#line 1003 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 117:
-#line 1004 "ass5_19CS30031_19CS10070.y"
+#line 1005 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 118:
-#line 1010 "ass5_19CS30031_19CS10070.y"
+#line 1011 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 119:
-#line 1013 "ass5_19CS30031_19CS10070.y"
+#line 1014 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 120:
-#line 1018 "ass5_19CS30031_19CS10070.y"
+#line 1019 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 121:
-#line 1021 "ass5_19CS30031_19CS10070.y"
+#line 1022 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 122:
-#line 1027 "ass5_19CS30031_19CS10070.y"
+#line 1028 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 123:
-#line 1030 "ass5_19CS30031_19CS10070.y"
+#line 1031 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 124:
-#line 1033 "ass5_19CS30031_19CS10070.y"
+#line 1034 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 125:
-#line 1040 "ass5_19CS30031_19CS10070.y"
+#line 1041 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 126:
-#line 1043 "ass5_19CS30031_19CS10070.y"
+#line 1044 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 127:
-#line 1048 "ass5_19CS30031_19CS10070.y"
+#line 1049 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 128:
-#line 1051 "ass5_19CS30031_19CS10070.y"
+#line 1052 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 129:
-#line 1056 "ass5_19CS30031_19CS10070.y"
+#line 1057 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 130:
-#line 1059 "ass5_19CS30031_19CS10070.y"
+#line 1060 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 131:
-#line 1062 "ass5_19CS30031_19CS10070.y"
+#line 1063 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 132:
-#line 1067 "ass5_19CS30031_19CS10070.y"
+#line 1068 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 133:
-#line 1072 "ass5_19CS30031_19CS10070.y"
+#line 1073 "ass5_19CS30031_19CS10070.y"
     { 
             // for multi-dimensional arrays -> moving deeper until base type is obtained
             SymType *temp = (yyvsp[(1) - (2)].sym_type);
@@ -3183,12 +3183,12 @@ yyreduce:
     break;
 
   case 134:
-#line 1083 "ass5_19CS30031_19CS10070.y"
+#line 1084 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 135:
-#line 1099 "ass5_19CS30031_19CS10070.y"
+#line 1100 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.symbol) = (yyvsp[(1) - (1)].symbol)->update(new SymType(currentType)); 
             currentSymbol = (yyval.symbol);
@@ -3196,24 +3196,24 @@ yyreduce:
     break;
 
   case 136:
-#line 1105 "ass5_19CS30031_19CS10070.y"
+#line 1106 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.symbol) = (yyvsp[(2) - (3)].symbol); // depends on declarator
         }
     break;
 
   case 137:
-#line 1110 "ass5_19CS30031_19CS10070.y"
+#line 1111 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 138:
-#line 1113 "ass5_19CS30031_19CS10070.y"
+#line 1114 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 139:
-#line 1116 "ass5_19CS30031_19CS10070.y"
+#line 1117 "ass5_19CS30031_19CS10070.y"
     { 
             
             // to check whether array is 1D or multi-dimensional
@@ -3237,7 +3237,7 @@ yyreduce:
     break;
 
   case 140:
-#line 1138 "ass5_19CS30031_19CS10070.y"
+#line 1139 "ass5_19CS30031_19CS10070.y"
     { 
             // similar to previous one, but initial value is kept as 0 
             SymType *temp = (yyvsp[(1) - (3)].symbol)->type, *prev = NULL;
@@ -3260,32 +3260,32 @@ yyreduce:
     break;
 
   case 141:
-#line 1159 "ass5_19CS30031_19CS10070.y"
+#line 1160 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 142:
-#line 1162 "ass5_19CS30031_19CS10070.y"
+#line 1163 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 143:
-#line 1165 "ass5_19CS30031_19CS10070.y"
+#line 1166 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 144:
-#line 1168 "ass5_19CS30031_19CS10070.y"
+#line 1169 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 145:
-#line 1171 "ass5_19CS30031_19CS10070.y"
+#line 1172 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 146:
-#line 1175 "ass5_19CS30031_19CS10070.y"
+#line 1176 "ass5_19CS30031_19CS10070.y"
     { 
             // function declaration
             currentST->name = (yyvsp[(1) - (5)].symbol)->name;
@@ -3305,12 +3305,12 @@ yyreduce:
     break;
 
   case 147:
-#line 1193 "ass5_19CS30031_19CS10070.y"
+#line 1194 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 148:
-#line 1196 "ass5_19CS30031_19CS10070.y"
+#line 1197 "ass5_19CS30031_19CS10070.y"
     { 
             // same as previous one
             currentST->name = (yyvsp[(1) - (4)].symbol)->name;
@@ -3330,160 +3330,160 @@ yyreduce:
     break;
 
   case 149:
-#line 1218 "ass5_19CS30031_19CS10070.y"
+#line 1219 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.sym_type) = new SymType(POINTER); // new pointer
         }
     break;
 
   case 150:
-#line 1223 "ass5_19CS30031_19CS10070.y"
+#line 1224 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.sym_type) = new SymType(POINTER, (yyvsp[(3) - (3)].sym_type)); // nested pointer
         }
     break;
 
   case 151:
-#line 1230 "ass5_19CS30031_19CS10070.y"
+#line 1231 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 152:
-#line 1233 "ass5_19CS30031_19CS10070.y"
+#line 1234 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 153:
-#line 1238 "ass5_19CS30031_19CS10070.y"
+#line 1239 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 154:
-#line 1241 "ass5_19CS30031_19CS10070.y"
+#line 1242 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 155:
-#line 1246 "ass5_19CS30031_19CS10070.y"
+#line 1247 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 156:
-#line 1249 "ass5_19CS30031_19CS10070.y"
+#line 1250 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 157:
-#line 1254 "ass5_19CS30031_19CS10070.y"
+#line 1255 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 158:
-#line 1257 "ass5_19CS30031_19CS10070.y"
+#line 1258 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 159:
-#line 1262 "ass5_19CS30031_19CS10070.y"
+#line 1263 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 160:
-#line 1265 "ass5_19CS30031_19CS10070.y"
+#line 1266 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 161:
-#line 1270 "ass5_19CS30031_19CS10070.y"
+#line 1271 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 162:
-#line 1273 "ass5_19CS30031_19CS10070.y"
+#line 1274 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 163:
-#line 1278 "ass5_19CS30031_19CS10070.y"
+#line 1279 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 164:
-#line 1283 "ass5_19CS30031_19CS10070.y"
+#line 1284 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.symbol) = (yyvsp[(1) - (1)].expr)->symbol; // depends on assignment expression
         }
     break;
 
   case 165:
-#line 1288 "ass5_19CS30031_19CS10070.y"
+#line 1289 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 166:
-#line 1291 "ass5_19CS30031_19CS10070.y"
+#line 1292 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 167:
-#line 1296 "ass5_19CS30031_19CS10070.y"
+#line 1297 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 168:
-#line 1299 "ass5_19CS30031_19CS10070.y"
+#line 1300 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 169:
-#line 1304 "ass5_19CS30031_19CS10070.y"
+#line 1305 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 170:
-#line 1309 "ass5_19CS30031_19CS10070.y"
+#line 1310 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 171:
-#line 1312 "ass5_19CS30031_19CS10070.y"
+#line 1313 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 172:
-#line 1317 "ass5_19CS30031_19CS10070.y"
+#line 1318 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 173:
-#line 1320 "ass5_19CS30031_19CS10070.y"
+#line 1321 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 174:
-#line 1325 "ass5_19CS30031_19CS10070.y"
+#line 1326 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 175:
-#line 1328 "ass5_19CS30031_19CS10070.y"
+#line 1329 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 176:
-#line 1337 "ass5_19CS30031_19CS10070.y"
+#line 1338 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 177:
-#line 1340 "ass5_19CS30031_19CS10070.y"
+#line 1341 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(1) - (1)].stmt); 
         }
     break;
 
   case 178:
-#line 1345 "ass5_19CS30031_19CS10070.y"
+#line 1346 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
             (yyval.stmt)->nextlist = (yyvsp[(1) - (1)].expr)->nextlist;
@@ -3491,43 +3491,43 @@ yyreduce:
     break;
 
   case 179:
-#line 1351 "ass5_19CS30031_19CS10070.y"
+#line 1352 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(1) - (1)].stmt);
         }
     break;
 
   case 180:
-#line 1356 "ass5_19CS30031_19CS10070.y"
+#line 1357 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(1) - (1)].stmt);
         }
     break;
 
   case 181:
-#line 1361 "ass5_19CS30031_19CS10070.y"
+#line 1362 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(1) - (1)].stmt);
         }
     break;
 
   case 182:
-#line 1369 "ass5_19CS30031_19CS10070.y"
+#line 1370 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 183:
-#line 1372 "ass5_19CS30031_19CS10070.y"
+#line 1373 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 184:
-#line 1375 "ass5_19CS30031_19CS10070.y"
+#line 1376 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 185:
-#line 1382 "ass5_19CS30031_19CS10070.y"
+#line 1383 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(4) - (5)].stmt);
             changeTable(currentST->parent); // return to parent ST
@@ -3535,14 +3535,14 @@ yyreduce:
     break;
 
   case 186:
-#line 1390 "ass5_19CS30031_19CS10070.y"
+#line 1391 "ass5_19CS30031_19CS10070.y"
     {
             (yyval.stmt) = (yyvsp[(1) - (1)].stmt);
         }
     break;
 
   case 187:
-#line 1395 "ass5_19CS30031_19CS10070.y"
+#line 1396 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(3) - (3)].stmt);
             backpatch((yyvsp[(1) - (3)].stmt)->nextlist,(yyvsp[(2) - (3)].instr_num));
@@ -3550,60 +3550,60 @@ yyreduce:
     break;
 
   case 188:
-#line 1403 "ass5_19CS30031_19CS10070.y"
+#line 1404 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(1) - (1)].stmt);
         }
     break;
 
   case 189:
-#line 1408 "ass5_19CS30031_19CS10070.y"
+#line 1409 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
         }
     break;
 
   case 190:
-#line 1416 "ass5_19CS30031_19CS10070.y"
+#line 1417 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
         }
     break;
 
   case 191:
-#line 1420 "ass5_19CS30031_19CS10070.y"
+#line 1421 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(1) - (1)].stmt);
         }
     break;
 
   case 192:
-#line 1427 "ass5_19CS30031_19CS10070.y"
+#line 1428 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (2)].expr);
         }
     break;
 
   case 193:
-#line 1434 "ass5_19CS30031_19CS10070.y"
+#line 1435 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = (yyvsp[(1) - (1)].expr);
         }
     break;
 
   case 194:
-#line 1438 "ass5_19CS30031_19CS10070.y"
+#line 1439 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.expr) = new Expression();
         }
     break;
 
   case 195:
-#line 1449 "ass5_19CS30031_19CS10070.y"
+#line 1450 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
 
-            (yyvsp[(3) - (10)].expr)->toBool();
+            (yyvsp[(3) - (10)].expr)->conv2Bool();
 
             backpatch((yyvsp[(3) - (10)].expr)->truelist, (yyvsp[(5) - (10)].instr_num)); // if true, go to M1 (if-statement)
             backpatch((yyvsp[(3) - (10)].expr)->falselist, (yyvsp[(9) - (10)].instr_num)); // if false, go to M2 (else-statement)
@@ -3613,11 +3613,11 @@ yyreduce:
     break;
 
   case 196:
-#line 1462 "ass5_19CS30031_19CS10070.y"
+#line 1463 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
 
-            (yyvsp[(3) - (7)].expr)->toBool();
+            (yyvsp[(3) - (7)].expr)->conv2Bool();
 
             backpatch((yyvsp[(3) - (7)].expr)->truelist, (yyvsp[(5) - (7)].instr_num)); // // if true, go to M1 (if-statement)
 
@@ -3626,16 +3626,16 @@ yyreduce:
     break;
 
   case 197:
-#line 1473 "ass5_19CS30031_19CS10070.y"
+#line 1474 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 198:
-#line 1480 "ass5_19CS30031_19CS10070.y"
+#line 1481 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
 
-            (yyvsp[(4) - (7)].expr)->toBool();
+            (yyvsp[(4) - (7)].expr)->conv2Bool();
 
             backpatch((yyvsp[(7) - (7)].stmt)->nextlist, (yyvsp[(2) - (7)].instr_num)); // M1 -> to go back to start of loop
             backpatch((yyvsp[(4) - (7)].expr)->truelist, (yyvsp[(6) - (7)].instr_num)); // if true, go to M2 (statement)
@@ -3647,11 +3647,11 @@ yyreduce:
     break;
 
   case 199:
-#line 1496 "ass5_19CS30031_19CS10070.y"
+#line 1497 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
 
-            (yyvsp[(7) - (9)].expr)->toBool();
+            (yyvsp[(7) - (9)].expr)->conv2Bool();
 
             backpatch((yyvsp[(7) - (9)].expr)->truelist, (yyvsp[(2) - (9)].instr_num)); // if true, go to M1 (statement)
             backpatch((yyvsp[(3) - (9)].stmt)->nextlist, (yyvsp[(4) - (9)].instr_num)); // M2 -> to go to check expression once statement is executed
@@ -3661,11 +3661,11 @@ yyreduce:
     break;
 
   case 200:
-#line 1509 "ass5_19CS30031_19CS10070.y"
+#line 1510 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
 
-            (yyvsp[(6) - (13)].expr)->toBool();
+            (yyvsp[(6) - (13)].expr)->conv2Bool();
 
             backpatch((yyvsp[(6) - (13)].expr)->truelist, (yyvsp[(12) - (13)].instr_num)); // if true, go to M3 (statement)
             backpatch((yyvsp[(10) - (13)].stmt)->nextlist, (yyvsp[(5) - (13)].instr_num)); // go to M1 after N1 (for checking condition)
@@ -3678,85 +3678,86 @@ yyreduce:
     break;
 
   case 201:
-#line 1524 "ass5_19CS30031_19CS10070.y"
+#line 1525 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 202:
-#line 1530 "ass5_19CS30031_19CS10070.y"
+#line 1531 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 203:
-#line 1533 "ass5_19CS30031_19CS10070.y"
+#line 1534 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 204:
-#line 1536 "ass5_19CS30031_19CS10070.y"
+#line 1537 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 205:
-#line 1539 "ass5_19CS30031_19CS10070.y"
-    { 
+#line 1540 "ass5_19CS30031_19CS10070.y"
+    {   
+            // depending on whether expression_opt is epsilon or not, return is handled
             (yyval.stmt) = new Statement();
             emit("return",((yyvsp[(2) - (3)].expr)->symbol == NULL) ? "" : (yyvsp[(2) - (3)].expr)->symbol->name);
         }
     break;
 
   case 206:
-#line 1550 "ass5_19CS30031_19CS10070.y"
+#line 1552 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 207:
-#line 1553 "ass5_19CS30031_19CS10070.y"
+#line 1555 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 208:
-#line 1558 "ass5_19CS30031_19CS10070.y"
+#line 1560 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 209:
-#line 1561 "ass5_19CS30031_19CS10070.y"
+#line 1563 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 210:
-#line 1567 "ass5_19CS30031_19CS10070.y"
+#line 1569 "ass5_19CS30031_19CS10070.y"
     { 
-            tableCount = 0;
+            block_count = 0;
             (yyvsp[(2) - (7)].symbol)->isFunction = true;
             changeTable(globalST); // return to global ST
         }
     break;
 
   case 211:
-#line 1576 "ass5_19CS30031_19CS10070.y"
+#line 1578 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 212:
-#line 1579 "ass5_19CS30031_19CS10070.y"
+#line 1581 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 213:
-#line 1584 "ass5_19CS30031_19CS10070.y"
+#line 1586 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
   case 214:
-#line 1587 "ass5_19CS30031_19CS10070.y"
+#line 1589 "ass5_19CS30031_19CS10070.y"
     { }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 3760 "y.tab.c"
+#line 3761 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -3970,7 +3971,7 @@ yyreturn:
 }
 
 
-#line 1590 "ass5_19CS30031_19CS10070.y"
+#line 1592 "ass5_19CS30031_19CS10070.y"
 
 
 void yyerror(const char* s) {
