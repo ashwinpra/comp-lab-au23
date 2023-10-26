@@ -300,12 +300,14 @@ void Quad::print() {
 void Expression::toInt() {
     if (this->type == Expression::typeEnum::BOOLEAN)
     {
-        // generate symbol of new type and do backpatching and other required operations
         this->symbol = gentemp(INT);
-        backpatch(this->trueList, nextinstr()); // update the true list
-        emit("=", this->symbol->name, "true");                        // emit the quad
-        emit("goto", toString(nextinstr() + 1));  // emit the goto quad
-        backpatch(this->falseList, nextinstr());  // update the false list
+
+        backpatch(this->trueList, nextinstr()); // truelist updation
+        emit("=", this->symbol->name, "true");  // corresponding quad is emitted
+
+        emit("goto", to_string(nextinstr() + 1));  
+
+        backpatch(this->falseList, nextinstr());  // falselist updation
         emit("=", this->symbol->name, "false");
     }
 }
@@ -313,13 +315,16 @@ void Expression::toInt() {
 void Expression::toBool() {
     if (this->type == Expression::typeEnum::NONBOOLEAN)
     {
-        // generate symbol of new type and do backpatching and other required operations
-        this->falseList = makelist(nextinstr()); // update the falselist
-        emit("==", "", this->symbol->name, "0");                        // emit general goto statements
-        this->trueList = makelist(nextinstr());  // update the truelist
+        this->falseList = makelist(nextinstr()); // falselist updation
+
+        emit("==", "", this->symbol->name, "0");
+
+        this->trueList = makelist(nextinstr());  // truelist updation
+
         emit("goto", "");
     }
 }
+
 
 // global functions
 
@@ -335,7 +340,6 @@ void emit(string op, string result, int arg1, string arg2) {
 
 
 list<int> makelist(int i) {
-    // returns list with base as the only value
     return list<int>(1, i);
 }
 
@@ -354,78 +358,64 @@ void backpatch(list<int> li, int addr) {
     }
 }
 
+// other functions
 
-// Implementation of other helper functions
-int nextinstr()
-{
-    // returns the next instruction number
+int nextinstr() {
     return quadArray.size() + 1;
 }
 
-// generates temporary of given type with given value s
-Symbol *gentemp(TYPE type, string s)
-{
-    Symbol *temp = new Symbol("t" + toString(temporaryCount++), type, s);
-    currentTable->symbols.push_back(*temp);
+Symbol *gentemp(TYPE type, string val) {
+    Symbol *temp = new Symbol("t" + to_string(temporaryCount++), type, val);
+    (currentTable->symbols).push_back(*temp);
     return temp;
 }
-// change current table to specified table
-void changeTable(SymTable *table)
-{
-    currentTable = table;
+
+void changeTable(SymTable *ST) {
+    currentTable = ST;
 }
 
-// lambda function to check if a and b are of the same type 
-bool type_comp(SymType *first, SymType *second) 
-{
-    if (!first and !second)
-        return true;
-    else if (!first or !second or first->type != second->type)
-        return false;
-    else
-        return type_comp(first->arr_type, second->arr_type);
-};
 
-// code to check if a and b are of the same type, promotes to the higher type if feasible and if that makes the type of both the same
-bool typeCheck(Symbol *&a, Symbol *&b)
+
+// checks if both are of same type, or if type conversion can be done
+bool typecheck(Symbol *&a, Symbol *&b)
 {
     
-    // if the types are same return true
-    if(type_comp(a->type, b->type))
+    // if types are same, then no need for converison
+    if(typecheck(a->type, b->type))
         return true;
-    // if the types are not same but can be cast safely according the rules, then cast and return
-    else if(a->type->type == FLOAT or b->type->type == FLOAT) {
-        a = a->convert(FLOAT);
-        b = b->convert(FLOAT);
-        return true;
-    }
+
+
     else if(a->type->type == INT or b->type->type == INT) {
+        // convert both to int
         a = a->convert(INT);
         b = b->convert(INT);
         return true;
     }
-    // return false if not possible to cast safelt to same type
-    else {
-        return false;
+
+    else if(a->type->type == FLOAT or b->type->type == FLOAT) {
+        // convert both to float
+        a = a->convert(FLOAT);
+        b = b->convert(FLOAT);
+        return true;
     }
+
+    // no conversion possible
+    else return false;
 }
-// Implementation of utility functions
-// overloaded toString function to maintain semantic consistency 
-// convert int to string
-string toString(int i)
-{
-    return to_string(i);
-}
-// converts float to string
-string toString(float f)
-{
-    return to_string(f);
-}
-// converts char to string
-string toString(char c)
-{
-    return string(1, c);
-}
+
+bool typecheck(SymType *st1, SymType *st2) {
+    // recursively checks base type
+    if (!st1 and !st2)
+        return true;
+    else if (!st1 or !st2 or st1->type != st2->type)
+        return false;
+    else
+        // recursive call
+        return typecheck(st1->arr_type, st2->arr_type);
+};
+
+
+
 
 int main() {
     // initialization of global variables

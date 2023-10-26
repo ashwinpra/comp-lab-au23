@@ -148,7 +148,8 @@ void emit(string, string, int, string = "");
 list<int> makelist(int);  
 list<int> merge(list<int>, list<int>); 
 void backpatch(list<int>, int); 
-bool typeCheck(Symbol *&, Symbol *&);  
+bool typecheck(Symbol *&, Symbol *&);  
+bool typecheck(SymType*, SymType*); // overloaded instance for symtype checking
 
 
 // Other function functions
@@ -159,14 +160,6 @@ Symbol *gentemp(TYPE, string = "");  // generate temporary variable and insert i
 
 
 void changeTable(SymTable *); // change the current symbol table
-
-
-// Utility functions
-string toString(int);  // returns the string representation of the given integer
-string toString(float);  // returns the string representation of the given float
-string toString(char);  // returns the string representation of the given character
-
-
 
 
 #endif

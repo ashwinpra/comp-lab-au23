@@ -2050,7 +2050,7 @@ yyreduce:
   case 5:
 #line 114 "ass5_19CS30031_19CS10070.y"
     {
-        string name = currentTable->name + "_" + toString(tableCount++); // name for new ST
+        string name = currentTable->name + "_" + to_string(tableCount++); // name for new ST
         Symbol *s = currentTable->lookup(name); 
         s->nestedTable = new SymTable(name, currentTable);
         s->type = new SymType(BLOCK);
@@ -2411,7 +2411,7 @@ yyreduce:
                 temp = (yyvsp[(3) - (3)].array)->symbol;
 
             // now we execute the required operation (here, multiplication)
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, temp)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, temp)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->symbol = gentemp((yyvsp[(1) - (3)].expr)->symbol->type->type);
                 emit("*", (yyval.expr)->symbol->name, (yyvsp[(1) - (3)].expr)->symbol->name, temp->name);
@@ -2441,7 +2441,7 @@ yyreduce:
             else
                 temp = (yyvsp[(3) - (3)].array)->symbol;
 
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, temp)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, temp)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->symbol = gentemp((yyvsp[(1) - (3)].expr)->symbol->type->type);
                 emit("/", (yyval.expr)->symbol->name, (yyvsp[(1) - (3)].expr)->symbol->name, temp->name);
@@ -2471,7 +2471,7 @@ yyreduce:
             else
                 temp = (yyvsp[(3) - (3)].array)->symbol;
 
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, temp)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, temp)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->symbol = gentemp((yyvsp[(1) - (3)].expr)->symbol->type->type);
                 emit("%", (yyval.expr)->symbol->name, (yyvsp[(1) - (3)].expr)->symbol->name, temp->name);
@@ -2493,7 +2493,7 @@ yyreduce:
 #line 499 "ass5_19CS30031_19CS10070.y"
     {   
             // addition operation
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->symbol = gentemp((yyvsp[(1) - (3)].expr)->symbol->type->type);
                 emit("+", (yyval.expr)->symbol->name, (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
@@ -2508,7 +2508,7 @@ yyreduce:
 #line 512 "ass5_19CS30031_19CS10070.y"
     { 
             // subtraction operation
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->symbol = gentemp((yyvsp[(1) - (3)].expr)->symbol->type->type);
                 emit("-", (yyval.expr)->symbol->name, (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
@@ -2566,7 +2566,7 @@ yyreduce:
   case 51:
 #line 566 "ass5_19CS30031_19CS10070.y"
     {   
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
                 (yyval.expr)->trueList = makelist(nextinstr());
@@ -2583,7 +2583,7 @@ yyreduce:
   case 52:
 #line 581 "ass5_19CS30031_19CS10070.y"
     { 
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
                 (yyval.expr)->trueList = makelist(nextinstr());
@@ -2600,7 +2600,7 @@ yyreduce:
   case 53:
 #line 596 "ass5_19CS30031_19CS10070.y"
     { 
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
                 (yyval.expr)->trueList = makelist(nextinstr());
@@ -2617,7 +2617,7 @@ yyreduce:
   case 54:
 #line 611 "ass5_19CS30031_19CS10070.y"
     { 
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
                 (yyval.expr)->trueList = makelist(nextinstr());
@@ -2641,7 +2641,7 @@ yyreduce:
   case 56:
 #line 633 "ass5_19CS30031_19CS10070.y"
     { 
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyvsp[(1) - (3)].expr)->toInt();
                 (yyvsp[(3) - (3)].expr)->toInt();
 
@@ -2663,7 +2663,7 @@ yyreduce:
   case 57:
 #line 653 "ass5_19CS30031_19CS10070.y"
     { 
-            if(typeCheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
+            if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyvsp[(1) - (3)].expr)->toInt();
                 (yyvsp[(3) - (3)].expr)->toInt();
 
@@ -3671,7 +3671,7 @@ yyreduce:
             backpatch((yyvsp[(10) - (13)].stmt)->nextList, (yyvsp[(5) - (13)].instr_num)); // go to M1 after N1 (for checking condition)
             backpatch((yyvsp[(13) - (13)].stmt)->nextList, (yyvsp[(8) - (13)].instr_num)); // go to M2 (3rd part of for loop), after statement is executed
 
-            emit("goto", toString((yyvsp[(8) - (13)].instr_num)));
+            emit("goto", to_string((yyvsp[(8) - (13)].instr_num)));
 
             (yyval.stmt)->nextList = (yyvsp[(6) - (13)].expr)->falseList; // to go out of for when expression is false
         }

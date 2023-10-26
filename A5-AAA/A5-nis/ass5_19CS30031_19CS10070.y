@@ -112,7 +112,7 @@ CT:
 // to change symbol table, in case of blocks
 CB: 
     {
-        string name = currentTable->name + "_" + toString(tableCount++); // name for new ST
+        string name = currentTable->name + "_" + to_string(tableCount++); // name for new ST
         Symbol *s = currentTable->lookup(name); 
         s->nestedTable = new SymTable(name, currentTable);
         s->type = new SymType(BLOCK);
@@ -422,7 +422,7 @@ multiplicative_expression:
                 temp = $3->symbol;
 
             // now we execute the required operation (here, multiplication)
-            if(typeCheck($1->symbol, temp)) {
+            if(typecheck($1->symbol, temp)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
                 emit("*", $$->symbol->name, $1->symbol->name, temp->name);
@@ -450,7 +450,7 @@ multiplicative_expression:
             else
                 temp = $3->symbol;
 
-            if(typeCheck($1->symbol, temp)) {
+            if(typecheck($1->symbol, temp)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
                 emit("/", $$->symbol->name, $1->symbol->name, temp->name);
@@ -478,7 +478,7 @@ multiplicative_expression:
             else
                 temp = $3->symbol;
 
-            if(typeCheck($1->symbol, temp)) {
+            if(typecheck($1->symbol, temp)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
                 emit("%", $$->symbol->name, $1->symbol->name, temp->name);
@@ -498,7 +498,7 @@ additive_expression:
     | additive_expression PLUS multiplicative_expression
         {   
             // addition operation
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
                 emit("+", $$->symbol->name, $1->symbol->name, $3->symbol->name);
@@ -511,7 +511,7 @@ additive_expression:
     | additive_expression MINUS multiplicative_expression
         { 
             // subtraction operation
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
                 emit("-", $$->symbol->name, $1->symbol->name, $3->symbol->name);
@@ -564,7 +564,7 @@ relational_expression:
         }
     | relational_expression LT_OP shift_expression
         {   
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
                 $$->trueList = makelist(nextinstr());
@@ -579,7 +579,7 @@ relational_expression:
 
     | relational_expression GT_OP shift_expression
         { 
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
                 $$->trueList = makelist(nextinstr());
@@ -594,7 +594,7 @@ relational_expression:
 
     | relational_expression LTE_OP shift_expression
         { 
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
                 $$->trueList = makelist(nextinstr());
@@ -609,7 +609,7 @@ relational_expression:
 
     | relational_expression GTE_OP shift_expression
         { 
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
                 $$->trueList = makelist(nextinstr());
@@ -631,7 +631,7 @@ equality_expression:
 
     | equality_expression EQ_OP relational_expression
         { 
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $1->toInt();
                 $3->toInt();
 
@@ -651,7 +651,7 @@ equality_expression:
 
     | equality_expression NE_OP relational_expression
         { 
-            if(typeCheck($1->symbol, $3->symbol)) {
+            if(typecheck($1->symbol, $3->symbol)) {
                 $1->toInt();
                 $3->toInt();
 
@@ -1515,7 +1515,7 @@ iteration_statement:
             backpatch($10->nextList, $5); // go to M1 after N1 (for checking condition)
             backpatch($13->nextList, $8); // go to M2 (3rd part of for loop), after statement is executed
 
-            emit("goto", toString($8));
+            emit("goto", to_string($8));
 
             $$->nextList = $6->falseList; // to go out of for when expression is false
         }
