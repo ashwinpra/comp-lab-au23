@@ -81,10 +81,10 @@ class Symbol {
         bool isFunction; // flag to indicate if the symbol represents a function or not
                          // if it does represent a function the return type will be given by the type attribute
 
-        Symbol(string, TYPE = INT, string = "");  // constructor
+        Symbol(string, TYPE = INT, string = "-");  // constructor
 
         Symbol *update(SymType*);  // update the symbol with given type
-        Symbol *convert(TYPE);  // convert the symbol to given type
+        Symbol *convert(TYPE);  // convert the symbol to given type - it covers all type conversions conv<type1>2<type2> in the assignment
 };
 
 
