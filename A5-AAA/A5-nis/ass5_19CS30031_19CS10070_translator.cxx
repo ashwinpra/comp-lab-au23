@@ -5,7 +5,7 @@ vector<Quad *> quadArray;  // Quad Array
 SymTable *currentTable, *globalTable, *parentTable;  // Symbol Tables
 Symbol *currentSymbol;  // Current Symbol
 TYPE currentType;  // Current Type
-int tableCount, temporaryCount;  // Counts of number of tables and number of temps generated
+int tableCount;  // Counts of number of tables and number of temps generated
 
 
 // SymType class methods
@@ -46,12 +46,14 @@ string SymType::toString() {
         return "array(" + to_string(this->width) + ", " + this->arr_type->toString() + ")";
     else if(this->type ==  BLOCK)
         return "block";
+    else
+        return "NULL";
 }
 
 
 // SymTable class methods
 
-SymTable::SymTable(string name_, SymTable *parent_) : name(name_), parent(parent_) {}
+SymTable::SymTable(string name_, SymTable *parent_) : name(name_), parent(parent_), count(0) {}
 
 Symbol *SymTable::lookup(string name) {
     list<Symbol>::iterator it = (this->symbols).begin();
@@ -114,7 +116,7 @@ void SymTable::print() {
     while(it != (this->symbols).end()){
         cout<<it->name<<"\t\t\t\t"
         <<((it->isFunction) ? "funct" : it->type->toString())<<"\t\t\t"
-        <<it->initialValue<<"\t\t\t\t"
+        <<it->init_val<<"\t\t\t\t"
         <<it->size<<"\t\t"
         <<it->offset<<"\t\t\t"
         <<(it->nestedTable == NULL ? "NULL" : it->nestedTable->name)<<endl;
@@ -140,7 +142,7 @@ void SymTable::print() {
 
 // Symbol class methods
 
-Symbol::Symbol(string name_, TYPE type_, string init_val_) : name(name_), type(new SymType(type_)), offset(0), nestedTable(NULL), initialValue(init_val_), isFunction(false) {
+Symbol::Symbol(string name_, TYPE type_, string init_val_) : name(name_), type(new SymType(type_)), offset(0), nestedTable(NULL), init_val(init_val_), isFunction(false) {
     size = this->type->getSize();
 }
 
@@ -298,7 +300,7 @@ void Quad::print() {
 // Expression class methods
 
 void Expression::toInt() {
-    if (this->type == Expression::typeEnum::BOOLEAN)
+    if (this->type == Expression::BOOLEAN)
     {
         this->symbol = gentemp(INT);
 
@@ -313,7 +315,7 @@ void Expression::toInt() {
 }
 
 void Expression::toBool() {
-    if (this->type == Expression::typeEnum::NONBOOLEAN)
+    if (this->type == Expression::NONBOOLEAN)
     {
         this->falseList = makelist(nextinstr()); // falselist updation
 
@@ -365,7 +367,7 @@ int nextinstr() {
 }
 
 Symbol *gentemp(TYPE type, string val) {
-    Symbol *temp = new Symbol("t" + to_string(temporaryCount++), type, val);
+    Symbol *temp = new Symbol("t" + to_string(currentTable->count++), type, val);
     (currentTable->symbols).push_back(*temp);
     return temp;
 }
@@ -373,7 +375,6 @@ Symbol *gentemp(TYPE type, string val) {
 void changeTable(SymTable *ST) {
     currentTable = ST;
 }
-
 
 
 // checks if both are of same type, or if type conversion can be done
@@ -412,24 +413,27 @@ bool typecheck(SymType *st1, SymType *st2) {
     else
         // recursive call
         return typecheck(st1->arr_type, st2->arr_type);
-};
+}
 
-
-
+void printQuadArray() {
+    cout<<"Three Address Codes:"<<endl;
+    for(int i = 0; i < quadArray.size(); i++) {
+        cout<<i+1<<": ";
+        quadArray[i]->print();
+    }
+}
 
 int main() {
-    // initialization of global variables
     tableCount = 0;
-    temporaryCount = 0;
     globalTable = new SymTable("global");
     currentTable = globalTable;
-    cout << left; // left allign
+
     yyparse();
+
     globalTable->update();
     globalTable->print();
-    int ins = 1;
-    for(auto it : quadArray) {
-        cout<<setw(4)<<ins++<<": "; it->print();
-    }
+    
+    printQuadArray();
+
     return 0;
 }

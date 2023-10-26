@@ -2986,7 +2986,7 @@ yyreduce:
   case 98:
 #line 927 "ass5_19CS30031_19CS10070.y"
     { 
-            if((yyvsp[(3) - (3)].symbol)->initialValue != "") (yyvsp[(1) - (3)].symbol)->initialValue = (yyvsp[(3) - (3)].symbol)->initialValue;
+            if((yyvsp[(3) - (3)].symbol)->init_val != "") (yyvsp[(1) - (3)].symbol)->init_val = (yyvsp[(3) - (3)].symbol)->init_val;
             emit("=", (yyvsp[(1) - (3)].symbol)->name, (yyvsp[(3) - (3)].symbol)->name);
         }
     break;
@@ -3225,12 +3225,12 @@ yyreduce:
 
             if(prev != NULL) { 
                 // case of multi-dimensional array
-                prev->arr_type =  new SymType(ARRAY, temp, atoi((yyvsp[(3) - (4)].expr)->symbol->initialValue.c_str()));	
+                prev->arr_type =  new SymType(ARRAY, temp, atoi((yyvsp[(3) - (4)].expr)->symbol->init_val.c_str()));	
                 (yyval.symbol) = (yyvsp[(1) - (4)].symbol)->update((yyvsp[(1) - (4)].symbol)->type);
             }
             else { 
                 // just 1D array
-                SymType* new_type = new SymType(ARRAY, (yyvsp[(1) - (4)].symbol)->type, atoi((yyvsp[(3) - (4)].expr)->symbol->initialValue.c_str()));
+                SymType* new_type = new SymType(ARRAY, (yyvsp[(1) - (4)].symbol)->type, atoi((yyvsp[(3) - (4)].expr)->symbol->init_val.c_str()));
                 (yyval.symbol) = (yyvsp[(1) - (4)].symbol)->update(new_type);
             }
         }

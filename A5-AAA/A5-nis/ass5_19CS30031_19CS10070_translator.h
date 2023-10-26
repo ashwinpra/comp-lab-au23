@@ -60,6 +60,7 @@ class SymTable {
         string name;                // name of the symbol table
         list <Symbol> symbols;      // list of symbols in the ST
         SymTable *parent;            // pointer to parent ST, NULL for global ST
+        int count;                  // number of entries in the ST
         
         SymTable(string = "NULL", SymTable * = NULL); // constructor
 
@@ -75,7 +76,7 @@ class Symbol {
         int offset;                     // offset of the symbol
         SymType *type;                   // type of the symbol
         SymTable *nestedTable;          // pointer to parent symbol table if any
-        string initialValue;            // initial value of the symbol
+        string init_val;            // initial value of the symbol
 
         // check this
         bool isFunction; // flag to indicate if the symbol represents a function or not
@@ -136,7 +137,7 @@ extern vector<Quad *> quadArray; // array of quads
 extern SymTable *currentTable, *globalTable; // current and global symbol tables
 extern Symbol *currentSymbol;  // current symbol
 extern TYPE currentType;  // current type
-extern int tableCount, temporaryCount; // counters for symbol table and temporary symbols
+extern int tableCount;
 
 
 
@@ -152,14 +153,14 @@ bool typecheck(Symbol *&, Symbol *&);
 bool typecheck(SymType*, SymType*); // overloaded instance for symtype checking
 
 
-// Other function functions
+// Other functions
 
 int nextinstr();  // return next instruction number
 
 Symbol *gentemp(TYPE, string = "");  // generate temporary variable and insert it to symbol table
 
-
 void changeTable(SymTable *); // change the current symbol table
 
+void printQuadArray();  // print the quad array
 
 #endif

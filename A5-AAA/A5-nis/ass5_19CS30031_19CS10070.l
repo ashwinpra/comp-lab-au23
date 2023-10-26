@@ -3,7 +3,21 @@
     #include <stdlib.h>
     #include "ass5_19CS30031_19CS10070_translator.h"
     #include "y.tab.h"
-    int lineCount = 1;
+
+    /* 
+        although the tokens have been kept same as in assignment 4, some of them are unnecessary: 
+        short, long, double, _Bool, _Complex, _Imaginary 
+        extern, static, auto, register (storage-class-specifiers)
+
+        enum  (enum-specifier)
+        const, restrict, volatile, inline (type-qualifiers and function-specifier)
+
+        case and default (labeled-statements)
+        swtich  (in selection-statement)
+        goto, continue, break  (jump-statements)
+
+        +=, -=, *=, /=, %=, <<=, >>=, |=, &=, ^= (assignment-operators)
+    */
 %}
 
 %x multi_line_comment
@@ -143,9 +157,11 @@ whitespace [ \t\n]
 <single_line_comment>"\n"       { BEGIN(INITIAL); }
 <single_line_comment>.          { }
 
-{whitespace}                    { }
 "\n"                            { yylineno++; }
-.                               { return UNEXPECTED_TOKEN; }
+
+{whitespace}                    { }
+
+.                               { return UNEXPECTED_TOKEN; } // if no matches, return unexpected token
 
 %%
 

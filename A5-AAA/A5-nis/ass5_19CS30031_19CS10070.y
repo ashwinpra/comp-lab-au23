@@ -925,7 +925,7 @@ init_declarator:
         }
     | declarator EQ initializer
         { 
-            if($3->initialValue != "") $1->initialValue = $3->initialValue;
+            if($3->init_val != "") $1->init_val = $3->init_val;
             emit("=", $1->name, $3->name);
         }
     ;
@@ -1124,12 +1124,12 @@ direct_declarator:
 
             if(prev != NULL) { 
                 // case of multi-dimensional array
-                prev->arr_type =  new SymType(ARRAY, temp, atoi($3->symbol->initialValue.c_str()));	
+                prev->arr_type =  new SymType(ARRAY, temp, atoi($3->symbol->init_val.c_str()));	
                 $$ = $1->update($1->type);
             }
             else { 
                 // just 1D array
-                SymType* new_type = new SymType(ARRAY, $1->type, atoi($3->symbol->initialValue.c_str()));
+                SymType* new_type = new SymType(ARRAY, $1->type, atoi($3->symbol->init_val.c_str()));
                 $$ = $1->update(new_type);
             }
         }
