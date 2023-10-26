@@ -233,68 +233,68 @@ Symbol *Symbol::convert(TYPE ret_type) {
 
 // Quad class methods 
 
-Quad::Quad(string result, string arg1, string op, string arg2) : result(result), op(op), arg1(arg1), arg2(arg2) {}
-Quad::Quad(string result, int arg1, string op, string arg2) : result(result), op(op), arg1(to_string(arg1)), arg2(arg2) {}
+Quad::Quad(string res, string arg1, string op, string arg2) : res(res), op(op), arg1(arg1), arg2(arg2) {}
+Quad::Quad(string res, int arg1, string op, string arg2) : res(res), op(op), arg1(to_string(arg1)), arg2(arg2) {}
 
 // print the quad 
 void Quad::print() {
 
-    // result = arg1 op arg2
+    // res = arg1 op arg2
     if (op == "+" || op == "-" || op == "*" || op == "/" || op == "%" || op == "|" || op == "^" || op == "&" || op == "<<" || op == ">>")
-        cout<<this->result<<" = "<<this->arg1<<" "<<this->op<<" "<<this->arg2<<endl;
+        cout<<this->res<<" = "<<this->arg1<<" "<<this->op<<" "<<this->arg2<<endl;
 
-    // if arg1 op arg2 goto result
+    // if arg1 op arg2 goto res
     else if (op == "==" || op == "!=" || op == "<=" || op == ">=" || op == "<" || op == ">")
-        cout<<"if "<<this->arg1<<" "<<this->op<<" "<<this->arg2<<" goto "<<this->result<<endl;
+        cout<<"if "<<this->arg1<<" "<<this->op<<" "<<this->arg2<<" goto "<<this->res<<endl;
 
-    // unary operators (result = op arg1)
+    // unary operators (res = op arg1)
     else if (op == "=")
-        cout<<this->result<<" = "<<this->arg1<<endl;
+        cout<<this->res<<" = "<<this->arg1<<endl;
 
     else if (op == "=&")
-        cout<<this->result<<" = &"<<this->arg1<<endl;
+        cout<<this->res<<" = &"<<this->arg1<<endl;
     
     else if (op == "=*")
-        cout<<this->result<<" = *"<<this->arg1<<endl;
+        cout<<this->res<<" = *"<<this->arg1<<endl;
 
     else if (op == "=-")
-        cout<<this->result<<" = -"<<this->arg1<<endl;
+        cout<<this->res<<" = -"<<this->arg1<<endl;
 
     else if (op == "!")
-        cout<<this->result<<" = !"<<this->arg1<<endl;
+        cout<<this->res<<" = !"<<this->arg1<<endl;
 
     else if (op == "~")
-        cout<<this->result<<" = ~"<<this->arg1<<endl;
+        cout<<this->res<<" = ~"<<this->arg1<<endl;
     
     else if (op == "*=")
-        cout<<"*"<<this->result<<" = "<<this->arg1<<endl;
+        cout<<"*"<<this->res<<" = "<<this->arg1<<endl;
 
     else if (op == "=[]")
-        cout<<this->result<<" = "<<this->arg1<<"["<<this->arg2<<"]"<<endl;
+        cout<<this->res<<" = "<<this->arg1<<"["<<this->arg2<<"]"<<endl;
 
     else if (op == "[]=")
-        cout<<this->result<<"["<<this->arg1<<"]"<<" = "<<this->arg2<<endl;
+        cout<<this->res<<"["<<this->arg1<<"]"<<" = "<<this->arg2<<endl;
 
 
-    // goto result
+    // goto res
     else if (op == "goto")
-        cout<<"goto "<<this->result<<endl;
+        cout<<"goto "<<this->res<<endl;
 
-    // return result
+    // return res
     else if (op == "return")
-        cout<<"return "<<this->result<<endl;
+        cout<<"return "<<this->res<<endl;
 
-    // param result
+    // param res
     else if (op == "param")
-        cout<<"param "<<this->result<<endl;
+        cout<<"param "<<this->res<<endl;
 
-    // result = call arg1, arg2
+    // res = call arg1, arg2
     else if (op == "call")
-        cout<<this->result<<" = call "<<this->arg1<<", "<<this->arg2<<endl;
+        cout<<this->res<<" = call "<<this->arg1<<", "<<this->arg2<<endl;
 
     // label
     else if (op == "label")
-        cout<<this->result<<":"<<endl;
+        cout<<this->res<<":"<<endl;
 }
 
 // Expression class methods
@@ -304,12 +304,12 @@ void Expression::toInt() {
     {
         this->symbol = gentemp(INT);
 
-        backpatch(this->trueList, nextinstr()); // truelist updation
+        backpatch(this->truelist, nextinstr()); // truelist updation
         emit("=", this->symbol->name, "true");  // corresponding quad is emitted
 
         emit("goto", to_string(nextinstr() + 1));  
 
-        backpatch(this->falseList, nextinstr());  // falselist updation
+        backpatch(this->falselist, nextinstr());  // falselist updation
         emit("=", this->symbol->name, "false");
     }
 }
@@ -317,11 +317,11 @@ void Expression::toInt() {
 void Expression::toBool() {
     if (this->type == Expression::NONBOOLEAN)
     {
-        this->falseList = makelist(nextinstr()); // falselist updation
+        this->falselist = makelist(nextinstr()); // falselist updation
 
         emit("==", "", this->symbol->name, "0");
 
-        this->trueList = makelist(nextinstr());  // truelist updation
+        this->truelist = makelist(nextinstr());  // truelist updation
 
         emit("goto", "");
     }
@@ -330,13 +330,13 @@ void Expression::toBool() {
 
 // global functions
 
-void emit(string op, string result, string arg1, string arg2) {
-    Quad *q = new Quad(result, arg1, op, arg2);
+void emit(string op, string res, string arg1, string arg2) {
+    Quad *q = new Quad(res, arg1, op, arg2);
     quadArray.push_back(q);
 }
 
-void emit(string op, string result, int arg1, string arg2) {
-    Quad *q = new Quad(result, arg1, op, arg2);
+void emit(string op, string res, int arg1, string arg2) {
+    Quad *q = new Quad(res, arg1, op, arg2);
     quadArray.push_back(q);
 }
 
@@ -355,7 +355,7 @@ void backpatch(list<int> li, int addr) {
     list<int>::iterator it = li.begin();
     while (it != li.end())
     {
-        quadArray[*it - 1]->result = to_string(addr);
+        quadArray[*it - 1]->res = to_string(addr);
         it++;
     }
 }

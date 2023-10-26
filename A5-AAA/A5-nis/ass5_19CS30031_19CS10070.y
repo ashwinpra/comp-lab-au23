@@ -91,7 +91,7 @@ M:
 N: 
     {
         $$ = new Statement();
-        $$->nextList = makelist(nextinstr());
+        $$->nextlist = makelist(nextinstr());
         emit("goto", "");
     }
 ;
@@ -567,8 +567,8 @@ relational_expression:
             if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
-                $$->trueList = makelist(nextinstr());
-                $$->falseList = makelist(nextinstr() + 1);
+                $$->truelist = makelist(nextinstr());
+                $$->falselist = makelist(nextinstr() + 1);
                 emit("<", "", $1->symbol->name, $3->symbol->name);
                 emit("goto", "");
             } 
@@ -582,8 +582,8 @@ relational_expression:
             if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
-                $$->trueList = makelist(nextinstr());
-                $$->falseList = makelist(nextinstr() + 1);
+                $$->truelist = makelist(nextinstr());
+                $$->falselist = makelist(nextinstr() + 1);
                 emit(">", "", $1->symbol->name, $3->symbol->name);
                 emit("goto", "");
             } 
@@ -597,8 +597,8 @@ relational_expression:
             if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
-                $$->trueList = makelist(nextinstr());
-                $$->falseList = makelist(nextinstr() + 1);
+                $$->truelist = makelist(nextinstr());
+                $$->falselist = makelist(nextinstr() + 1);
                 emit("<=", "", $1->symbol->name, $3->symbol->name);
                 emit("goto", "");
             } 
@@ -612,8 +612,8 @@ relational_expression:
             if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
-                $$->trueList = makelist(nextinstr());
-                $$->falseList = makelist(nextinstr() + 1);
+                $$->truelist = makelist(nextinstr());
+                $$->falselist = makelist(nextinstr() + 1);
                 emit(">=", "", $1->symbol->name, $3->symbol->name);
                 emit("goto", "");
             } 
@@ -637,8 +637,8 @@ equality_expression:
 
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
-                $$->trueList = makelist(nextinstr());
-                $$->falseList = makelist(nextinstr() + 1);
+                $$->truelist = makelist(nextinstr());
+                $$->falselist = makelist(nextinstr() + 1);
 
                 emit("==", "", $1->symbol->name, $3->symbol->name);
                 emit("goto", "");
@@ -657,8 +657,8 @@ equality_expression:
 
                 $$ = new Expression();
                 $$->type = Expression::BOOLEAN;
-                $$->trueList = makelist(nextinstr());
-                $$->falseList = makelist(nextinstr() + 1);
+                $$->truelist = makelist(nextinstr());
+                $$->falselist = makelist(nextinstr() + 1);
 
                 emit("!=", "", $1->symbol->name, $3->symbol->name);
                 emit("goto", "");
@@ -743,9 +743,9 @@ logical_AND_expression:
             $$ = new Expression();
             $$->type = Expression::BOOLEAN;
 
-            backpatch($1->trueList, $3); // backpatching
-            $$->trueList = $4->trueList; // B.truelist = B2.truelist
-            $$->falseList = merge($1->falseList, $4->falseList); // B.falselist = merge(B1.falselist, B2.falselist)
+            backpatch($1->truelist, $3); // backpatching
+            $$->truelist = $4->truelist; // B.truelist = B2.truelist
+            $$->falselist = merge($1->falselist, $4->falselist); // B.falselist = merge(B1.falselist, B2.falselist)
         }
     ;
 
@@ -764,9 +764,9 @@ logical_OR_expression:
             $$ = new Expression();
             $$->type = Expression::BOOLEAN;
 
-            backpatch($1->falseList, $3); // backpatching
-            $$->trueList = merge($1->trueList, $4->trueList); // B.truelist = merge(B1.truelist, B2.truelist)
-            $$->falseList = $4->falseList; // B.falselist = B2.falselist
+            backpatch($1->falselist, $3); // backpatching
+            $$->truelist = merge($1->truelist, $4->truelist); // B.truelist = merge(B1.truelist, B2.truelist)
+            $$->falselist = $4->falselist; // B.falselist = B2.falselist
         }
     ;
 
@@ -785,18 +785,18 @@ conditional_expression:
             list<int> l = makelist(nextinstr());
             emit("goto", "");
 
-            backpatch($6->nextList, nextinstr());
+            backpatch($6->nextlist, nextinstr());
             emit("=", $$->symbol->name, $5->symbol->name);
 
             l = merge(l, makelist(nextinstr()));
             emit("goto", "");
 
-            backpatch($2->nextList, nextinstr());
+            backpatch($2->nextlist, nextinstr());
 
             $1->toBool();
 
-            backpatch($1->trueList, $4);
-            backpatch($1->falseList, $8);
+            backpatch($1->truelist, $4);
+            backpatch($1->falselist, $8);
 
             backpatch(l, nextinstr());
         }
@@ -1344,7 +1344,7 @@ statement:
     | expression_statement
         { 
             $$ = new Statement();
-            $$->nextList = $1->nextList;
+            $$->nextlist = $1->nextlist;
         }
 
     | selection_statement
@@ -1394,7 +1394,7 @@ block_item_list:
     | block_item_list M block_item
         { 
             $$ = $3;
-            backpatch($1->nextList,$2);
+            backpatch($1->nextlist,$2);
         }
     ;
 
@@ -1451,10 +1451,10 @@ selection_statement:
 
             $3->toBool();
 
-            backpatch($3->trueList, $5); // if true, go to M1 (if-statement)
-            backpatch($3->falseList, $9); // if false, go to M2 (else-statement)
+            backpatch($3->truelist, $5); // if true, go to M1 (if-statement)
+            backpatch($3->falselist, $9); // if false, go to M2 (else-statement)
 
-            $$->nextList = merge($10->nextList, merge($6->nextList, $7->nextList)); // to go out of if-else after it's done
+            $$->nextlist = merge($10->nextlist, merge($6->nextlist, $7->nextlist)); // to go out of if-else after it's done
         }
     
     /* %prec THEN added to remove translation conflicts */
@@ -1464,9 +1464,9 @@ selection_statement:
 
             $3->toBool();
 
-            backpatch($3->trueList, $5); // // if true, go to M1 (if-statement)
+            backpatch($3->truelist, $5); // // if true, go to M1 (if-statement)
 
-            $$->nextList = merge($3->falseList, merge($6->nextList, $7->nextList)); // to go out of if when expression is false
+            $$->nextlist = merge($3->falselist, merge($6->nextlist, $7->nextlist)); // to go out of if when expression is false
         }
     
     | SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement
@@ -1482,10 +1482,10 @@ iteration_statement:
 
             $4->toBool();
 
-            backpatch($7->nextList, $2); // M1 -> to go back to start of loop
-            backpatch($4->trueList, $6); // if true, go to M2 (statement)
+            backpatch($7->nextlist, $2); // M1 -> to go back to start of loop
+            backpatch($4->truelist, $6); // if true, go to M2 (statement)
 
-            $$->nextList = $4->falseList; // to go out of while when expression is false
+            $$->nextlist = $4->falselist; // to go out of while when expression is false
 
             emit("goto", to_string($2));
         }
@@ -1498,10 +1498,10 @@ iteration_statement:
 
             $7->toBool();
 
-            backpatch($7->trueList, $2); // if true, go to M1 (statement)
-            backpatch($3->nextList, $4); // M2 -> to go to check expression once statement is executed
+            backpatch($7->truelist, $2); // if true, go to M1 (statement)
+            backpatch($3->nextlist, $4); // M2 -> to go to check expression once statement is executed
 
-            $$->nextList = $7->falseList; // to go out of do-while when expression is false
+            $$->nextlist = $7->falselist; // to go out of do-while when expression is false
         }
 
     // again similar to while ... 
@@ -1511,13 +1511,13 @@ iteration_statement:
 
             $6->toBool();
 
-            backpatch($6->trueList, $12); // if true, go to M3 (statement)
-            backpatch($10->nextList, $5); // go to M1 after N1 (for checking condition)
-            backpatch($13->nextList, $8); // go to M2 (3rd part of for loop), after statement is executed
+            backpatch($6->truelist, $12); // if true, go to M3 (statement)
+            backpatch($10->nextlist, $5); // go to M1 after N1 (for checking condition)
+            backpatch($13->nextlist, $8); // go to M2 (3rd part of for loop), after statement is executed
 
             emit("goto", to_string($8));
 
-            $$->nextList = $6->falseList; // to go out of for when expression is false
+            $$->nextlist = $6->falselist; // to go out of for when expression is false
         }
 
     | FOR PARENTHESIS_OPEN declaration expression_opt SEMI_COLON expression_opt PARENTHESIS_CLOSE statement

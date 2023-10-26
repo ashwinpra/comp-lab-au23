@@ -91,11 +91,11 @@ class Symbol {
 
 class Quad {
     public:
-        // result = arg1 op arg2
+        // res = arg1 op arg2
         string op;
         string arg1;
         string arg2; 
-        string result; 
+        string res; 
 
         // overloaded constructors - supporting different types of arg1
         Quad(string, string, string = "=", string = "");  
@@ -109,9 +109,9 @@ class Expression {
     public:
         Symbol *symbol;                             // symbol corresponding to the expression
         enum typeEnum {NONBOOLEAN, BOOLEAN} type;   // type of the expression 
-        list<int> trueList;                         // truelist for the expression
-        list<int> falseList;                        // falselist for the expression
-        list<int> nextList;                         // nextlist for the expression
+        list<int> truelist;                         // truelist for the expression
+        list<int> falselist;                        // falselist for the expression
+        list<int> nextlist;                         // nextlist for the expression
 
         void toInt();  // convert boolean expression to integer
         void toBool();  // convert integer expression to boolean
@@ -129,7 +129,7 @@ class Array {
 
 class Statement {
     public:
-        list<int> nextList;     // nextlist for the statement
+        list<int> nextlist;     // nextlist for the statement
 };
 
 // Global variables

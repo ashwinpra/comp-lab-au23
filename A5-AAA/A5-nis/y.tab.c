@@ -2029,7 +2029,7 @@ yyreduce:
 #line 92 "ass5_19CS30031_19CS10070.y"
     {
         (yyval.stmt) = new Statement();
-        (yyval.stmt)->nextList = makelist(nextinstr());
+        (yyval.stmt)->nextlist = makelist(nextinstr());
         emit("goto", "");
     }
     break;
@@ -2569,8 +2569,8 @@ yyreduce:
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
-                (yyval.expr)->trueList = makelist(nextinstr());
-                (yyval.expr)->falseList = makelist(nextinstr() + 1);
+                (yyval.expr)->truelist = makelist(nextinstr());
+                (yyval.expr)->falselist = makelist(nextinstr() + 1);
                 emit("<", "", (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
                 emit("goto", "");
             } 
@@ -2586,8 +2586,8 @@ yyreduce:
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
-                (yyval.expr)->trueList = makelist(nextinstr());
-                (yyval.expr)->falseList = makelist(nextinstr() + 1);
+                (yyval.expr)->truelist = makelist(nextinstr());
+                (yyval.expr)->falselist = makelist(nextinstr() + 1);
                 emit(">", "", (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
                 emit("goto", "");
             } 
@@ -2603,8 +2603,8 @@ yyreduce:
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
-                (yyval.expr)->trueList = makelist(nextinstr());
-                (yyval.expr)->falseList = makelist(nextinstr() + 1);
+                (yyval.expr)->truelist = makelist(nextinstr());
+                (yyval.expr)->falselist = makelist(nextinstr() + 1);
                 emit("<=", "", (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
                 emit("goto", "");
             } 
@@ -2620,8 +2620,8 @@ yyreduce:
             if(typecheck((yyvsp[(1) - (3)].expr)->symbol, (yyvsp[(3) - (3)].expr)->symbol)) {
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
-                (yyval.expr)->trueList = makelist(nextinstr());
-                (yyval.expr)->falseList = makelist(nextinstr() + 1);
+                (yyval.expr)->truelist = makelist(nextinstr());
+                (yyval.expr)->falselist = makelist(nextinstr() + 1);
                 emit(">=", "", (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
                 emit("goto", "");
             } 
@@ -2647,8 +2647,8 @@ yyreduce:
 
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
-                (yyval.expr)->trueList = makelist(nextinstr());
-                (yyval.expr)->falseList = makelist(nextinstr() + 1);
+                (yyval.expr)->truelist = makelist(nextinstr());
+                (yyval.expr)->falselist = makelist(nextinstr() + 1);
 
                 emit("==", "", (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
                 emit("goto", "");
@@ -2669,8 +2669,8 @@ yyreduce:
 
                 (yyval.expr) = new Expression();
                 (yyval.expr)->type = Expression::BOOLEAN;
-                (yyval.expr)->trueList = makelist(nextinstr());
-                (yyval.expr)->falseList = makelist(nextinstr() + 1);
+                (yyval.expr)->truelist = makelist(nextinstr());
+                (yyval.expr)->falselist = makelist(nextinstr() + 1);
 
                 emit("!=", "", (yyvsp[(1) - (3)].expr)->symbol->name, (yyvsp[(3) - (3)].expr)->symbol->name);
                 emit("goto", "");
@@ -2761,9 +2761,9 @@ yyreduce:
             (yyval.expr) = new Expression();
             (yyval.expr)->type = Expression::BOOLEAN;
 
-            backpatch((yyvsp[(1) - (4)].expr)->trueList, (yyvsp[(3) - (4)].instr_num)); // backpatching
-            (yyval.expr)->trueList = (yyvsp[(4) - (4)].expr)->trueList; // B.truelist = B2.truelist
-            (yyval.expr)->falseList = merge((yyvsp[(1) - (4)].expr)->falseList, (yyvsp[(4) - (4)].expr)->falseList); // B.falselist = merge(B1.falselist, B2.falselist)
+            backpatch((yyvsp[(1) - (4)].expr)->truelist, (yyvsp[(3) - (4)].instr_num)); // backpatching
+            (yyval.expr)->truelist = (yyvsp[(4) - (4)].expr)->truelist; // B.truelist = B2.truelist
+            (yyval.expr)->falselist = merge((yyvsp[(1) - (4)].expr)->falselist, (yyvsp[(4) - (4)].expr)->falselist); // B.falselist = merge(B1.falselist, B2.falselist)
         }
     break;
 
@@ -2783,9 +2783,9 @@ yyreduce:
             (yyval.expr) = new Expression();
             (yyval.expr)->type = Expression::BOOLEAN;
 
-            backpatch((yyvsp[(1) - (4)].expr)->falseList, (yyvsp[(3) - (4)].instr_num)); // backpatching
-            (yyval.expr)->trueList = merge((yyvsp[(1) - (4)].expr)->trueList, (yyvsp[(4) - (4)].expr)->trueList); // B.truelist = merge(B1.truelist, B2.truelist)
-            (yyval.expr)->falseList = (yyvsp[(4) - (4)].expr)->falseList; // B.falselist = B2.falselist
+            backpatch((yyvsp[(1) - (4)].expr)->falselist, (yyvsp[(3) - (4)].instr_num)); // backpatching
+            (yyval.expr)->truelist = merge((yyvsp[(1) - (4)].expr)->truelist, (yyvsp[(4) - (4)].expr)->truelist); // B.truelist = merge(B1.truelist, B2.truelist)
+            (yyval.expr)->falselist = (yyvsp[(4) - (4)].expr)->falselist; // B.falselist = B2.falselist
         }
     break;
 
@@ -2805,18 +2805,18 @@ yyreduce:
             list<int> l = makelist(nextinstr());
             emit("goto", "");
 
-            backpatch((yyvsp[(6) - (9)].stmt)->nextList, nextinstr());
+            backpatch((yyvsp[(6) - (9)].stmt)->nextlist, nextinstr());
             emit("=", (yyval.expr)->symbol->name, (yyvsp[(5) - (9)].expr)->symbol->name);
 
             l = merge(l, makelist(nextinstr()));
             emit("goto", "");
 
-            backpatch((yyvsp[(2) - (9)].stmt)->nextList, nextinstr());
+            backpatch((yyvsp[(2) - (9)].stmt)->nextlist, nextinstr());
 
             (yyvsp[(1) - (9)].expr)->toBool();
 
-            backpatch((yyvsp[(1) - (9)].expr)->trueList, (yyvsp[(4) - (9)].instr_num));
-            backpatch((yyvsp[(1) - (9)].expr)->falseList, (yyvsp[(8) - (9)].instr_num));
+            backpatch((yyvsp[(1) - (9)].expr)->truelist, (yyvsp[(4) - (9)].instr_num));
+            backpatch((yyvsp[(1) - (9)].expr)->falselist, (yyvsp[(8) - (9)].instr_num));
 
             backpatch(l, nextinstr());
         }
@@ -3486,7 +3486,7 @@ yyreduce:
 #line 1345 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = new Statement();
-            (yyval.stmt)->nextList = (yyvsp[(1) - (1)].expr)->nextList;
+            (yyval.stmt)->nextlist = (yyvsp[(1) - (1)].expr)->nextlist;
         }
     break;
 
@@ -3545,7 +3545,7 @@ yyreduce:
 #line 1395 "ass5_19CS30031_19CS10070.y"
     { 
             (yyval.stmt) = (yyvsp[(3) - (3)].stmt);
-            backpatch((yyvsp[(1) - (3)].stmt)->nextList,(yyvsp[(2) - (3)].instr_num));
+            backpatch((yyvsp[(1) - (3)].stmt)->nextlist,(yyvsp[(2) - (3)].instr_num));
         }
     break;
 
@@ -3605,10 +3605,10 @@ yyreduce:
 
             (yyvsp[(3) - (10)].expr)->toBool();
 
-            backpatch((yyvsp[(3) - (10)].expr)->trueList, (yyvsp[(5) - (10)].instr_num)); // if true, go to M1 (if-statement)
-            backpatch((yyvsp[(3) - (10)].expr)->falseList, (yyvsp[(9) - (10)].instr_num)); // if false, go to M2 (else-statement)
+            backpatch((yyvsp[(3) - (10)].expr)->truelist, (yyvsp[(5) - (10)].instr_num)); // if true, go to M1 (if-statement)
+            backpatch((yyvsp[(3) - (10)].expr)->falselist, (yyvsp[(9) - (10)].instr_num)); // if false, go to M2 (else-statement)
 
-            (yyval.stmt)->nextList = merge((yyvsp[(10) - (10)].stmt)->nextList, merge((yyvsp[(6) - (10)].stmt)->nextList, (yyvsp[(7) - (10)].stmt)->nextList)); // to go out of if-else after it's done
+            (yyval.stmt)->nextlist = merge((yyvsp[(10) - (10)].stmt)->nextlist, merge((yyvsp[(6) - (10)].stmt)->nextlist, (yyvsp[(7) - (10)].stmt)->nextlist)); // to go out of if-else after it's done
         }
     break;
 
@@ -3619,9 +3619,9 @@ yyreduce:
 
             (yyvsp[(3) - (7)].expr)->toBool();
 
-            backpatch((yyvsp[(3) - (7)].expr)->trueList, (yyvsp[(5) - (7)].instr_num)); // // if true, go to M1 (if-statement)
+            backpatch((yyvsp[(3) - (7)].expr)->truelist, (yyvsp[(5) - (7)].instr_num)); // // if true, go to M1 (if-statement)
 
-            (yyval.stmt)->nextList = merge((yyvsp[(3) - (7)].expr)->falseList, merge((yyvsp[(6) - (7)].stmt)->nextList, (yyvsp[(7) - (7)].stmt)->nextList)); // to go out of if when expression is false
+            (yyval.stmt)->nextlist = merge((yyvsp[(3) - (7)].expr)->falselist, merge((yyvsp[(6) - (7)].stmt)->nextlist, (yyvsp[(7) - (7)].stmt)->nextlist)); // to go out of if when expression is false
         }
     break;
 
@@ -3637,10 +3637,10 @@ yyreduce:
 
             (yyvsp[(4) - (7)].expr)->toBool();
 
-            backpatch((yyvsp[(7) - (7)].stmt)->nextList, (yyvsp[(2) - (7)].instr_num)); // M1 -> to go back to start of loop
-            backpatch((yyvsp[(4) - (7)].expr)->trueList, (yyvsp[(6) - (7)].instr_num)); // if true, go to M2 (statement)
+            backpatch((yyvsp[(7) - (7)].stmt)->nextlist, (yyvsp[(2) - (7)].instr_num)); // M1 -> to go back to start of loop
+            backpatch((yyvsp[(4) - (7)].expr)->truelist, (yyvsp[(6) - (7)].instr_num)); // if true, go to M2 (statement)
 
-            (yyval.stmt)->nextList = (yyvsp[(4) - (7)].expr)->falseList; // to go out of while when expression is false
+            (yyval.stmt)->nextlist = (yyvsp[(4) - (7)].expr)->falselist; // to go out of while when expression is false
 
             emit("goto", to_string((yyvsp[(2) - (7)].instr_num)));
         }
@@ -3653,10 +3653,10 @@ yyreduce:
 
             (yyvsp[(7) - (9)].expr)->toBool();
 
-            backpatch((yyvsp[(7) - (9)].expr)->trueList, (yyvsp[(2) - (9)].instr_num)); // if true, go to M1 (statement)
-            backpatch((yyvsp[(3) - (9)].stmt)->nextList, (yyvsp[(4) - (9)].instr_num)); // M2 -> to go to check expression once statement is executed
+            backpatch((yyvsp[(7) - (9)].expr)->truelist, (yyvsp[(2) - (9)].instr_num)); // if true, go to M1 (statement)
+            backpatch((yyvsp[(3) - (9)].stmt)->nextlist, (yyvsp[(4) - (9)].instr_num)); // M2 -> to go to check expression once statement is executed
 
-            (yyval.stmt)->nextList = (yyvsp[(7) - (9)].expr)->falseList; // to go out of do-while when expression is false
+            (yyval.stmt)->nextlist = (yyvsp[(7) - (9)].expr)->falselist; // to go out of do-while when expression is false
         }
     break;
 
@@ -3667,13 +3667,13 @@ yyreduce:
 
             (yyvsp[(6) - (13)].expr)->toBool();
 
-            backpatch((yyvsp[(6) - (13)].expr)->trueList, (yyvsp[(12) - (13)].instr_num)); // if true, go to M3 (statement)
-            backpatch((yyvsp[(10) - (13)].stmt)->nextList, (yyvsp[(5) - (13)].instr_num)); // go to M1 after N1 (for checking condition)
-            backpatch((yyvsp[(13) - (13)].stmt)->nextList, (yyvsp[(8) - (13)].instr_num)); // go to M2 (3rd part of for loop), after statement is executed
+            backpatch((yyvsp[(6) - (13)].expr)->truelist, (yyvsp[(12) - (13)].instr_num)); // if true, go to M3 (statement)
+            backpatch((yyvsp[(10) - (13)].stmt)->nextlist, (yyvsp[(5) - (13)].instr_num)); // go to M1 after N1 (for checking condition)
+            backpatch((yyvsp[(13) - (13)].stmt)->nextlist, (yyvsp[(8) - (13)].instr_num)); // go to M2 (3rd part of for loop), after statement is executed
 
             emit("goto", to_string((yyvsp[(8) - (13)].instr_num)));
 
-            (yyval.stmt)->nextList = (yyvsp[(6) - (13)].expr)->falseList; // to go out of for when expression is false
+            (yyval.stmt)->nextlist = (yyvsp[(6) - (13)].expr)->falselist; // to go out of for when expression is false
         }
     break;
 
