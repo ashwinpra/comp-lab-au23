@@ -58,6 +58,7 @@ t39				int		-				4		24388			NULL
 t40				int		-				4		24392			NULL
 r				ptr(ptr(ptr(int)))		-				4		24396			NULL
 t41				ptr(ptr(ptr(int)))		-				4		24400			NULL
+t42				int		0				4		24404			NULL
 ---------------------------------------------------------------------------------------------
 
 Three Address Codes:
@@ -110,3 +111,5 @@ Three Address Codes:
 47: q = t40
 48: t41 = &q
 49: r = t41
+50: t42 = 0
+51: return t42

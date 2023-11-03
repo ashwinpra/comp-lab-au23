@@ -8,17 +8,17 @@
 
 %union {
     int ival;
-    char *fval;
-    char *cval;
-    char *sval;
-    char *unary_op;
+    char* fval;
+    char* cval;
+    char* sval;
+    char* unary_op;
     int instr_num;
     int num_params;
-    Expression *expr;
-    Statement *stmt;
-    Array *array;
-    SymType *sym_type;
-    Symbol *symbol;
+    Expression* expr;
+    Statement* stmt;
+    Array* array;
+    SymType* sym_type;
+    Symbol* symbol;
 }
 
 // parenthesis
@@ -122,6 +122,8 @@ CB:
 ;
 
 
+// The rules that have been ignored (according to assignment specifications) have been left blank. The other rules are left blank because nothing is to be done at that rule
+
 
 // ----------1. Declarations----------
 
@@ -140,9 +142,9 @@ primary_expression:
 
     | STRING_LITERAL 
         { 
-            $$ = new Expression();
+            $$ = new Expression(); // making a new expression and storing the symbol
             $$->symbol = gentemp(POINTER, $1);
-            $$->symbol->type->arr_type = new SymType(CHAR);
+            $$->symbol->type->arr_type = new SymType(CHAR); // string = char *
         }
 
     | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
@@ -155,7 +157,7 @@ primary_expression:
 constant: 
     INTEGER_CONST 
         { 
-            $$ = new Expression();
+            $$ = new Expression(); 
             $$->symbol = gentemp(INT, to_string($1));
             emit("=", $$->symbol->name, $1);
         }
@@ -341,6 +343,7 @@ unary_expression:
     ;
 
 
+// just getting the operator, which will be used later on
 unary_operator:
     BITWISEAND
         { 
@@ -368,6 +371,7 @@ unary_operator:
         }
     ;
 
+// typecasting
 cast_expression:
     unary_expression
         { 
@@ -387,19 +391,22 @@ multiplicative_expression:
         { 
             $$ = new Expression();
 
-            // we have to obtain base type of the expression
+            // we have to obtain base type of the expression in case of array
             SymType *bType = $1->symbol->type;
             while(bType->arr_type != NULL)
                 bType = bType->arr_type;
 
+            // if array, then we create a temp symbol and emit code
             if($1->type == Array::ARRAY) {
                 $$->symbol = gentemp(bType->type);
                 emit("=[]", $$->symbol->name, $1->symbol->name, $1->loc->name);
             } 
             
+            // if pointer, then we simply store the location
             else if($1->type == Array::POINTER)
                 $$->symbol = $1->loc;
 
+            // if normal variable, then we simply store the symbol
             else
                 $$->symbol = $1->symbol;
 
@@ -423,6 +430,7 @@ multiplicative_expression:
                 temp = $3->symbol;
 
             // now we execute the required operation (here, multiplication)
+            // type compatibility is also checked
             if(typecheck($1->symbol, temp)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
@@ -463,7 +471,7 @@ multiplicative_expression:
 
     | multiplicative_expression PERCENTAGE cast_expression
         { 
-            // similar to above agains
+            // similar to above again
             SymType *bType = $1->symbol->type;
             while(bType->arr_type != NULL)
                 bType = bType->arr_type;
@@ -498,7 +506,7 @@ additive_expression:
 
     | additive_expression PLUS multiplicative_expression
         {   
-            // addition operation
+            // addition operation, but type compatibility is checked
             if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
@@ -511,7 +519,7 @@ additive_expression:
 
     | additive_expression MINUS multiplicative_expression
         { 
-            // subtraction operation
+            // subtraction operation, but type compatibility is checked
             if(typecheck($1->symbol, $3->symbol)) {
                 $$ = new Expression();
                 $$->symbol = gentemp($1->symbol->type->type);
@@ -556,7 +564,7 @@ shift_expression:
         }
     ;
 
-// boolean expressions -> truelist and falselist is made as discussed in class, then backpatching will be done later on
+// boolean expressions (>, <, <=, >=, =, !=) -> truelist and falselist is made as discussed in class, then backpatching will be done later on
 
 relational_expression:
     shift_expression
@@ -804,6 +812,7 @@ conditional_expression:
         }
     ;
 
+
 assignment_expression:
     conditional_expression
         { 
@@ -863,7 +872,7 @@ expression:
             $$ = $1; // depends on assignment expression
         }
     
-    /* expression involving comma operator -> involved */
+    /* expression involving comma operator -> ignored */
     | expression COMMA assignment_expression
         { }
     ;
@@ -926,8 +935,9 @@ init_declarator:
             $$ = $1; // depends on declarator
         }
     | declarator EQ initializer
-        { 
-            if($3->init_val != "") $1->init_val = $3->init_val;
+        {   
+            // if non-empty, then we assign the initial value
+            if($3->init_val != "-") $1->init_val = $3->init_val;
             emit("=", $1->name, $3->name);
         }
     ;
@@ -949,6 +959,7 @@ storage_class_specifier:
 
 /* only void, char, int, float considered */
 /* their token names were changed to avoid overlap with enum names */
+/* depending on the type, current type is updated */
 type_specifier:
     VOID_TYPE
         { 
@@ -1077,6 +1088,7 @@ declarator:
             while(temp->arr_type != NULL) 
                 temp = temp->arr_type;
 
+            // updating type of declarator
             temp->arr_type = $2->type;
             $$ = $2->update($1);
         }
@@ -1099,6 +1111,7 @@ Declarations
 direct_declarator:
     IDENTIFIER 
         { 
+            // variable declaration
             $$ = $1->update(new SymType(current_type)); 
             current_symbol = $$;
         }
@@ -1125,7 +1138,7 @@ direct_declarator:
             }
 
             if(prev != NULL) { 
-                // case of multi-dimensional array
+                // case of multi-dimensional array -> base type is obtained from temp
                 prev->arr_type =  new SymType(ARRAY, temp, atoi($3->symbol->init_val.c_str()));	
                 $$ = $1->update($1->type);
             }
@@ -1138,7 +1151,7 @@ direct_declarator:
 
     | direct_declarator SQR_BRACE_OPEN SQR_BRACE_CLOSE
         { 
-            // similar to previous one, but initial value is kept as 0 
+            // similar to previous one, but initial value is kept as 0 as we don't know the size
             SymType *temp = $1->type, *prev = NULL;
             while(temp->type == ARRAY) { 
                 prev = temp;
@@ -1179,6 +1192,7 @@ direct_declarator:
             currentST->name = $1->name;
 
             if($1->type->type != VOID) {
+                // return symbol is updated, for non-void functions
                 Symbol* s = currentST->lookup("return");
                 s->update($1->type);
             }
@@ -1393,6 +1407,8 @@ block_item_list:
             $$ = $1;
         }
 
+    // backpatching needs to be done 
+    // L -> L1 M S 
     | block_item_list M block_item
         { 
             $$ = $3;
@@ -1403,12 +1419,12 @@ block_item_list:
 block_item_list_opt:
     block_item_list
         { 
-            $$ = $1;
+            $$ = $1; // depends on block item list
         }
 
     | /* empty */
         { 
-            $$ = new Statement();
+            $$ = new Statement(); // new statement
         }
     ;
 
@@ -1416,29 +1432,29 @@ block_item_list_opt:
 block_item:
     declaration
         { 
-            $$ = new Statement();
+            $$ = new Statement(); // new statement
         }
     | statement
         { 
-            $$ = $1;
+            $$ = $1; // depends on statement
         }
     ;
 
 expression_statement:
     expression_opt SEMI_COLON
         { 
-            $$ = $1;
+            $$ = $1; // depends on expression
         }
     ;
 
 expression_opt:
     expression
         { 
-            $$ = $1;
+            $$ = $1; // depends on expression
         }
     | /* empty */
         { 
-            $$ = new Expression();
+            $$ = new Expression(); // new expression
         }
     ;
 
@@ -1447,6 +1463,7 @@ expression_opt:
 
 /* in IF, WHILE, DO and FOR: backpatching needs to be done (as discussed in class) */
 selection_statement:
+    /* if (expression) M statement N else M statement */
     IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement N ELSE M statement
         { 
             $$ = new Statement();
@@ -1460,6 +1477,8 @@ selection_statement:
         }
     
     /* %prec THEN added to remove translation conflicts */
+    /* if (expression) M statement */
+    /* N also added before %prec THEN to exit if condition ("THEN" is not actually checked) */
     | IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement N %prec THEN
         { 
             $$ = new Statement();
@@ -1477,7 +1496,7 @@ selection_statement:
 
 iteration_statement:
 
-    // while M1 (expression) M2 statement
+    /* while M1 (expression) M2 statement */
     WHILE M PARENTHESIS_OPEN expression PARENTHESIS_CLOSE M statement
         { 
             $$ = new Statement();

@@ -4,9 +4,9 @@
 vector<Quad *> qArr;             // array of quads (implemented as a simple vector for convenience)
 SymTable* currentST;             // current symbol table being used
 SymTable* globalST;              // global symbol table (parent of all symbol tables)
+int block_count;                 // block count which is used while generating names for new symbol tables
 Symbol* current_symbol;          // current symbol - for changing ST if required
 TYPE current_type;               // current type - for type casting if required
-int block_count;                 // block count which is used while generating names for new symbol tables
 
 
 // SymType class methods
@@ -16,21 +16,24 @@ SymType::SymType(TYPE type_, SymType *arr_type_, int width_) : type(type_), widt
 // to get size (machine-dependent)
 int SymType::computeSize() {
 
-    if (type == CHAR)
+    if(this->type == VOID)
+        return SIZE_OF_VOID;
+
+    else if (this->type == CHAR)
         return SIZE_OF_CHAR;
 
-    else if (type == INT)
+    else if (this->type == INT)
         return SIZE_OF_INT;
 
-    else if (type == FLOAT)
+    else if (this->type == FLOAT)
         return SIZE_OF_FLOAT;
 
-    else if (type == POINTER)
+    else if (this->type == POINTER)
         return SIZE_OF_POINTER;
 
     // depends on type of constituent elements
-    else if (type == ARRAY)
-        return width * (arr_type->computeSize());
+    else if (this->type == ARRAY)
+        return this->width * (this->arr_type->computeSize());
 
     else
         return -1;
@@ -38,6 +41,7 @@ int SymType::computeSize() {
 
 // to convert the enum to string, for printing
 string SymType::toString() {
+
     if(this->type == VOID)
         return "void";
 
@@ -71,10 +75,10 @@ string SymType::toString() {
 
 SymTable::SymTable(string name_, SymTable *parent_) : name(name_), parent(parent_), count(0) {}
 
-Symbol *SymTable::lookup(string name) {
+Symbol* SymTable::lookup(string name) {
     list<Symbol>::iterator it = (this->symbols).begin();
 
-    while(it != (this->symbols).end()){
+    while(it != (this->symbols).end()) {
         if(it->name == name)
             return &(*it);
         it++;
@@ -144,6 +148,7 @@ void SymTable::print() {
         it++;
     }
 
+    // gap before printing nested tables
     cout<<"---------------------------------------------------------------------------------------------"<<endl;
     cout<<endl;
 
@@ -162,29 +167,25 @@ Symbol::Symbol(string name_, TYPE type_, string init_val_) : name(name_), type(n
     size = this->type->computeSize();
 }
 
-// update type to given type
-Symbol *Symbol::update(SymType *type) {
+Symbol* Symbol::update(SymType *type) {
     this->type = type;
     size = this->type->computeSize();
     return this;
 }
 
-// convert type to given type IF POSSIBLE, else return same symbol
-Symbol *Symbol::convert(TYPE ret_type) {
 
-    if ((this->type)->type == INT)
-    {
-        
-        if (ret_type == FLOAT)
-        {
+Symbol* Symbol::convert(TYPE ret_type) {
+// convert type to given type IF POSSIBLE, else return same symbol
+
+    if (this->type->type == INT) {  
+        if (ret_type == FLOAT) {
             // int to float conversion
             Symbol* temp = gentemp(ret_type);
             emit("=", temp->name, "int2float(" + this->name + ")");
             return temp;
         }
 
-        else if (ret_type == CHAR)
-        {
+        else if (ret_type == CHAR) {
             // int to char conversion
             Symbol* temp = gentemp(ret_type);
             emit("=", temp->name, "int2char(" + this->name + ")");
@@ -196,18 +197,16 @@ Symbol *Symbol::convert(TYPE ret_type) {
     }
 
 
-    else if ((this->type)->type == FLOAT)
-    {
-        if (ret_type == INT)
-        {
+    else if (this->type->type == FLOAT) {
+        if (ret_type == INT) {
             // float to int conversion
             Symbol* temp = gentemp(ret_type);
             emit("=", temp->name, "float2int(" + this->name + ")");
             return temp;
         }
+
         // if the target type is char 
-        else if (ret_type == CHAR)
-        {
+        else if (ret_type == CHAR) {
             // float to char conversion
             Symbol* temp = gentemp(ret_type);
             emit("=", temp->name, "float2char(" + this->name + ")");
@@ -219,19 +218,17 @@ Symbol *Symbol::convert(TYPE ret_type) {
     }
 
    
-    else if ((this->type)->type == CHAR)
+    else if (this->type->type == CHAR)
     {
-
-        if (ret_type == INT)
-        {
+        if (ret_type == INT) {
             // char to int conversion
             Symbol* temp = gentemp(ret_type);
             emit("=", temp->name, "char2int(" + this->name + ")");
             return temp;
         }
+
         // if the target type is float
-        else if (ret_type == FLOAT)
-        {
+        else if (ret_type == FLOAT) {
             // char to float conversion
             Symbol* temp = gentemp(ret_type);
             emit("=", temp->name, "char2float(" + this->name + ")");
@@ -249,8 +246,8 @@ Symbol *Symbol::convert(TYPE ret_type) {
 
 // Quad class methods 
 
-Quad::Quad(string res, string arg1, string op, string arg2) : res(res), op(op), arg1(arg1), arg2(arg2) {}
-Quad::Quad(string res, int arg1, string op, string arg2) : res(res), op(op), arg1(to_string(arg1)), arg2(arg2) {}
+Quad::Quad(string res_, string arg1_, string op_, string arg2_) : op(op_), arg1(arg1_), arg2(arg2_), res(res_) {}
+Quad::Quad(string res_, int arg1_, string op_, string arg2_) : op(op_), arg1(to_string(arg1_)), arg2(arg2_), res(res_) {}
 
 // print the quad 
 void Quad::print() {
@@ -315,8 +312,7 @@ void Quad::print() {
 // Expression class methods
 
 void Expression::conv2Int() {
-    if (this->type == Expression::BOOLEAN)
-    {
+    if (this->type == Expression::BOOLEAN) {
         this->symbol = gentemp(INT);
 
         backpatch(this->truelist, nextinstr()); // truelist updation
@@ -330,8 +326,7 @@ void Expression::conv2Int() {
 }
 
 void Expression::conv2Bool() {
-    if (this->type == Expression::NONBOOLEAN)
-    {
+    if (this->type == Expression::NONBOOLEAN) {
         this->falselist = makelist(nextinstr()); // falselist updation
 
         emit("==", "", this->symbol->name, "0");
@@ -375,23 +370,6 @@ void backpatch(list<int> li, int addr) {
     }
 }
 
-// other functions
-
-int nextinstr() {
-    return qArr.size() + 1;
-}
-
-Symbol *gentemp(TYPE type, string val) {
-    Symbol *temp = new Symbol("t" + to_string(currentST->count++), type, val);
-    (currentST->symbols).push_back(*temp);
-    return temp;
-}
-
-void changeTable(SymTable *ST) {
-    currentST = ST;
-}
-
-
 // checks if both are of same type, or if type conversion can be done
 bool typecheck(Symbol *&a, Symbol *&b)
 {
@@ -430,6 +408,18 @@ bool typecheck(SymType *st1, SymType *st2) {
         return typecheck(st1->arr_type, st2->arr_type);
 }
 
+// other functions
+
+int nextinstr() { return qArr.size() + 1; }
+
+Symbol *gentemp(TYPE type, string val) {
+    Symbol *temp = new Symbol("t" + to_string(currentST->count++), type, val);
+    (currentST->symbols).push_back(*temp);
+    return temp;
+}
+
+void changeTable(SymTable *ST) { currentST = ST; }
+
 void printQuadArray() {
     cout<<"Three Address Codes:"<<endl;
     for(int i = 0; i < qArr.size(); i++) {
@@ -438,17 +428,20 @@ void printQuadArray() {
     }
 }
 
+
 int main() {
-    block_count = 0;
-    globalST = new SymTable("global");
+
+    block_count = 0; // initial block count is 0
+
+    globalST = new SymTable("global"); // create global ST and set it as current
     currentST = globalST;
 
     yyparse();
 
-    globalST->update();
-    globalST->print();
+    globalST->update(); // update offsets
+    globalST->print(); // print global ST (would include all nested STs too)
     
-    printQuadArray();
+    printQuadArray(); // print quad array (TACs)
 
     return 0;
 }

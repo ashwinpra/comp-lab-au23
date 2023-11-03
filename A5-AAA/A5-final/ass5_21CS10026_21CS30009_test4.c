@@ -17,4 +17,6 @@ int main() {
         y = 30;
         y++;
     }
+
+    return 0;
 }

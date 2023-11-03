@@ -16,4 +16,6 @@ int main() {
     int** q = x[1];
 
     int*** r = &q;
+
+    return 0;
 }
