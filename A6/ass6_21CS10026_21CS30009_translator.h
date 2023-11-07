@@ -159,6 +159,7 @@ extern vector<Quad *> qArr;             // array of quads (implemented as a simp
 extern SymTable* currentST;             // current symbol table being used
 extern SymTable* globalST;              // global symbol table (parent of all symbol tables)
 extern int block_count;                 // block count which is used while generating names for new symbol tables
+extern int temp_count;
 extern Symbol* current_symbol;          // current symbol - for changing ST if required
 extern TYPE current_type;               // current type - for type casting if required
 

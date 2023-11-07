@@ -6,6 +6,7 @@ vector<Quad *> qArr;             // array of quads (implemented as a simple vect
 SymTable* currentST;             // current symbol table being used
 SymTable* globalST;              // global symbol table (parent of all symbol tables)
 int block_count;                 // block count which is used while generating names for new symbol tables
+int temp_count;                  // made this a global variable to avoid overlap in different STs 
 Symbol* current_symbol;          // current symbol - for changing ST if required
 TYPE current_type;               // current type - for type casting if required
 
@@ -66,7 +67,6 @@ string SymType::toString() {
 
     else if(this->type ==  BLOCK)
         return "block";
-
     else
         return "null";
 }
@@ -85,18 +85,27 @@ Symbol* SymTable::lookup(string name) {
         it++;
     }
 
-    // if it doesnt exist, add it to the table and return it
-    Symbol* sym = new Symbol(name);
+    // if it doesn't exist, check the parent table - done to avoid functions/global variables getting re-added
+    Symbol* ret = NULL; 
+    if(this->parent != NULL)
+        ret = this->parent->lookup(name);
 
-    // set category as global or local
-    if(currentST == globalST) 
-        sym->category = Symbol::GLOBAL;
-    else
-        sym->category = Symbol::LOCAL;
+    if (this == currentST && ret == NULL) {
+        // if it doesnt exist there either, add it to the table and return it
+        Symbol* sym = new Symbol(name);
 
-    (this->symbols).push_back(*sym);
+        // set category as global or local
+        if(currentST == globalST)
+            sym->category = Symbol::GLOBAL;
+        else
+            sym->category = Symbol::LOCAL;
 
-    return &(this->symbols).back();
+        (this->symbols).push_back(*sym);
+
+        return &(this->symbols).back();
+    }
+
+    return ret;
 }
 
 
@@ -145,7 +154,7 @@ void SymTable::update() {
                 this->AR->total_displacement -= it->size;
                 this->AR->displacement[it->name] = this->AR->total_displacement;
             }
-        }
+        }   
         it++;
     }
 
@@ -480,7 +489,7 @@ bool typecheck(SymType *st1, SymType *st2) {
 int nextinstr() { return qArr.size() + 1; }
 
 Symbol *gentemp(TYPE type, string val) {
-    Symbol *temp = new Symbol("t" + to_string(currentST->count++), type, val);
+    Symbol *temp = new Symbol("t" + to_string(temp_count++), type, val);
     temp->category = Symbol::TEMP;
     (currentST->symbols).push_back(*temp);
     return temp;

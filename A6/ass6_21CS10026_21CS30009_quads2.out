@@ -1,8 +1,361 @@
-ERROR [Line 1] : syntax error, unable to parse : 
 ---------------------------------------------------------------------------------------------
 Symbol Table : global						Parent: NULL
 ---------------------------------------------------------------------------------------------
 Name			Category			Type		Initial Value	Size	Offset		Nested Table
+printStr				function			int		-				4		0			printStr
+readInt				function			int		-				4		4			readInt
+printInt				function			int		-				4		8			printInt
+testIncDec				function			void		-				0		12			testIncDec
+main				function			int		-				4		12			main
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : printStr						Parent: global
+---------------------------------------------------------------------------------------------
+Name			Category			Type		Initial Value	Size	Offset		Nested Table
+s				local			ptr(char)		-				8		0			NULL
+return				local			int		-				4		8			NULL
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : readInt						Parent: global
+---------------------------------------------------------------------------------------------
+Name			Category			Type		Initial Value	Size	Offset		Nested Table
+eP				local			ptr(int)		-				8		0			NULL
+return				local			int		-				4		8			NULL
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : printInt						Parent: global
+---------------------------------------------------------------------------------------------
+Name			Category			Type		Initial Value	Size	Offset		Nested Table
+n				local			int		-				4		0			NULL
+return				local			int		-				4		4			NULL
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : testIncDec						Parent: global
+---------------------------------------------------------------------------------------------
+Name			Category			Type		Initial Value	Size	Offset		Nested Table
+n				local			int		-				4		0			NULL
+t0				temp			ptr(char)		"Value passed to function = "				8		4			NULL
+t1				temp			int		-				4		12			NULL
+t2				temp			int		-				4		16			NULL
+---------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------
+Symbol Table : main						Parent: global
+---------------------------------------------------------------------------------------------
+Name			Category			Type		Initial Value	Size	Offset		Nested Table
+return				local			int		-				4		0			NULL
+t3				temp			ptr(char)		"\n#### TEST 1 (Arithmetic operators) ####"				8		4			NULL
+t4				temp			int		-				4		12			NULL
+n1				local			int		-				4		16			NULL
+n2				local			int		-				4		20			NULL
+n3				local			int		-				4		24			NULL
+n4				local			int		-				4		28			NULL
+t5				temp			int		30				4		32			NULL
+t6				temp			int		16				4		36			NULL
+t7				temp			int		7				4		40			NULL
+t8				temp			int		22				4		44			NULL
+t9				temp			int		-				4		48			NULL
+t10				temp			ptr(char)		"\nn1 = "				8		52			NULL
+t11				temp			int		-				4		60			NULL
+t12				temp			int		-				4		64			NULL
+t13				temp			ptr(char)		"\nn2 = "				8		68			NULL
+t14				temp			int		-				4		76			NULL
+t15				temp			int		-				4		80			NULL
+t16				temp			ptr(char)		"\nn3 = "				8		84			NULL
+t17				temp			int		-				4		92			NULL
+t18				temp			int		-				4		96			NULL
+t19				temp			ptr(char)		"\nn4 = "				8		100			NULL
+t20				temp			int		-				4		108			NULL
+t21				temp			int		-				4		112			NULL
+n5				local			int		-				4		116			NULL
+t22				temp			int		-				4		120			NULL
+n6				local			int		-				4		124			NULL
+t23				temp			int		-				4		128			NULL
+n7				local			int		-				4		132			NULL
+t24				temp			int		-				4		136			NULL
+n8				local			int		-				4		140			NULL
+t25				temp			int		-				4		144			NULL
+n9				local			int		-				4		148			NULL
+t26				temp			int		-				4		152			NULL
+t27				temp			ptr(char)		"\nn1 + n2 = "				8		156			NULL
+t28				temp			int		-				4		164			NULL
+t29				temp			int		-				4		168			NULL
+t30				temp			ptr(char)		"\nn1 - n2 = "				8		172			NULL
+t31				temp			int		-				4		180			NULL
+t32				temp			int		-				4		184			NULL
+t33				temp			ptr(char)		"\nn1 * n2 = "				8		188			NULL
+t34				temp			int		-				4		196			NULL
+t35				temp			int		-				4		200			NULL
+t36				temp			ptr(char)		"\nn1 / n2 = "				8		204			NULL
+t37				temp			int		-				4		212			NULL
+t38				temp			int		-				4		216			NULL
+t39				temp			ptr(char)		"\nn1 % n2 = "				8		220			NULL
+t40				temp			int		-				4		228			NULL
+t41				temp			int		-				4		232			NULL
+n10				local			int		-				4		236			NULL
+t42				temp			int		-				4		240			NULL
+t43				temp			int		-				4		244			NULL
+t44				temp			int		-				4		248			NULL
+t45				temp			int		-				4		252			NULL
+t46				temp			int		10				4		256			NULL
+t47				temp			int		-				4		260			NULL
+n11				local			int		-				4		264			NULL
+t48				temp			int		-				4		268			NULL
+t49				temp			int		-				4		272			NULL
+t50				temp			int		-				4		276			NULL
+t51				temp			int		10				4		280			NULL
+t52				temp			int		-				4		284			NULL
+n12				local			int		-				4		288			NULL
+t53				temp			int		-				4		292			NULL
+t54				temp			int		-				4		296			NULL
+t55				temp			int		-				4		300			NULL
+t56				temp			int		0				4		304			NULL
+t57				temp			int		-				4		308			NULL
+n13				local			int		-				4		312			NULL
+t58				temp			int		-				4		316			NULL
+t59				temp			int		-				4		320			NULL
+t60				temp			int		-				4		324			NULL
+t61				temp			int		-				4		328			NULL
+t62				temp			int		15				4		332			NULL
+t63				temp			int		-				4		336			NULL
+t64				temp			ptr(char)		"\n-n1 + n2 - n3 + n4 + 10 = "				8		340			NULL
+t65				temp			int		-				4		348			NULL
+t66				temp			int		-				4		352			NULL
+t67				temp			ptr(char)		"\nn1 * n2 / n3 + n4 - 10 = "				8		356			NULL
+t68				temp			int		-				4		364			NULL
+t69				temp			int		-				4		368			NULL
+t70				temp			ptr(char)		"\nn1 + n2 * n3 / n4 - 0 = "				8		372			NULL
+t71				temp			int		-				4		380			NULL
+t72				temp			int		-				4		384			NULL
+t73				temp			ptr(char)		"\n(n1 + n2) * (n3 / n4) - 15 = "				8		388			NULL
+t74				temp			int		-				4		396			NULL
+t75				temp			int		-				4		400			NULL
+t76				temp			ptr(char)		"\n-n3 = "				8		404			NULL
+t77				temp			int		-				4		412			NULL
+t78				temp			int		-				4		416			NULL
+t79				temp			int		-				4		420			NULL
+t80				temp			ptr(char)		"\n-n4 = "				8		424			NULL
+t81				temp			int		-				4		432			NULL
+t82				temp			int		-				4		436			NULL
+t83				temp			int		-				4		440			NULL
+t84				temp			ptr(char)		"\nTest pre increment: "				8		444			NULL
+t85				temp			int		-				4		452			NULL
+t86				temp			void		-				0		456			NULL
+t87				temp			ptr(char)		", Value after call = "				8		456			NULL
+t88				temp			int		-				4		464			NULL
+t89				temp			int		-				4		468			NULL
+t90				temp			ptr(char)		"\nTest post increment: "				8		472			NULL
+t91				temp			int		-				4		480			NULL
+t92				temp			int		-				4		484			NULL
+t93				temp			void		-				0		488			NULL
+t94				temp			ptr(char)		", Value after call = "				8		488			NULL
+t95				temp			int		-				4		496			NULL
+t96				temp			int		-				4		500			NULL
+t97				temp			ptr(char)		"\nTest pre decrement: "				8		504			NULL
+t98				temp			int		-				4		512			NULL
+t99				temp			void		-				0		516			NULL
+t100				temp			ptr(char)		", Value after call = "				8		516			NULL
+t101				temp			int		-				4		524			NULL
+t102				temp			int		-				4		528			NULL
+t103				temp			ptr(char)		"\nTest post decrement: "				8		532			NULL
+t104				temp			int		-				4		540			NULL
+t105				temp			int		-				4		544			NULL
+t106				temp			void		-				0		548			NULL
+t107				temp			ptr(char)		", Value after call = "				8		548			NULL
+t108				temp			int		-				4		556			NULL
+t109				temp			int		-				4		560			NULL
+t110				temp			ptr(char)		"\n\n"				8		564			NULL
+t111				temp			int		-				4		572			NULL
+t112				temp			int		0				4		576			NULL
 ---------------------------------------------------------------------------------------------
 
 Three Address Codes:
+1: Start: testIncDec
+2: t0 = "Value passed to function = "
+3: param t0
+4: t1 = call printStr, 1
+5: param n
+6: t2 = call printInt, 1
+7: End: testIncDec
+8: Start: main
+9: t3 = "\n#### TEST 1 (Arithmetic operators) ####"
+10: param t3
+11: t4 = call printStr, 1
+12: t5 = 30
+13: n1 = t5
+14: t6 = 16
+15: n2 = t6
+16: t7 = 7
+17: n3 = t7
+18: t8 = 22
+19: t9 = -t8
+20: n4 = t9
+21: t10 = "\nn1 = "
+22: param t10
+23: t11 = call printStr, 1
+24: param n1
+25: t12 = call printInt, 1
+26: t13 = "\nn2 = "
+27: param t13
+28: t14 = call printStr, 1
+29: param n2
+30: t15 = call printInt, 1
+31: t16 = "\nn3 = "
+32: param t16
+33: t17 = call printStr, 1
+34: param n3
+35: t18 = call printInt, 1
+36: t19 = "\nn4 = "
+37: param t19
+38: t20 = call printStr, 1
+39: param n4
+40: t21 = call printInt, 1
+41: t22 = n1 + n2
+42: n5 = t22
+43: t23 = n1 - n2
+44: n6 = t23
+45: t24 = n1 * n2
+46: n7 = t24
+47: t25 = n1 / n2
+48: n8 = t25
+49: t26 = n1 % n2
+50: n9 = t26
+51: t27 = "\nn1 + n2 = "
+52: param t27
+53: t28 = call printStr, 1
+54: param n5
+55: t29 = call printInt, 1
+56: t30 = "\nn1 - n2 = "
+57: param t30
+58: t31 = call printStr, 1
+59: param n6
+60: t32 = call printInt, 1
+61: t33 = "\nn1 * n2 = "
+62: param t33
+63: t34 = call printStr, 1
+64: param n7
+65: t35 = call printInt, 1
+66: t36 = "\nn1 / n2 = "
+67: param t36
+68: t37 = call printStr, 1
+69: param n8
+70: t38 = call printInt, 1
+71: t39 = "\nn1 % n2 = "
+72: param t39
+73: t40 = call printStr, 1
+74: param n9
+75: t41 = call printInt, 1
+76: t42 = -n1
+77: t43 = t42 + n2
+78: t44 = t43 - n3
+79: t45 = t44 + n4
+80: t46 = 10
+81: t47 = t45 + t46
+82: n10 = t47
+83: t48 = n1 * n2
+84: t49 = t48 / n3
+85: t50 = t49 + n4
+86: t51 = 10
+87: t52 = t50 - t51
+88: n11 = t52
+89: t53 = n2 * n3
+90: t54 = t53 / n4
+91: t55 = n1 + t54
+92: t56 = 0
+93: t57 = t55 - t56
+94: n12 = t57
+95: t58 = n1 + n2
+96: t59 = -n3
+97: t60 = t59 / n4
+98: t61 = t58 * t60
+99: t62 = 15
+100: t63 = t61 - t62
+101: n13 = t63
+102: t64 = "\n-n1 + n2 - n3 + n4 + 10 = "
+103: param t64
+104: t65 = call printStr, 1
+105: param n10
+106: t66 = call printInt, 1
+107: t67 = "\nn1 * n2 / n3 + n4 - 10 = "
+108: param t67
+109: t68 = call printStr, 1
+110: param n11
+111: t69 = call printInt, 1
+112: t70 = "\nn1 + n2 * n3 / n4 - 0 = "
+113: param t70
+114: t71 = call printStr, 1
+115: param n12
+116: t72 = call printInt, 1
+117: t73 = "\n(n1 + n2) * (n3 / n4) - 15 = "
+118: param t73
+119: t74 = call printStr, 1
+120: param n13
+121: t75 = call printInt, 1
+122: t76 = "\n-n3 = "
+123: param t76
+124: t77 = call printStr, 1
+125: t78 = -n3
+126: param t78
+127: t79 = call printInt, 1
+128: t80 = "\n-n4 = "
+129: param t80
+130: t81 = call printStr, 1
+131: t82 = -n4
+132: param t82
+133: t83 = call printInt, 1
+134: t84 = "\nTest pre increment: "
+135: param t84
+136: t85 = call printStr, 1
+137: n1 = n1 + 1
+138: param n1
+139: t86 = call testIncDec, 1
+140: t87 = ", Value after call = "
+141: param t87
+142: t88 = call printStr, 1
+143: param n1
+144: t89 = call printInt, 1
+145: t90 = "\nTest post increment: "
+146: param t90
+147: t91 = call printStr, 1
+148: t92 = n1
+149: n1 = n1 + 1
+150: param t92
+151: t93 = call testIncDec, 1
+152: t94 = ", Value after call = "
+153: param t94
+154: t95 = call printStr, 1
+155: param n1
+156: t96 = call printInt, 1
+157: t97 = "\nTest pre decrement: "
+158: param t97
+159: t98 = call printStr, 1
+160: n1 = n1 - 1
+161: param n1
+162: t99 = call testIncDec, 1
+163: t100 = ", Value after call = "
+164: param t100
+165: t101 = call printStr, 1
+166: param n1
+167: t102 = call printInt, 1
+168: t103 = "\nTest post decrement: "
+169: param t103
+170: t104 = call printStr, 1
+171: t105 = n1
+172: n1 = n1 - 1
+173: param t105
+174: t106 = call testIncDec, 1
+175: t107 = ", Value after call = "
+176: param t107
+177: t108 = call printStr, 1
+178: param n1
+179: t109 = call printInt, 1
+180: t110 = "\n\n"
+181: param t110
+182: t111 = call printStr, 1
+183: t112 = 0
+184: return t112
+185: End: main

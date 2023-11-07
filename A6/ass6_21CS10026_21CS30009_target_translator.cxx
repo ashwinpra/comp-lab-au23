@@ -1,9 +1,10 @@
 #include "ass6_21CS10026_21CS30009_translator.h"
 
 string input_filename, asm_filename;
-ActivationRecord *currentAR; // points to the activation record of the current function
-ofstream asm_file; // assembly file
+ActivationRecord *currentAR; 
+ofstream asm_file; 
 
+// get ascii value of the character const
 int getAsciiValue(string charConst) {
     if(charConst.length() == 3) 
         return (int)charConst[1];
@@ -29,6 +30,7 @@ int getAsciiValue(string charConst) {
     }
 }
 
+// get the register to be used for the parameter in the function call
 string getReg(string paramName, int paramNum, int size) {
     if(paramNum == 1){
         if(size==1) return "%dil";
@@ -55,21 +57,25 @@ string getReg(string paramName, int paramNum, int size) {
     }
 }
 
+// get the stack location of the parameter in the function call
 string getStackLoc(string paramName) {
+    // check if it is a parameter
     if(currentAR->displacement.count(paramName))
         return to_string(currentAR->displacement[paramName]) + "(%rbp)";
-    else // global variable
+    // else it is a global variable
+    else
         return paramName;
 }
 
-// register to stack
+// load the parameter from register to stack
 void loadParam(string paramName, int paramNum) {
     Symbol *symbol = currentST->lookup(paramName);
     int size = symbol->size;
     TYPE type = symbol->type->type;
     string movIns = "";
-    // if it is an array just store the address
+
     if(type == ARRAY) {
+        // in this case, just store the address
         movIns = "movq";
         size = 8;
     } else if (size == 1) {
@@ -120,8 +126,8 @@ void translate() {
         if(it->category == Symbol::FUNCTION) {
             asm_file << "#\t" << it->name << endl;
 
-            map<string, int>::iterator it2 = it->nestedST->AR->displacement.begin();
-            while(it2 != it->nestedST->AR->displacement.end()){
+            map<string, int>::iterator it2 = (it->nestedST->AR->displacement).begin();
+            while(it2 != (it->nestedST->AR->displacement).end()){
                 asm_file << "#\t" << it2->first << " : " << it2->second << endl;
                 it2++;
             }
@@ -495,6 +501,7 @@ int main(int argc, char const *argv[]) {
     asm_filename = string(argv[1]) + ".s";
 
     block_count = 0; // initial block count is 0
+    temp_count = 0; // initial temp count is 0
     
     globalST = new SymTable("global"); // create global ST and set it as current
     currentST = globalST;

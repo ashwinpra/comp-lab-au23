@@ -1203,6 +1203,7 @@ direct_declarator:
 
             // set nested table for function
             $1->nestedST = currentST;
+            $1->category = Symbol::FUNCTION;
             currentST->parent = globalST;
 
             changeTable(globalST); // change to global table
@@ -1224,6 +1225,7 @@ direct_declarator:
 
             // set nested table for function
             $1->nestedST = currentST;
+            $1->category = Symbol::FUNCTION;
             currentST->parent = globalST;
 
             changeTable(globalST); // change to global table
@@ -1403,10 +1405,10 @@ labeled_statement:
 
 
 compound_statement:
-    CURLY_BRACE_OPEN CB CT block_item_list_opt CURLY_BRACE_CLOSE
+    CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
         { 
-            $$ = $4;
-            changeTable(currentST->parent); // return to parent ST
+            $$ = $2;
+            // changeTable(currentST->parent); // return to parent ST
         }
     ;
 
@@ -1597,11 +1599,9 @@ function_definition:
     declaration_specifiers declarator declaration_list_opt CT CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
         { 
             block_count = 0; // reset block count for function
-            // $2->type->type = FUNCTION; // check
             emit("labelend", $2->name);
-            if($2->type->type != VOID) {
-                currentST->lookup("return")->update($2->type); // return value type is updated
-            }
+            if($2->type->type != VOID) 
+                currentST->lookup("return")->update($2->type); // return value type is updated  
             changeTable(globalST); // return to global ST
         }
     ;
