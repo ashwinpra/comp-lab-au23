@@ -31,19 +31,19 @@ ass2_21CS30009.o: ass2_21CS30009.c myl.h
 
 run: a.out libmyl.a
 	@echo "Generating assembly file 1"
-	./a.out < $(BASE_NAME)_test1 > $(BASE_NAME)_quads1.out
+	./a.out $(BASE_NAME)_test1 > $(BASE_NAME)_quads1.out
 
 	@echo "Generating assembly file 2"
-	./a.out < $(BASE_NAME)_test2 > $(BASE_NAME)_quads2.out
+	./a.out $(BASE_NAME)_test2 > $(BASE_NAME)_quads2.out
 
 	@echo "Generating assembly file 3"
-	./a.out < $(BASE_NAME)_test3 > $(BASE_NAME)_quads3.out
+	./a.out $(BASE_NAME)_test3 > $(BASE_NAME)_quads3.out
 
 	@echo "Generating assembly file 4"
-	./a.out < $(BASE_NAME)_test4 > $(BASE_NAME)_quads4.out
+	./a.out $(BASE_NAME)_test4 > $(BASE_NAME)_quads4.out
 
 	@echo "Generating assembly file 5"
-	./a.out < $(BASE_NAME)_test5 > $(BASE_NAME)_quads5.out
+	./a.out $(BASE_NAME)_test5 > $(BASE_NAME)_quads5.out
 
 clean:
 	-rm a.out lex.yy.* *.o y.tab.* *.h.gch *.a 

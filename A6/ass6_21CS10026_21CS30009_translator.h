@@ -8,6 +8,7 @@
 #include <map>
 #include <fstream>
 #include <stack>
+#include <iomanip>
 #include <string.h>
 
 extern int yyparse(); 

@@ -1,14 +1,14 @@
-/* A Bison parser, made by GNU Bison 2.3.  */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
-/* Skeleton interface for Bison's Yacc-like parsers in C
+/* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,9 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -33,104 +31,116 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Tokens.  */
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
+#ifndef YY_YY_Y_TAB_H_INCLUDED
+# define YY_YY_Y_TAB_H_INCLUDED
+/* Debug traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 1
+#endif
+#if YYDEBUG
+extern int yydebug;
+#endif
+
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     PARENTHESIS_OPEN = 258,
-     PARENTHESIS_CLOSE = 259,
-     CURLY_BRACE_OPEN = 260,
-     CURLY_BRACE_CLOSE = 261,
-     SQR_BRACE_OPEN = 262,
-     SQR_BRACE_CLOSE = 263,
-     INC_OP = 264,
-     DEC_OP = 265,
-     LEFT_OP = 266,
-     RIGHT_OP = 267,
-     EQ_OP = 268,
-     NE_OP = 269,
-     LTE_OP = 270,
-     GTE_OP = 271,
-     AND_OP = 272,
-     OR_OP = 273,
-     PTR_OP = 274,
-     LT_OP = 275,
-     GT_OP = 276,
-     EQ = 277,
-     DOT = 278,
-     BITWISEAND = 279,
-     BITWISEOR = 280,
-     BITWISEXOR = 281,
-     STAR = 282,
-     PLUS = 283,
-     MINUS = 284,
-     NOT = 285,
-     EXCLAMATION = 286,
-     DIVIDE = 287,
-     PERCENTAGE = 288,
-     ADD_ASSIGN = 289,
-     SUB_ASSIGN = 290,
-     MUL_ASSIGN = 291,
-     DIV_ASSIGN = 292,
-     MOD_ASSIGN = 293,
-     LEFT_ASSIGN = 294,
-     RIGHT_ASSIGN = 295,
-     OR_ASSIGN = 296,
-     AND_ASSIGN = 297,
-     XOR_ASSIGN = 298,
-     COLON = 299,
-     SEMI_COLON = 300,
-     ELLIPSIS = 301,
-     QUESTION_MARK = 302,
-     COMMA = 303,
-     HASH = 304,
-     EXTERN = 305,
-     STATIC = 306,
-     AUTO = 307,
-     REGISTER = 308,
-     VOID_TYPE = 309,
-     CHAR_TYPE = 310,
-     SHORT = 311,
-     INT_TYPE = 312,
-     LONG = 313,
-     FLOAT_TYPE = 314,
-     DOUBLE = 315,
-     SIGNED = 316,
-     UNSIGNED = 317,
-     BOOL = 318,
-     COMPLEX = 319,
-     IMAGINARY = 320,
-     CONST = 321,
-     RESTRICT = 322,
-     VOLATILE = 323,
-     ENUM = 324,
-     INLINE = 325,
-     SIZEOF = 326,
-     STRUCT = 327,
-     TYPEDEF = 328,
-     UNION = 329,
-     IF = 330,
-     ELSE = 331,
-     CASE = 332,
-     DEFAULT = 333,
-     WHILE = 334,
-     CONTINUE = 335,
-     DO = 336,
-     GOTO = 337,
-     FOR = 338,
-     RETURN = 339,
-     BREAK = 340,
-     SWITCH = 341,
-     UNEXPECTED_TOKEN = 342,
-     IDENTIFIER = 343,
-     INTEGER_CONST = 344,
-     FLOAT_CONST = 345,
-     CHAR_CONST = 346,
-     STRING_LITERAL = 347,
-     THEN = 348
-   };
+  enum yytokentype
+  {
+    PARENTHESIS_OPEN = 258,
+    PARENTHESIS_CLOSE = 259,
+    CURLY_BRACE_OPEN = 260,
+    CURLY_BRACE_CLOSE = 261,
+    SQR_BRACE_OPEN = 262,
+    SQR_BRACE_CLOSE = 263,
+    INC_OP = 264,
+    DEC_OP = 265,
+    LEFT_OP = 266,
+    RIGHT_OP = 267,
+    EQ_OP = 268,
+    NE_OP = 269,
+    LTE_OP = 270,
+    GTE_OP = 271,
+    AND_OP = 272,
+    OR_OP = 273,
+    PTR_OP = 274,
+    LT_OP = 275,
+    GT_OP = 276,
+    EQ = 277,
+    DOT = 278,
+    BITWISEAND = 279,
+    BITWISEOR = 280,
+    BITWISEXOR = 281,
+    STAR = 282,
+    PLUS = 283,
+    MINUS = 284,
+    NOT = 285,
+    EXCLAMATION = 286,
+    DIVIDE = 287,
+    PERCENTAGE = 288,
+    ADD_ASSIGN = 289,
+    SUB_ASSIGN = 290,
+    MUL_ASSIGN = 291,
+    DIV_ASSIGN = 292,
+    MOD_ASSIGN = 293,
+    LEFT_ASSIGN = 294,
+    RIGHT_ASSIGN = 295,
+    OR_ASSIGN = 296,
+    AND_ASSIGN = 297,
+    XOR_ASSIGN = 298,
+    COLON = 299,
+    SEMI_COLON = 300,
+    ELLIPSIS = 301,
+    QUESTION_MARK = 302,
+    COMMA = 303,
+    HASH = 304,
+    EXTERN = 305,
+    STATIC = 306,
+    AUTO = 307,
+    REGISTER = 308,
+    VOID_TYPE = 309,
+    CHAR_TYPE = 310,
+    SHORT = 311,
+    INT_TYPE = 312,
+    LONG = 313,
+    FLOAT_TYPE = 314,
+    DOUBLE = 315,
+    SIGNED = 316,
+    UNSIGNED = 317,
+    BOOL = 318,
+    COMPLEX = 319,
+    IMAGINARY = 320,
+    CONST = 321,
+    RESTRICT = 322,
+    VOLATILE = 323,
+    ENUM = 324,
+    INLINE = 325,
+    SIZEOF = 326,
+    STRUCT = 327,
+    TYPEDEF = 328,
+    UNION = 329,
+    IF = 330,
+    ELSE = 331,
+    CASE = 332,
+    DEFAULT = 333,
+    WHILE = 334,
+    CONTINUE = 335,
+    DO = 336,
+    GOTO = 337,
+    FOR = 338,
+    RETURN = 339,
+    BREAK = 340,
+    SWITCH = 341,
+    UNEXPECTED_TOKEN = 342,
+    IDENTIFIER = 343,
+    INTEGER_CONST = 344,
+    FLOAT_CONST = 345,
+    CHAR_CONST = 346,
+    STRING_LITERAL = 347,
+    THEN = 348
+  };
 #endif
 /* Tokens.  */
 #define PARENTHESIS_OPEN 258
@@ -225,13 +235,12 @@
 #define STRING_LITERAL 347
 #define THEN 348
 
-
-
-
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
-#line 9 "ass6_21CS10026_21CS30009.y"
+union YYSTYPE
 {
+#line 9 "ass6_21CS10026_21CS30009.y"
+
     int ival;
     char* fval;
     char* cval;
@@ -244,14 +253,18 @@ typedef union YYSTYPE
     Array* array;
     SymType* sym_type;
     Symbol* symbol;
-}
-/* Line 1529 of yacc.c.  */
-#line 250 "y.tab.h"
-	YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
+
+#line 258 "y.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
+
 
 extern YYSTYPE yylval;
 
+int yyparse (void);
+
+#endif /* !YY_YY_Y_TAB_H_INCLUDED  */

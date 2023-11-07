@@ -116,6 +116,7 @@ void translate() {
 
     list<Symbol>::iterator it = globalST->symbols.begin();
     while (it != globalST->symbols.end()){
+        // cout<<"type of it = "<<(it->category == Symbol::GLOBAL ? "global" : (it->category == Symbol::PARAM ? "param" : (it->category == Symbol::LOCAL ? "local" : (it->category == Symbol::TEMP ? "temp" : "function"))))<<endl;
         if(it->category == Symbol::FUNCTION) {
             asm_file << "#\t" << it->name << endl;
 
@@ -162,7 +163,7 @@ void translate() {
             labelMap[quadNum] = ".LFE" + to_string(labelNum);
             labelNum++;
         }
-        quadNum++; it++;
+        quadNum++; it2++;
     }
 
     it2 = qArr.begin();
@@ -174,6 +175,7 @@ void translate() {
                 labelNum++;
             }
         }
+        it2++;
     }
 
 
@@ -480,7 +482,7 @@ void translate() {
             }
         }
 
-        quadNum++;
+        quadNum++; it2++;
     }
 
 
