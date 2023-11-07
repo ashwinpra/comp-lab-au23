@@ -5,9 +5,13 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
+#include <fstream>
+#include <stack>
 #include <string.h>
 
 extern int yyparse(); 
+extern FILE* yyin;
 
 using namespace std;
 
@@ -16,16 +20,17 @@ using namespace std;
 #define SIZE_OF_CHAR 1
 #define SIZE_OF_INT 4
 #define SIZE_OF_FLOAT 8
-#define SIZE_OF_POINTER 4
+#define SIZE_OF_POINTER 8 // check 
 
 // Classes
-class SymType;      // type of a symbol
-class SymTable;     // symbol table
-class Symbol;       // symbol table entry
-class Quad;         // entry in quad array
-class Expression;   // expression attributes (used while parsing)
-class Array;        // array attributes (used while parsing)
-class Statement;    // statement attributes (used while parsing)
+class SymType;          // type of a symbol
+class SymTable;         // symbol table
+class Symbol;           // symbol table entry
+class Quad;             // entry in quad array
+class Expression;       // expression attributes (used while parsing)
+class Array;            // array attributes (used while parsing)
+class Statement;        // statement attributes (used while parsing)
+class ActivationRecord; // activation record (used in code generation)
 
 enum TYPE {
     VOID,
@@ -58,24 +63,27 @@ class SymTable {
         list <Symbol> symbols;      // list of symbols in the ST
         SymTable *parent;           // pointer to parent ST, NULL for global ST
         int count;                  // number of entries in the ST
+        ActivationRecord *AR;       // activation record for the ST
+        vector<string> params;      // ordered list of parameters of the function (if any) 
         
         SymTable(string = "NULL", SymTable * = NULL); // constructor
 
         Symbol* lookup(string); // lookup for a symbol in the symbol table, or add if not present - as mentioned in the assignment
 
-        void print();  // print the symbol table - as mentioned in the assignment
+        void print();  // print the symbol table - as mentioned in assignment 5
 
-        void update(); // update the symbol table - as mentioned in the assignment
+        void update(); // update the symbol table - as mentioned in assignment 5, also creates activation record
 };
 
 class Symbol {
     public:
-        string name;            // name of the symbol
+        string name;            // name of the symbol 
         int size;               // size of the symbol
         int offset;             // offset of the symbol
         SymType *type;          // type of the symbol
         SymTable *nestedST;     // pointer to parent symbol table if any
         string init_val;        // initial value of the symbol
+        enum Category {LOCAL, GLOBAL, PARAM, TEMP, FUNCTION} category;  // category of the symbol
 
         Symbol(string, TYPE = INT, string = "-");  // constructor
 
@@ -136,7 +144,16 @@ class Statement {
         list<int> nextlist;     // nextlist for the statement
 };
 
+class ActivationRecord {
+    public: 
+        map <string, int> displacement; 
+        int total_displacement;
+
+        ActivationRecord();
+};
+
 // Global variables
+extern vector<string> stringList;       // list of strings (to save in DATA SEGMENT)
 extern vector<Quad *> qArr;             // array of quads (implemented as a simple vector for convenience)
 extern SymTable* currentST;             // current symbol table being used
 extern SymTable* globalST;              // global symbol table (parent of all symbol tables)
@@ -153,7 +170,8 @@ void emit(string, string, int, string = "");
 // global functions, as mentioned in the assignment (other ones have been defined as class methods)
 list<int> makelist(int);  
 list<int> merge(list<int>, list<int>); 
-void backpatch(list<int>, int); 
+void backpatch(list<int>, int);
+void final_backpatch(); // check 
 bool typecheck(Symbol *&, Symbol *&);  
 bool typecheck(SymType*, SymType*); // overloaded instance for symtype checking within typecheck for symbol
 

@@ -1,7 +1,7 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
-    #include "ass5_21CS10026_21CS30009_translator.h"
+    #include "ass6_21CS10026_21CS30009_translator.h"
     #include "y.tab.h"
 
     /* 

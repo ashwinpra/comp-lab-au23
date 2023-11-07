@@ -1,6 +1,7 @@
-#include "ass5_21CS10026_21CS30009_translator.h"
+#include "ass6_21CS10026_21CS30009_translator.h"
 
 // Global variables
+vector<string> stringList;       // list of strings (to save in DATA SEGMENT)
 vector<Quad *> qArr;             // array of quads (implemented as a simple vector for convenience)
 SymTable* currentST;             // current symbol table being used
 SymTable* globalST;              // global symbol table (parent of all symbol tables)
@@ -86,13 +87,20 @@ Symbol* SymTable::lookup(string name) {
 
     // if it doesnt exist, add it to the table and return it
     Symbol* sym = new Symbol(name);
+
+    // set category as global or local
+    if(currentST == globalST) 
+        sym->category = Symbol::GLOBAL;
+    else
+        sym->category = Symbol::LOCAL;
+
     (this->symbols).push_back(*sym);
 
     return &(this->symbols).back();
 }
 
 
-// to update offsets
+// to update offsets, also creates activation record
 void SymTable::update() {
     vector<SymTable *> nested_tables; 
     int offset;
@@ -114,13 +122,42 @@ void SymTable::update() {
         it++;
     }
 
+    // now that the offsets are updated, we can create activation record
+    this->AR = new ActivationRecord();
+
+    // stacking the parameters
+    it = (this->symbols).begin();
+    while(it != (this->symbols).end()) {
+        if(it->category == Symbol::PARAM) {
+            if(it->size != 0){
+                this->AR->total_displacement -= it->size;
+                this->AR->displacement[it->name] = this->AR->total_displacement;
+            }
+        }
+        it++;
+    }
+
+    // stacking temps and local variables
+    it = (this->symbols).begin();
+    while(it != (this->symbols).end()) {
+        if(it->category == Symbol::TEMP || (it->category == Symbol::LOCAL && it->name != "return") ) {
+            if(it->size != 0){
+                this->AR->total_displacement -= it->size;
+                this->AR->displacement[it->name] = this->AR->total_displacement;
+            }
+        }
+        it++;
+    }
+
+    // now recursively update nested tables
     vector<SymTable*>::iterator it2 = nested_tables.begin();
     while(it2 != nested_tables.end()) {
         (*it2)->update();
         it2++;
     }
-}
 
+}
+ 
 // to print symbol name and children
 void SymTable::print() {
 
@@ -128,13 +165,14 @@ void SymTable::print() {
     cout<<"---------------------------------------------------------------------------------------------"<<endl;
     cout<<"Symbol Table : "<<this->name<<"\t\t\t\t\t\tParent: "<<(this->parent == NULL ? "NULL" : this->parent->name)<<endl;
     cout<<"---------------------------------------------------------------------------------------------"<<endl;
-    cout<<"Name\t\t\tType\t\tInitial Value\tSize\tOffset\t\tNested Table"<<endl;
+    cout<<"Name\t\t\tCategory\t\t\tType\t\tInitial Value\tSize\tOffset\t\tNested Table"<<endl;
 
     vector<SymTable *> nested_tables;
 
     list<Symbol>::iterator it = (this->symbols).begin();
     while(it != (this->symbols).end()){
         cout<<it->name<<"\t\t\t\t"
+        <<(it->category == Symbol::GLOBAL ? "global" : (it->category == Symbol::PARAM ? "param" : (it->category == Symbol::LOCAL ? "local" : (it->category == Symbol::TEMP ? "temp" : "function"))))<<"\t\t\t"
         <<it->type->toString()<<"\t\t"
         <<it->init_val<<"\t\t\t\t"
         <<it->size<<"\t\t"
@@ -288,6 +326,9 @@ void Quad::print() {
     else if (op == "[]=")
         cout<<this->res<<"["<<this->arg1<<"]"<<" = "<<this->arg2<<endl;
 
+    else if (op == "=str")
+        cout<<this->res<<" = "<<stringList[atoi((this->arg1).c_str())]<<endl;
+
     // goto res
     else if (op == "goto")
         cout<<"goto "<<this->res<<endl;
@@ -306,7 +347,11 @@ void Quad::print() {
 
     // label
     else if (op == "label")
-        cout<<this->res<<":"<<endl;
+        cout<<"Start: "<<this->res<<endl;
+
+    // end label 
+    else if (op == "labelend")
+        cout<<"End: "<<this->res<<endl;
 }
 
 // Expression class methods
@@ -336,6 +381,10 @@ void Expression::conv2Bool() {
         emit("goto", "");
     }
 }
+
+// ActivationRecord class methods
+
+ActivationRecord::ActivationRecord() : displacement(map<string, int> ()), total_displacement(0)  {}
 
 
 // global functions
@@ -367,6 +416,24 @@ void backpatch(list<int> li, int addr) {
     {
         qArr[*it - 1]->res = to_string(addr);
         it++;
+    }
+}
+
+void final_backpatch() {
+    // to send any dangling exits to function end, for void functions 
+    int curr = qArr.size();
+    int last = -1; 
+
+
+    // define reverse iterator
+    vector<Quad*>::reverse_iterator it = qArr.rbegin();
+    while(it != qArr.rend()) {
+        if((*it)->op == "labelend") 
+            last = curr;
+        else if((*it)->op == "goto" || (*it)->op == "==" || (*it)->op == "!=" || (*it)->op == "<" || (*it)->op == ">" || (*it)->op == "<=" || (*it)->op == ">=") {
+            if((*it)->res == "") (*it)->res = to_string(last);
+        }
+        curr--; it++;
     }
 }
 
@@ -414,6 +481,7 @@ int nextinstr() { return qArr.size() + 1; }
 
 Symbol *gentemp(TYPE type, string val) {
     Symbol *temp = new Symbol("t" + to_string(currentST->count++), type, val);
+    temp->category = Symbol::TEMP;
     (currentST->symbols).push_back(*temp);
     return temp;
 }
@@ -428,20 +496,21 @@ void printQuadArray() {
     }
 }
 
+// 
 
-int main() {
+// int main() {
 
-    block_count = 0; // initial block count is 0
+//     block_count = 0; // initial block count is 0
 
-    globalST = new SymTable("global"); // create global ST and set it as current
-    currentST = globalST;
+//     globalST = new SymTable("global"); // create global ST and set it as current
+//     currentST = globalST;
 
-    yyparse();
+//     yyparse();
 
-    globalST->update(); // update offsets
-    globalST->print(); // print global ST (would include all nested STs too)
+//     globalST->update(); // update offsets
+//     globalST->print(); // print global ST (would include all nested STs too)
     
-    printQuadArray(); // print quad array (TACs)
+//     printQuadArray(); // print quad array (TACs)
 
-    return 0;
-}
+//     return 0;
+// }
